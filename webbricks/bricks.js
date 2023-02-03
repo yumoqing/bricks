@@ -18,9 +18,15 @@ class Factory_ {
 const Factory = new Factory_();
 
 class DomElement {
-	constructor(name, options){
-		this.dom_element = document.createElement(name);
+	dom_element = null;
+	constructor(options){
 		this.opts = options;
+	}
+	create(tagname){
+		this.dom_element = document.createElement(tagname);
+	}
+	set_id(id){
+		this.dom_element.id = id;
 	}
 	show(){
 		this.dom_element.style.display = '';
@@ -32,7 +38,9 @@ class DomElement {
 
 class Text extends DomElement {
 	constructor(options){
-		super("span", options);
+		super(options);
+		this.opts = options;
+		this.create("span");
 		this.set_attrs();
 	}
 	set_attrs(){
@@ -59,7 +67,8 @@ class Text extends DomElement {
 class Title1 extends Text {
 	constructor(options){
 		super(options);
-		this.dom_element = document.createElement('H1');
+		this.opts = options;
+		this.create('H1');
 		this.set_attrs();
 	}
 }
@@ -67,7 +76,8 @@ class Title1 extends Text {
 class Title2 extends Text {
 	constructor(options){
 		super(options);
-		this.dom_element = document.createElement('H2');
+		this.opts = options;
+		this.create('H2');
 		this.set_attrs();
 	}
 }
@@ -75,7 +85,8 @@ class Title2 extends Text {
 class Title3 extends Text {
 	constructor(options){
 		super(options);
-		this.dom_element = document.createElement('H3');
+		this.opts = options;
+		this.create('H3');
 		this.set_attrs();
 	}
 }
@@ -83,7 +94,8 @@ class Title3 extends Text {
 class Title4 extends Text {
 	constructor(options){
 		super(options);
-		this.dom_element = document.createElement('H4');
+		this.opts = options;
+		this.create('H4');
 		this.set_attrs();
 	}
 }
@@ -91,7 +103,8 @@ class Title4 extends Text {
 class Title5 extends Text {
 	constructor(options){
 		super(options);
-		this.dom_element = document.createElement('H5');
+		this.opts = options;
+		this.create('H5');
 		this.set_attrs();
 	}
 }
@@ -99,7 +112,8 @@ class Title5 extends Text {
 class Title6 extends Text {
 	constructor(options){
 		super(options);
-		this.dom_element = document.createElement('H6');
+		this.opts = options;
+		this.create('H6');
 		this.set_attrs();
 	}
 }
