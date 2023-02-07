@@ -5,21 +5,38 @@
   <script src="bricks.js"></script>
 	<script>
 		const opts = 
-
 {
 	"widget": {
-		"widgettype":"Title1",
-		"options":{
-			"otext":"Test text",
-			"i18n":true
+			"widgettype":"VBox",
+			"options":{
+			},
+			"subwidgets":[
+				{
+					"widgettype":"Title1",
+					"options":{
+						"text":"Pic Viewer",
+						"i18n":true
+					}
+				},
+				{
+					"widgettype":"urlwidget",
+					"options":{
+						"url":"/bricks/image.tmpl",
+						"i18n":true
+					}
+				}
+			]
 		}
-	}
 }
 
 		;
 		const app = new BricksApp(opts);
 		app.run();
-		alert('ttttttttt');
+		let o1 = new Oper(2);
+		let o2 = new Oper(3);
+		let o3 = o1 + o2;
+		console.log('o1=', o1, 'o2=', o2, 'o3=', o3);
+		alert(o3.value);
 	</script>
 </body>
 </html>

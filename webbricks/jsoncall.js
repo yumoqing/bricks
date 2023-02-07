@@ -1,7 +1,12 @@
+function url_params(data) {
+  return Object.keys(data).map(key => `${key}=${encodeURIComponent(data[key])}`).join('&');
+}
+
 class JsonCall {
 	constructor(){
 	}
 	async jcall(url, method, opts){
+		console.log('jcall(', url, method, opts, ')');
 		let headers = {
 			"Accept": "application/json",
 			"Content-Type": "application/json",
@@ -19,15 +24,15 @@ class JsonCall {
 		if (opts.hasOwnProperty('headers')) {
 			params.headers = Object(headers, opts.headers);
 		}
-		if (method in ['GET', 'HEAD']) {
-			let pstr = new URLSearchParams(data).toString()
+		if (method == 'GET' || method == 'HEAD') {
+			let pstr = url_params(data);
 			url = url + '?' + pstr;
 		} else {
 			params.body = JSON.stringify(data);
 		}
-
+		console.log('method=', method, 'url=', url, 'params=', params);
 		const fetchResult = await fetch(url, params);
-		const result = await fech.Result.json();
+		const result = await fetchResult.json();
 		if (fetchResult.ok){
 			return result;
 		}
@@ -42,9 +47,9 @@ class JsonCall {
 		return error;
 	}
 	async get(url, opts){
-		return await jcall(url, 'GET', opts);
+		return await this.jcall(url, 'GET', opts);
 	}
 	async post(url, opts){
-		return await jcall(url, 'POST', opts);
+		return await this.jcall(url, 'POST', opts);
 	}
 }
