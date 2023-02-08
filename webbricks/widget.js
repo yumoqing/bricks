@@ -42,7 +42,7 @@ class Text extends JsWidget {
 		}
 		this._i18n = new I18n();
 		if (this.i18n && this.otext) {
-			this.text = this._i18n.i18n(this.otext);
+			this.text = this._i18n._(this.otext);
 			console.log('otext=', this.otext, 'text=', this.text);
 		}
 		this.dom_element.innerHTML = this.text;

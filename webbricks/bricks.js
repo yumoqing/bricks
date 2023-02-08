@@ -1,4 +1,18 @@
 let bricks_app = null;
+var extend = function(d, s){
+	for (var p in s){
+		if (! s.hasOwnProperty(p)){
+			continue;
+		}
+		if (d[p] && (typeof(d[p]) == 'object') 
+				&& (d[p].toString() == '[object Object]') && s[p]){
+			extend(d[p], s[p]);
+		} else {
+			d[p] = s[p];
+		}
+	}
+	return d;
+}
 
 class Bricks {
 	async widgetBuild(desc){
@@ -7,8 +21,7 @@ class Bricks {
 			let url = desc.options.url;
 			let method = desc.options.method || 'GET';
 			let opts = desc.options.params || {};
-			let jc = new JsonCall();
-			desc = await jc.jcall(url, method, opts);
+			desc = await jcall(url, method, opts);
 		}
 		let klass = Factory.get(desc.widgettype);
 		if (! klass){
@@ -60,11 +73,17 @@ class BricksApp {
 		this.opts = opts;
 		bricks_app = this;
 		this.i18n = new I18n();
-		if (opts.i18n) {
-			desc = istructuredClone(ops.i18n);
-		}
+	}
+	async setup_i18n(desc){
+		let params = desc.params;
+		d = await jcall(desc.url, method=desc.method||'GET', params=params);
+		this.i18n.setup_dict(d);
 	}
 	async run(){
+		if (this.opts.i18n) {
+			desc = structuredClone(ops.i18n);
+			this.setup_i18n(desc);
+		}
 		let b = new Bricks();
 		let opts = structuredClone(this.opts.widget);
 		let w = await b.widgetBuild(opts);

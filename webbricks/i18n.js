@@ -1,8 +1,9 @@
 class I18n {
 	constructor(){
-		this.msgs = {}
+		this.msgs = {};
+		console.log('I18n():msg=', this.msgs);
 	}
-	i18n(txt){
+	_(txt){
 		if (this.msgs.hasOwnProperty(txt)){
 			return this.msgs[txt];
 		}
