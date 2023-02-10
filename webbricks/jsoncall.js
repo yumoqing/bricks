@@ -2,57 +2,110 @@ function url_params(data) {
   return Object.keys(data).map(key => `${key}=${encodeURIComponent(data[key])}`).join('&');
 }
 class HttpClient {
-async jcall(url, method, opts){
-	console.log('jcall(', url, method, opts, ')');
-	let headers = {
-		"Accept": "application/json",
-		"Content-Type": "application/json",
-	}
-	let data = {
-		"_webbricks_":1
-	}
-	if (opts.hasOwnProperty('data')) {
-		data = Object.assign(data, opts.data);
+	async httpcall(url, {method='GET', headers=null, params=null, resulttype='text'}={}){
+		let data = {
+			"_webbricks_":1
+		}
+		var _headers = {
+			"Accept":"text/html",
+			"Content-Type":"text/html; charset=utf-8"
+		}
+		if (resulttype == 'json'){
+			_headers = {
+				"Accept": "application/json",
+				"Content-Type": "application/json",
+			};
+		}
+		
+		if (params) {
+			data = Object.assign(data, params);
+		}
+
+		let _params = {
+			"method":method,
+		}
+		_params.headers = _headers;
+		if (headers) {
+			_params.headers = Object(_headers, headers);
+		}
+		if (method == 'GET' || method == 'HEAD') {
+			let pstr = url_params(data);
+			url = url + '?' + pstr;
+		} else {
+			_params.body = JSON.stringify(data);
+		}
+		const fetchResult = await fetch(url, _params);
+		var result=null;
+		if (resulttype == 'json'){
+			result = await fetchResult.json();
+		}
+		else {
+			result = await fetchResult.text();
+		}
+		if (fetchResult.ok){
+			console.log('method=', method, 'url=', url, 'params=', params);
+			console.log('result=', result);
+			return result;
+		}
+		console.log('method=', method, 'url=', url, 'params=', params);
+		console.log('jsoncall error:');
+		const resp_error = {
+			"type":"Error",
+			"message":result.message || 'Something went wrong',
+			"data":result.data || '',
+			"code":result.code || ''
+		};
+		const error = new Error();
+		error.info = resp_error;
+		return error;
 	}
 
-	let params = {
-		"method":method,
+	async httpcall_json(url, {method='GET', headers=null, params=null}={}){
+		return httpcall(url, 
+									{
+										"method":method,
+										"headers":headers,
+										"resulttype":'json',
+										"params":params
+									});
 	}
-	if (opts.hasOwnProperty('headers')) {
-		params.headers = Object(headers, opts.headers);
+
+	async gettext(url, {headers=null, params=null}={}){
+		return await httpcall(url, {
+								"method":"GET",
+								"header":headers,
+								"params":params
+							});
 	}
-	if (method == 'GET' || method == 'HEAD') {
-		let pstr = url_params(data);
-		url = url + '?' + pstr;
-	} else {
-		params.body = JSON.stringify(data);
+	async posttext(url, {headers=null, params=null}={}){
+		return await httpcall(url, {
+								"method":"POST",
+								"header":headers,
+								"params":params
+							});
 	}
-	const fetchResult = await fetch(url, params);
-	const result = await fetchResult.json();
-	if (fetchResult.ok){
-		console.log('method=', method, 'url=', url, 'params=', params);
-		console.log('result=', result);
-		return result;
+	async getjson(url, {headers=null, params=null}={}){
+		return await httpcall(url, {
+								"method":"GET",
+								"header":headers,
+								"resulttype":'json',
+								"params":params
+							});
 	}
-	console.log('method=', method, 'url=', url, 'params=', params);
-	console.log('jsoncall error:');
-	const resp_error = {
-		"type":"Error",
-		"message":result.message || 'Something went wrong',
-		"data":result.data || '',
-		"code":result.code || ''
-	};
-	const error = new Error();
-	error.info = resp_error;
-	return error;
-}
-async get(url, opts){
-	return await jcall(url, 'GET', opts);
-}
-async post(url, opts){
-	return await jcall(url, 'POST', opts);
-}
+	async postjson(url, {headers=null, params=null}={}){
+		return await httpcall(url, {
+								"method":"POST",
+								"header":headers,
+								"resulttype":'json',
+								"params":params
+							});
+	}
 }
 var hc = new HttpClient();
-var jcall = hc.jcall;
+var httpcall = hc.httpcall;
+var jcall = hc.httpcall_json;
+var jget = hc.getjson;
+var jpost = hc.postjson;
+var tget = hc.gettext;
+var tpost = hc.posttext;
 

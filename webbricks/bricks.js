@@ -1,19 +1,4 @@
 let bricks_app = null;
-var extend = function(d, s){
-	for (var p in s){
-		if (! s.hasOwnProperty(p)){
-			continue;
-		}
-		if (d[p] && (typeof(d[p]) == 'object') 
-				&& (d[p].toString() == '[object Object]') && s[p]){
-			extend(d[p], s[p]);
-		} else {
-			d[p] = s[p];
-		}
-	}
-	return d;
-}
-
 class Bricks {
 	async widgetBuild(desc){
 		const klassname = desc.widgettype;
@@ -21,7 +6,7 @@ class Bricks {
 			let url = desc.options.url;
 			let method = desc.options.method || 'GET';
 			let opts = desc.options.params || {};
-			desc = await jcall(url, method, opts);
+			desc = await jcall(url, { "method":method, "params":opts});
 		}
 		let klass = Factory.get(desc.widgettype);
 		if (! klass){
@@ -35,20 +20,117 @@ class Bricks {
 			for (let i=0; i<desc.subwidgets.length; i++){
 				let sdesc = desc.subwidgets[i];
 				let sw = await this.widgetBuild(sdesc);
-				console.log('sw=', sw, 'sdesc=', sdesc, desc.subwidgets);
 				if ( sw ){
 					w.add_widget(sw);
+				} else {
+					console.log('widgetBuild() error: sdesc=', sdesc);
 				}
+			}
+		}
+		if (desc.hasOwnProperty('binds')){
+			for (var i=0;i<desc.binds.length; i++){
+				this.buidlBind(w, desc.binds[i]);
 			}
 		}
 		console.log('w=', w);
 		return w;
 	}
+
+	buildBind(w, bind_desc){
+		/*
+		all type of bind action's desc has the following attributes:
+			actiontype:'bricks',
+			wid:
+			event:
+			target:
+			datawidget:
+			datascript:
+			datamethod:
+			datakwargs:
+			conform:
+		and each type of binds specified attributes list following
+
+		url action:
+			mode:,
+			options:{
+				method:
+				params:{},
+				url:
+			}
+
+		bricks action:
+			mode:,
+			options:{
+				"widgettype":"gg",
+				...
+			}
+
+		method action:
+			method:
+			options: for methods kwargs
+
+
+		script action:
+			script:
+			options:
+
+		registerfunction action:
+			rfname:
+			params:
+
+		event action:
+			dispatch_event:
+			params:
+
+		multiple action:
+			actions:[
+				{
+					actiontype:
+					target:
+					datawidget:
+					datascript:
+					datamethod:
+					datakwargs:
+					...plus specified action attributes
+				}
+				...
+			]
+		*/
+	}
 	getWidgetById(id, from_widget){
-		if (from_widget){
-			return from_widget.getElementById(id);
+		var ids = id.split('/');
+		var el = from_widget.dom_element;
+		var j = 0;
+		for (var i in ids){
+			if (j == 0){
+				j = 1;
+				if (i=='root'){
+					el = bricks_app.root.dom_element;
+					continue;
+				}
+				if (i=='app'){
+					return bricks_app;
+				}
+				if (i == 'window'){
+					el = Body.dom_element;
+					continue;
+				}
+			}
+					
+			if (i[0] == '-'){
+				i = substr(1, i.length - 1)
+				el = el.closest('#' + i);
+			} else {
+				el = el.getSelector('#' + i);
+			}
+			if ( el == null ){
+				return null;
+			}
 		}
-		return document.getElementById(id);
+		if (typeof(el.bricks_widget) !== 'undefined'){
+			return el.bricks_widget;
+		}
+		return el;
 	}
 }
 
@@ -76,7 +158,8 @@ class BricksApp {
 	}
 	async setup_i18n(desc){
 		let params = desc.params;
-		d = await jcall(desc.url, method=desc.method||'GET', params=params);
+		d = await jcall(desc.url, {
+					"method":desc.method||'GET', params:params});
 		this.i18n.setup_dict(d);
 	}
 	async run(){

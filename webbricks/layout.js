@@ -4,6 +4,18 @@ class Layout extends JsWidget {
 		this.create('div');
 		console.log('this=', this);
 	}
+	opts_handle(){
+		var e = this.dom_element;
+		if (this.opts.width)
+			e.style.width = this.opts.width;
+		
+		if (this.opts.height) 
+			e.style.height = this.opts.height;
+
+		if (this.opts.css){
+			this.dom_element.classList.add(this.opts.css);
+		}
+	}
 	add_widget(w, index){
 		this.dom_element.appendChild(w.dom_element);
 	}
@@ -26,11 +38,30 @@ Body = new _Body();
 
 class BoxLayout extends Layout {
 	constructor(options){
+		/* options:
+		{
+			"orientation":"vertical" or "horizontal",
+			"size_hint_x",
+			"size_hint_y",
+			"height":
+			"width",
+			"css",
+			"x",
+			"y",
+		}
+		*/
 		super(options);
-		this.orientation = options.orientation | 'vertical';
-		this.size_hint_y = options.size_hint_y | null;
-		this.size_hint_x = options.size_hint_x | null;
-		this.size_hint = [this.size_hint_x, this.size_hint_y];
+		this.create('div');
+		this.opts_handle();
+		this.container_jss = {
+			'display':'flex',
+		}
+		this.child_jss = {
+		}
+		this.orientation = get(options, 'orientation', 'vertical');
+		if (this.orientation in ['vertical', 'horizontal']){
+			this.orientation = 'vertical';
+		}
 	}
 }
 
@@ -38,6 +69,16 @@ class VBox extends BoxLayout {
 	constructor(options){
 		super(options);
 		this.orientation = 'vertical';
+		this.container_jss.flexFlow = 'column';
+		this.dom_element.style.update(this.container_jss);
+	}
+	add_widget(w, index){
+		var e = w.dom_element;
+		BoxLayout.prototype.add_widget.call(this, w, index);
+		if (w.opts.height)
+			e.style.flex = obj_fmtstr({'height':w.opts.height}, '0 1 ${height}');
+		else
+			e.style.flex = '1 1 auto';
 	}
 }
 
@@ -45,7 +86,16 @@ class HBox extends BoxLayout {
 	constructor(options){
 		super(options);
 		this.orientation = 'horizontal';
-		this.dom_element.style.float = 'left';
+		this.container_jss.flexFlow = 'row';
+		this.dom_element.style.update(this.container_jss);
+	}
+	add_widget(w, index){
+		var e = w.dom_element;
+		BoxLayout.prototype.add_widget.call(this, w, index);
+		if (w.opts.width)
+			e.style.flex = obj_fmtstr({'width':w.opts.width}, '0 1 ${width}');
+		else
+			e.style.flex = '1 1 auto';
 	}
 }
 Factory.register('HBox', HBox);

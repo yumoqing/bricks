@@ -6,6 +6,7 @@ class JsWidget {
 	}
 	create(tagname){
 		this.dom_element = document.createElement(tagname);
+		this.dom_element.bricks_widget = this;
 	}
 	set_id(id){
 		this.dom_element.id = id;
@@ -18,6 +19,9 @@ class JsWidget {
 	}
 	bind(eventname, handler){
 		this.dom_element.addEventListener(eventname, handler);
+	}
+	unbind(eventname, handler){
+		this.dom_element.removeEventListener(eventname, handler);
 	}
 }
 
