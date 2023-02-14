@@ -92,6 +92,7 @@ class Modal extends JsWidget {
 		}
 	}
 	click_handler(event){
+		console.log('click_handler() called ...');
 		if (event.target == this.dom_element){
 			this.dismiss();
 		} else {
@@ -101,7 +102,8 @@ class Modal extends JsWidget {
 	open(){
 		console.log('modal():open called ............');
 		if (this.opts.auto_close){
-			window.addEventListener('click', this.click_handler);
+			var f = this.click_handler.bind(this);
+			window.addEventListener('click', f);
 		}
 		this.dom_element.style.display = "";
 	}

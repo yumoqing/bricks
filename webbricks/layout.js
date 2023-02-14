@@ -1,6 +1,8 @@
 class Layout extends JsWidget {
 	constructor(options){
 		super(options);
+		this._container = true;
+		this.children = [];
 		this.create('div');
 		console.log('this=', this);
 	}
@@ -17,12 +19,23 @@ class Layout extends JsWidget {
 		}
 	}
 	add_widget(w, index){
+		w.parent = this;
+		this.children.push(w);
 		this.dom_element.appendChild(w.dom_element);
 	}
 	remove_widget(w){
+		w.parent = null;
+		this.children = this.children.filter(function(item){
+			return item !== w;
+		});
+
 		this.dom_element.removeChild(w.dom_element);
 	}
 	clear_widgets(w){
+		for (var i=0;i<this.children.length;i++){
+			this.children[i].parent = null;
+		}
+		this.children = [];
 		this.dom_element.replaceChildren();
 	}
 }

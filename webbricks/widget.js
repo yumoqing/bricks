@@ -3,6 +3,11 @@ class JsWidget {
 	dom_element = null;
 	constructor(options){
 		this.opts = options;
+		this._container = false;
+		this.parent = null;
+	}
+	is_container(){
+		return this._container;
 	}
 	create(tagname){
 		this.dom_element = document.createElement(tagname);
@@ -10,6 +15,9 @@ class JsWidget {
 	}
 	set_id(id){
 		this.dom_element.id = id;
+	}
+	set_baseURL(url){
+		this.baseURL = url;
 	}
 	show(){
 		this.dom_element.style.display = '';
@@ -22,6 +30,11 @@ class JsWidget {
 	}
 	unbind(eventname, handler){
 		this.dom_element.removeEventListener(eventname, handler);
+	}
+	dispatch(eventname, params){
+		var e = new Event(eventname);
+		e.params = params;
+		this.dom_element.dispatchEvent(e);
 	}
 }
 

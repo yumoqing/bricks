@@ -1,0 +1,43 @@
+
+<html>
+  <head>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+  <script src="../bricks.js"></script>
+    <div id="mynetwork"></div>
+    <script type="text/javascript">
+		const opts = 
+{
+	"widget": {
+			"widgettype":"VBox",
+			"options":{
+			},
+			"subwidgets":[
+				{
+					"widgettype":"Title1",
+					"options":{
+						"text":"Pic Viewer",
+						"i18n":true
+					}
+				},
+				{
+					"widgettype":"urlwidget",
+					"options":{
+						"url":"/bricks/menu.tmpl",
+						"i18n":true
+					}
+				}
+			]
+		}
+}
+
+		;
+		const app = new BricksApp(opts);
+		app.run();
+
+
+</script>
+  </body>
+</html>

@@ -1,9 +1,30 @@
 
+var schedule_once = function(f, t){
+	/* f: function
+		t:time in second unit
+	*/
+	t = t * 1000
+	window.setTimeout(f, t);
+}
+
+var schedule_interval = function(f, t){
+	var mf = function(func, t){
+		func();
+		schedule_once(f, t);
+	}
+	schedule_once(mf.bind(f,t), t);
+}
+
+var debug = function(){
+	console.log(...arguments);
+}
+
 var import_cache = new Map()
 
 var import_css = async function(url){
-	if (impor_cache.get(url)===1) return;
-	var result = await get(url);
+	if (import_cache.get(url)===1) return;
+	var result = await tget(url);
+	debug('import_css():tget() return', result); 
 	var s = document.createElement('style');
 	s.setAttribute('type', 'text/javascript');
 	s.innerHTML = result;
@@ -12,11 +33,13 @@ var import_css = async function(url){
 }
 
 var import_js = async function(url){
-	if (impor_cache.get(url)===1) return;
-	var result = await get(url);
-	var s = document.createElement('style');
-	s.setAttribute('type', 'text/css');
-	s.innerHTML = result;
+	if (import_cache.get(url)===1) return;
+	// var result = await tget(url);
+	// debug('import_js():tget() return', url, result); 
+	var s = document.createElement('script');
+	s.setAttribute('type', 'text/javascript');
+	s.src=url;
+	// s.innerHTML = result;
 	document.body.appendChild(s);
 	import_cache.set(url, 1);
 
