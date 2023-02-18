@@ -2,16 +2,17 @@
   <head>
   </head>
   <body>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="../bricks.js"></script>
 	<script>
 		const opts = 
 {
 	"widget": {
-		"widgettype":"MarkdownViewer",
+		"id":"videoplayer",
+		"widgettype":"VideoPlayer",
 		"options":{
-			"navigator":true,
-			"md_url":"../docs/index.md"
+			"autoplay":true,
+			"url":"http://kimird.com/video/sample-mp4-file.mp4",
+			"type":"mp4"
 		}
 	}
 }

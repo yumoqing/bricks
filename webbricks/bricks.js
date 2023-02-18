@@ -1,4 +1,49 @@
 let bricks_app = null;
+/*
+all type of bind action's desc has the following attributes:
+	actiontype:'bricks',
+	wid:
+	event:
+	target:
+	datawidget:
+	datascript:
+	datamethod:
+	datakwargs:
+	conform:
+and each type of binds specified attributes list following
+
+url action:
+	mode:,
+	options:{
+		method:
+		params:{},
+		url:
+	}
+
+bricks action:
+	mode:,
+	options:{
+		"widgettype":"gg",
+		...
+	}
+
+method action:
+	method:
+	params: for methods kwargs
+
+
+script action:
+	script:
+	params:
+
+registerfunction action:
+	rfname:
+	params:
+
+event action:
+	dispatch_event:
+	params:
+*/
 class Bricks {
 	async widgetBuild(desc){
 		const klassname = desc.widgettype;
@@ -11,6 +56,7 @@ class Bricks {
 		}
 		let klass = Factory.get(desc.widgettype);
 		if (! klass){
+			console.log('widgetBuild():',desc.widgettype, 'not registered');
 			return null;
 		}
 		let w = new klass(desc.options);
@@ -41,52 +87,6 @@ class Bricks {
 	}
 
 	buildBind(w, desc){
-		/*
-		all type of bind action's desc has the following attributes:
-			actiontype:'bricks',
-			wid:
-			event:
-			target:
-			datawidget:
-			datascript:
-			datamethod:
-			datakwargs:
-			conform:
-		and each type of binds specified attributes list following
-
-		url action:
-			mode:,
-			options:{
-				method:
-				params:{},
-				url:
-			}
-
-		bricks action:
-			mode:,
-			options:{
-				"widgettype":"gg",
-				...
-			}
-
-		method action:
-			method:
-			params: for methods kwargs
-
-
-		script action:
-			script:
-			params:
-
-		registerfunction action:
-			rfname:
-			params:
-
-		event action:
-			dispatch_event:
-			params:
-
-		*/
 		var widget = this.getWidgetById(desc.wid, w);
 		var handler = this.buildEventHandler(w, desc);
 		if (! handler){
@@ -248,12 +248,10 @@ class BricksApp {
 	constructor(opts){
 		/*
 		opts = {
+			"charsize:
+			"language":
 			"i18n":{
 				"url":'rrr',
-				"options":{
-					"method":"GET",
-					"params":{}
-				}
 			},
 			"widget":{
 				"widgettype":"Text",
@@ -264,22 +262,81 @@ class BricksApp {
 		*/
 		this.opts = opts;
 		bricks_app = this;
+		this.charsize = this.opts.charsize || 20;
+		if (this.opts.language){
+			this.lang = this.opts.language;
+		}
+		else {
+			this.lang = navigator.language;
+		}
+		this.textList = [];
 		this.i18n = new I18n();
+		schedule_once(this.build.bind(this), 0.01);
 	}
-	async setup_i18n(desc){
-		let params = desc.params;
+	get_textsize(ctype){
+		var tsize = this.charsize;
+		var stimes = {
+			"text":1.0,
+			"title1":1.96,
+			"title2":1.80,
+			"title3":1.64,
+			"title4":1.48,
+			"title5":1.32,
+			"title6":1.16
+		}
+		tsize = parseInt(stimes[ctype] * tsize);
+		return tsize + 'px';
+	}
+	text_ref(textWidget){
+		this.textList.push(new WeakRef(textWidget));
+	}
+	text_remove_dead(){
+		var tList = this.textList;
+		for (var i=0;i<tList.length;i++){
+			if (! tList[i].deref()){
+				this.textList.remove(tList[i]);
+			}
+		}
+	}
+	async setup_i18n(){
+		let params = {'lang':this.lang};
 		d = await jcall(desc.url, {
 					"method":desc.method||'GET', params:params});
 		this.i18n.setup_dict(d);
 	}
+	build = async function(){
+		var b = new Bricks();
+		var opts = structuredClone(this.opts.widget);
+		var w = await b.widgetBuild(opts);
+		return w
+	}
 	async run(){
 		if (this.opts.i18n) {
-			desc = structuredClone(ops.i18n);
-			this.setup_i18n(desc);
+			this.setup_i18n();
 		}
-		let b = new Bricks();
-		let opts = structuredClone(this.opts.widget);
-		let w = await b.widgetBuild(opts);
+		var w = await this.build();
 		Body.add_widget(w);
+	}
+	text_resize = function(){
+		var txts = this.textList;
+		for (var i=0;i<txts.length;i++){
+			if(! txts[i].deref()){
+				w = txts[i].deref();
+				w.set_fontsize();
+			}
+		}
+	}
+	change_language = async function(lang){
+		this.lang = lang;
+		await this.setup_i18n();
+		var txts = this.textList;
+		for (var i=0;i<txts.length;i++){
+			if(! txts[i].deref()){
+				w = txts[i].deref();
+				if (w.opts.i18n) {
+					w.set_i18n_text();
+				}
+			}
+		}
 	}
 }

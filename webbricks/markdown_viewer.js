@@ -1,5 +1,7 @@
 /* 
 reply on "https://github.com/markedjs/marked"
+add following lines before 'bricks.js'
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 */
 
 class MdText extends JsWidget {
@@ -10,6 +12,7 @@ class MdText extends JsWidget {
 		"params":{}
 	}
 	*/
+
 	constructor(options){
 		super(options);
 		this.create('div');

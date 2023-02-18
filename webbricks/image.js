@@ -12,11 +12,11 @@ class Image extends JsWidget {
 		}
 		if (this.opts.hasOwnProperty('width')){
 			this.width = this.opts.width;
-			this.dom_element.width = this.width;
+			this.dom_element.style.width = this.width;
 		}
 		if (this.opts.hasOwnProperty('height')){
 			this.height = this.opts.height;
-			this.dom_element.height = this.height;
+			this.dom_element.style.height = this.height;
 		}
 	}
 }

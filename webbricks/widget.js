@@ -13,6 +13,9 @@ class JsWidget {
 		this.dom_element = document.createElement(tagname);
 		this.dom_element.bricks_widget = this;
 	}
+	_create(tagname){
+		return document.createElement(tagname);
+	}
 	set_id(id){
 		this.dom_element.id = id;
 	}
@@ -40,11 +43,34 @@ class JsWidget {
 
 
 class Text extends JsWidget {
+	/* {
+		otext:
+		i18n:
+		fontsize:
+		halign:
+		valign:
+		css
+	}
+	*/
 	constructor(options){
 		super(options);
 		this.opts = options;
-		this.create("span");
+		this.create("div");
 		this.set_attrs();
+		bricks_app.text_ref(this);
+		this.ctype = 'text';
+	}
+	set_fontsize(){
+		var fontsize;
+		if (this.opts.fontsize){
+			fontsize = this.opts.fontsize;
+		} else {
+			fontsize = bricks_app.get_textsize(this.ctype);
+		}
+		this.dom_element.style.fontSize = fontsize;
+		if (this.ctype != 'text'){
+			this.dom_element.style.fontWeight = 'bold';
+		}
 	}
 	set_attrs(){
 		if (this.opts.hasOwnProperty('text')){
@@ -63,15 +89,26 @@ class Text extends JsWidget {
 			console.log('otext=', this.otext, 'text=', this.text);
 		}
 		this.dom_element.innerHTML = this.text;
-		console.log('text=', this.text, 'ops=', this.opts);
+		this.set_fontsize();
 	}
+	set_i18n_text(){
+		if ( !this.otext){
+			return;
+		}
+		if (! this.i18n){
+			return;
+		}
+		this.text = this._i18n._(this.otext);
+		this.dom_element.innerHTML = this.text;
+	}
+		
 }
 
 class Title1 extends Text {
 	constructor(options){
 		super(options);
+		this.ctype = 'Title1';
 		this.opts = options;
-		this.create('H1');
 		this.set_attrs();
 	}
 }
@@ -79,8 +116,8 @@ class Title1 extends Text {
 class Title2 extends Text {
 	constructor(options){
 		super(options);
+		this.ctype = 'Title2';
 		this.opts = options;
-		this.create('H2');
 		this.set_attrs();
 	}
 }
@@ -88,8 +125,8 @@ class Title2 extends Text {
 class Title3 extends Text {
 	constructor(options){
 		super(options);
+		this.ctype = 'Title3';
 		this.opts = options;
-		this.create('H3');
 		this.set_attrs();
 	}
 }
@@ -97,8 +134,8 @@ class Title3 extends Text {
 class Title4 extends Text {
 	constructor(options){
 		super(options);
+		this.ctype = 'Title4';
 		this.opts = options;
-		this.create('H4');
 		this.set_attrs();
 	}
 }
@@ -106,8 +143,8 @@ class Title4 extends Text {
 class Title5 extends Text {
 	constructor(options){
 		super(options);
+		this.ctype = 'Title5';
 		this.opts = options;
-		this.create('H5');
 		this.set_attrs();
 	}
 }
@@ -115,8 +152,8 @@ class Title5 extends Text {
 class Title6 extends Text {
 	constructor(options){
 		super(options);
+		this.ctype = 'Title6';
 		this.opts = options;
-		this.create('H6');
 		this.set_attrs();
 	}
 }
