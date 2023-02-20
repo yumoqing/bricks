@@ -1,0 +1,4 @@
+AJaxMin from Microsoft
+https://developers.google.com/closure/compiler
+YUI Compressor
+Uglify-js

@@ -1,0 +1,6 @@
+class UiType {
+	viewwWidget(){
+	}
+	inputWidget(){
+	}
+}
