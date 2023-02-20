@@ -3,12 +3,8 @@
   </head>
   <body>
   <div>
-  <button id='btn' onclick="showModal();" >show modal</button>
-<a id="testing" href="#" onclick="alert('did stuff inline');">Click me</a>
-  </div>
-
   <script src="/marked.min.js"></script>
-  <script src="../bricks.js"></script>
+  <script src="../dist/bricks.js"></script>
 	<script>
 		const opts = 
 {
@@ -29,47 +25,14 @@
 					"options":{
 						"md_url":"test1.md"
 					}
-				},
-				{
-					"id":"mymodal",
-					"widgettype":"Modal",
-					"options":{
-						"auto_close":true,
-						"auto_open":false,
-						"width":"700px",
-						"height":"400px",
-						"archor":"cl",
-					},
-					"subwidgets":[
-						{
-							"widgettype":"Text",
-							"options":{
-								"text":"This is a test"
-							}
-						}
-					]
 				}
 			]
 		}
 }
 
 		;
-		var o = {
-			'name':'john',
-			'age':12
-		}
-		console.log('fmtstr=', obj_fmtstr(o, 'name=${name} ${age:}'));
 		const app = new BricksApp(opts);
 		app.run();
-		var btn = document.getElementById('btn')
-		btn.innerText = 'ShowModal';
-		var showModal = function(){
-			var m = document.getElementById('mymodal');
-			m.style.display = 'block';
-			console.log('clicked');
-		}
-		btn['HDHDHD'] = o;
-		console.log('btn new data=', btn['HDHDHD']);
 	</script>
 </body>
 </html>
