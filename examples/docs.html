@@ -1,0 +1,24 @@
+  <html>
+  <head>
+  </head>
+  <body>
+  <script src="/marked.js"></script>
+  <script src="../bricks.js"></script>
+	<script>
+		const opts = 
+{
+	"widget": {
+		"widgettype":"MarkdownViewer",
+		"options":{
+			"navigator":true,
+			"md_url":"../docs/index.md"
+		}
+	}
+}
+
+		;
+		const app = new BricksApp(opts);
+		app.run();
+	</script>
+</body>
+</html>

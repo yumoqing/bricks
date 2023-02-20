@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+  <title>ui flags</title>
+  <link rel="stylesheet" href="//cdn.flowplayer.com/releases/native/3/stable/style/flowplayer.css">
+  <script src="//cdn.flowplayer.com/releases/native/3/stable/flowplayer.min.js"></script>
+  <!-- Optional plugins -->
+  <script src="//cdn.flowplayer.com/releases/native/3/stable/plugins/hls.min.js"></script>
+</head>
+<body>
+<div id="player_container"></div>
+<script>
+flowplayer("#player_container", {
+  src: "https://yourserver.com/path/playlist.m3u8"
+, token: "<yourtoken>"
+, ui: flowplayer.ui.NO_VOLUME_CONTROL | flowplayer.ui.NO_MUTE | flowplayer.ui.NO_FULLSCREEN
+});
+</script>
+</body>
+</html>
