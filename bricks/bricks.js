@@ -195,6 +195,9 @@ class Bricks {
 	}
 
 	getWidgetById(id, from_widget){
+		if (! id){
+			return from_widget;
+		}
 		var ids = id.split('/');
 		var el = from_widget.dom_element;
 		var j = 0;
@@ -315,6 +318,7 @@ class BricksApp {
 			this.setup_i18n();
 		}
 		var w = await this.build();
+		this.root = w;
 		Body.add_widget(w);
 	}
 	text_resize = function(){

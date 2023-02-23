@@ -45,15 +45,12 @@ class HttpText {
 	}
 
 	async httpcall(url, {method='GET', headers=null, params=null}={}){
-		var data = add_own_params(params);
-		var header = add_own_headers(headers);
+		var data = this.add_own_params(params);
+		var header = this.add_own_headers(headers);
 		var _params = {
 			"method":method,
 		}
-		_params.headers = _headers;
-		if (headers) {
-			_params.headers = Object(_headers, headers);
-		}
+		// _params.headers = headers;
 		if (method == 'GET' || method == 'HEAD') {
 			let pstr = url_params(data);
 			url = url + '?' + pstr;
@@ -84,6 +81,20 @@ class HttpText {
 		error.info = resp_error;
 		return error;
 	}
+	async get(url, {headers=null, params=null}={}){
+		return await this.httpcall(url, {
+					method:'GET',
+					headers:headers,
+					params:params
+				});
+	}
+	async post(url, {headers=null, params=null}={}){
+		return await this.httpcall(url, {
+					method:'POST',
+					headers:headers,
+					params:params
+				});
+	}
 }
 
 class HttpJson extends HttpText {
@@ -101,52 +112,11 @@ class HttpJson extends HttpText {
 	}
 }
 
-	async httpcall_json(url, {method='GET', headers=null, body=null, params=null}={}){
-		return httpcall(url, 
-									{
-										"method":method,
-										"headers":headers,
-										"resulttype":'json',
-										"params":params
-									});
-	}
-
-	async gettext(url, {headers=null, params=null}={}){
-		return await httpcall(url, {
-								"method":"GET",
-								"header":headers,
-								"params":params
-							});
-	}
-	async posttext(url, {headers=null, params=null}={}){
-		return await httpcall(url, {
-								"method":"POST",
-								"header":headers,
-								"params":params
-							});
-	}
-	async getjson(url, {headers=null, params=null}={}){
-		return await httpcall(url, {
-								"method":"GET",
-								"header":headers,
-								"resulttype":'json',
-								"params":params
-							});
-	}
-	async postjson(url, {headers=null, params=null}={}){
-		return await httpcall(url, {
-								"method":"POST",
-								"header":headers,
-								"resulttype":'json',
-								"params":params
-							});
-	}
-}
-var hc = new HttpClient();
-var httpcall = hc.httpcall;
-var jcall = hc.httpcall_json;
-var jget = hc.getjson;
-var jpost = hc.postjson;
-var tget = hc.gettext;
-var tpost = hc.posttext;
+var hc = new HttpText();
+var tget = hc.get.bind(hc);
+var tpost = hc.post.bind(hc);
+jc = new HttpJson();
+var jcall = jc.httpcall.bind(jc);
+var jget = jc.get.bind(jc);
+var jpost = jc.post.bind(jc);
 

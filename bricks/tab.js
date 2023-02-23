@@ -31,6 +31,8 @@ class TabPanel extends Layout {
 		this.content_buffer = {};
 		this.cur_tab_name = '';
 		this.content_container = new VBox({});
+		this.dom_element.style.width = '100%';
+		this.dom_element.style.height = '100%';
 		if (this.opts.tab_pos == 'top' ||  this.opts.tab_pos == 'bottom'){
 			this.panel = new VBox({});
 			var height = this.opts.tab_wide || '45px';
@@ -49,6 +51,8 @@ class TabPanel extends Layout {
 			this.panel.add_widget(this.content_container);
 			this.panel.add_widget(this.tab_container);
 		}
+		this.panel.dom_element.style.width = '100%';
+		this.panel.dom_element.style.height = '100%';
 		this.add_widget(this.panel);
 		this.createToolbar();
 		this.panel.dom_element.classList.add('tabpanel');

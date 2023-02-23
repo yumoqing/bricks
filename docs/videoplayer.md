@@ -71,7 +71,17 @@ following attributes
 the url of a video resouce, VideoPlayer can play mp4, m3u8 video
 ### srctype
 specify the source type, should be 'mp4' or 'hls' for m3u8 'dash' for play a Dash manifest
+## play avi file
+!v[sample video](http://kimird.com/video/sample-avi-file.avi)
+## play flv file
+!v[sample video](http://kimird.com/video/sample-flv-file.flv)
+## play mkv file
+!v[sample video](http://kimird.com/video/sample-mkv-file.mkv)
+## play mov file
+!v[sample video](http://kimird.com/video/sample-mov-file.mov)
 ## play mp4 file
 !v[sample video](http://kimird.com/video/sample-mp4-file.mp4)
+## play webm file
+!v[sample video](http://kimird.com/video/sample-webm-file.webm)
 ## play m3u8 file
 !v[abc news TV](https://abc-iview-mediapackagestreams-2.akamaized.net/out/v1/6e1cc6d25ec0480ea099a5399d73bc4b/index.m3u8)
