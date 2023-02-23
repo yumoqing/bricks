@@ -6,27 +6,6 @@ class Layout extends JsWidget {
 		this.create('div');
 		console.log('this=', this);
 	}
-	h_center(){
-		this.dom_element.style.marginLeft = 'auto';
-		this.dom_element.style.marginRight = 'auto';
-	}
-	h_left(){
-		this.dom_element.style.marginLeft = '0px';
-		this.dom_element.style.marginRight = 'auto';
-	}
-	h_right(){
-		this.dom_element.style.marginLeft = 'auto';
-		this.dom_element.style.marginRight = '0px';
-	}
-	ht_center(){
-		this.dom_element.style.textAlign = 'center';
-	}
-	ht_left(){
-		this.dom_element.style.textAlign = 'left';
-	}
-	ht_right(){
-		this.dom_element.style.textAlign = 'right';
-	}
 
 	opts_handle(){
 		var e = this.dom_element;

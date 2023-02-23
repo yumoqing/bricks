@@ -307,17 +307,21 @@ class BricksApp {
 					"method":desc.method||'GET', params:params});
 		this.i18n.setup_dict(d);
 	}
-	build = async function(){
+	async build(){
+		console.log('App.build() called ... ');
 		var b = new Bricks();
 		var opts = structuredClone(this.opts.widget);
 		var w = await b.widgetBuild(opts);
 		return w
 	}
 	async run(){
+		console.log('App.run() called ... ');
 		if (this.opts.i18n) {
 			this.setup_i18n();
 		}
+		console.log('before ..........................');
 		var w = await this.build();
+		console.log('after  ..........................');
 		this.root = w;
 		Body.add_widget(w);
 	}
@@ -326,7 +330,8 @@ class BricksApp {
 		for (var i=0;i<txts.length;i++){
 			if(! txts[i].deref()){
 				w = txts[i].deref();
-				w.set_fontsize();
+				ts = this.get_textsize(ctype);
+				w.change_fontsize(ts);
 			}
 		}
 	}

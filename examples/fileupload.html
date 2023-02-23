@@ -1,0 +1,64 @@
+  <html>
+  <head>
+  </head>
+  <body>
+<div>
+<button onclick="f()">uoload</button>
+</div>
+  <script src="../bricks/bricks.js"></script>
+	<script>
+		const opts = 
+{
+	"widget": {
+			"widgettype":"VBox",
+			"options":{
+			},
+			"subwidgets":[
+				{
+					"id":"file1",
+					"widgettype":"UtFile",
+					"options":{
+						"name":"file1",
+						"label":"File 1"
+					}
+				},
+				{
+					"widgettype":"Text",
+					"options":{
+						"text":"upload"
+					},
+					"binds":[
+						{
+							"wid":"self",
+							"event":"clcik",
+							"action":{
+								"rfname":"do_upload"
+							}
+						}
+					]
+				}
+			]
+		}
+}
+
+		;
+		var f = async function(){
+			console.log('it work');
+			var b = new Bricks();
+			var w = b.getWidgetById('file1', bricks_app.root);
+			var file = w.files[0];
+			var fd = new FormData();
+			fd.append('file1', file);
+			var resp = await jcall('http://192.168.1.10/examples/fileupload.dspy',{
+				method:'POST',
+				params:fd
+			})
+			console.log('resp=', resp);
+		}
+		rf = new RegisterFunction();
+		rf.register('do_upload', f);
+		const app = new BricksApp(opts);
+		app.run();
+	</script>
+</body>
+</html>

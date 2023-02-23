@@ -6,6 +6,36 @@ class JsWidget {
 		this._container = false;
 		this.parent = null;
 	}
+	h_center(){
+		this.dom_element.style.marginLeft = 'auto';
+		this.dom_element.style.marginRight = 'auto';
+	}
+	h_left(){
+		this.dom_element.style.marginLeft = '0px';
+		this.dom_element.style.marginRight = 'auto';
+	}
+	h_right(){
+		this.dom_element.style.marginLeft = 'auto';
+		this.dom_element.style.marginRight = '0px';
+	}
+	ht_center(){
+		this.dom_element.style.textAlign = 'center';
+	}
+	ht_left(){
+		this.dom_element.style.textAlign = 'left';
+	}
+	ht_right(){
+		this.dom_element.style.textAlign = 'right';
+	}
+	set_width(width){
+		this.dom_element.style.width = width;
+	}
+	set_height(height){
+		this.dom_element.style.height = height;
+	}
+	set_css(css){
+		this.dom_element.classList.add(css);
+	}
 	is_container(){
 		return this._container;
 	}
@@ -42,7 +72,7 @@ class JsWidget {
 }
 
 
-class Text extends JsWidget {
+class TextBase extends JsWidget {
 	/* {
 		otext:
 		i18n:
@@ -55,14 +85,20 @@ class Text extends JsWidget {
 	constructor(options){
 		super(options);
 		this.opts = options;
+		this.specified_fontsize = false;
 		this.create("div");
 		this.set_attrs();
 		bricks_app.text_ref(this);
-		this.ctype = 'text';
+	}
+	change_textsize(ts){
+		if (this.specified_fontsize){
+			this.dom_element.style.fontSize = fontsize;
+		}
 	}
 	set_fontsize(){
 		var fontsize;
 		if (this.opts.fontsize){
+			this.specified_fontsize = true;
 			fontsize = this.opts.fontsize;
 		} else {
 			fontsize = bricks_app.get_textsize(this.ctype);
@@ -70,6 +106,8 @@ class Text extends JsWidget {
 		this.dom_element.style.fontSize = fontsize;
 		if (this.ctype != 'text'){
 			this.dom_element.style.fontWeight = 'bold';
+		} else {
+			this.dom_element.style.fontWeight = 'normal';
 		}
 	}
 	set_attrs(){
@@ -104,57 +142,59 @@ class Text extends JsWidget {
 		
 }
 
-class Title1 extends Text {
-	constructor(options){
-		super(options);
-		this.ctype = 'Title1';
-		this.opts = options;
-		this.set_attrs();
+class Text extends TextBase {
+	constructor(opts){
+		super(opts);
+		this.ctype = 'text';
+		this.set_fontsize();
 	}
 }
 
-class Title2 extends Text {
+class Title1 extends TextBase {
 	constructor(options){
 		super(options);
-		this.ctype = 'Title2';
-		this.opts = options;
-		this.set_attrs();
+		this.ctype = 'title1';
+		this.set_fontsize();
 	}
 }
 
-class Title3 extends Text {
+class Title2 extends TextBase {
 	constructor(options){
 		super(options);
-		this.ctype = 'Title3';
-		this.opts = options;
-		this.set_attrs();
+		this.ctype = 'title2';
+		this.set_fontsize();
 	}
 }
 
-class Title4 extends Text {
+class Title3 extends TextBase {
 	constructor(options){
 		super(options);
-		this.ctype = 'Title4';
-		this.opts = options;
-		this.set_attrs();
+		this.ctype = 'title3';
+		this.set_fontsize();
 	}
 }
 
-class Title5 extends Text {
+class Title4 extends TextBase {
 	constructor(options){
 		super(options);
-		this.ctype = 'Title5';
-		this.opts = options;
-		this.set_attrs();
+		this.ctype = 'title4';
+		this.set_fontsize();
 	}
 }
 
-class Title6 extends Text {
+class Title5 extends TextBase {
 	constructor(options){
 		super(options);
-		this.ctype = 'Title6';
-		this.opts = options;
-		this.set_attrs();
+		this.ctype = 'title5';
+		this.set_fontsize();
+	}
+}
+
+class Title6 extends TextBase {
+	constructor(options){
+		super(options);
+		this.ctype = 'title6';
+		this.set_fontsize();
 	}
 }
 
