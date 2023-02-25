@@ -73,8 +73,7 @@ class MarkdownViewer extends VBox {
 				}
 			]
 		}
-		var b = new Bricks();
-		var w = await b.widgetBuild(desc);
+		var w = await widgetBuild(desc);
 		console.log('createBackButton():error, desc=', desc, 'w=', w);
 		var t = w.children[0];
 		console.log('createBackButton():text=',t);

@@ -90,15 +90,14 @@ class TabPanel extends Layout {
 		}
 		for (var i=0;i<items.length;i++){
 			if (tdesc.name == items[i].name){
-				var w = get(this.content_buffer,tdesc.name);
+				var w = this.content_buffer.get(tdesc.name);
 				if (w && ! items[i].refresh){
 					this.content_container.clear_widgets();
 					this.content_container.add_widget(w);
 					this.cur_tab_name = name;
 					return;
 				}
-				var b = new Bricks();
-				w = await b.widgetBuild(items[i].content);
+				w = await widgetBuild(items[i].content);
 				if (! w){
 					console.log('TabPanel():create content error', items[i].content);
 					return;

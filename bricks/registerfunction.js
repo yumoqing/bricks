@@ -6,6 +6,6 @@ class RegisterFunction {
 		this.rfs.update({n:f});
 	}
 	get(n){
-		return get(this.rfs, n);
+		return this.rfs.get(n);
 	}
 }

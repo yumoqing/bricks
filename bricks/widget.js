@@ -90,9 +90,9 @@ class TextBase extends JsWidget {
 		this.set_attrs();
 		bricks_app.text_ref(this);
 	}
-	change_textsize(ts){
-		if (this.specified_fontsize){
-			this.dom_element.style.fontSize = fontsize;
+	change_fontsize(ts){
+		if (! this.specified_fontsize){
+			this.dom_element.style.fontSize = ts;
 		}
 	}
 	set_fontsize(){

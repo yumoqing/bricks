@@ -7,8 +7,7 @@ class Image extends JsWidget {
 	}
 	options_parse(){
 		if (this.opts.hasOwnProperty('source')){
-			this.source = this.opts.source;
-			this.dom_element.src = this.source;
+			this.set_source(this.opts.source);
 		}
 		if (this.opts.hasOwnProperty('width')){
 			this.width = this.opts.width;
@@ -18,6 +17,10 @@ class Image extends JsWidget {
 			this.height = this.opts.height;
 			this.dom_element.style.height = this.height;
 		}
+	}
+	set_source(url){
+		this.source = url;
+		thjis.dom_element.src = url;
 	}
 }
 

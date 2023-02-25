@@ -98,7 +98,7 @@ var extend = function(d, s){
 	return d;
 }
 
-var get = function(obj, key, defval){
+var objget = function(obj, key, defval){
 	if (obj.hasOwnProperty(key)){
 		return obj[key];
 	}
@@ -122,6 +122,10 @@ var obj_fmtstr = function(obj, fmt){
 		return ''
 	})
 	return s;
+}
+
+Object.prototype.get = function(name, defvalue){
+	return objget(this, name, defvalue);
 }
 
 Object.prototype.fmtstr = function(fmt){
@@ -182,6 +186,10 @@ var archorize = function(ele,archor){
 	ele.style.transform = tsf;
 	ele.style.position = "absolute";
 }
+
+Array.prototype.insert = function ( index, ...items ) {
+    this.splice( index, 0, ...items );
+};
 
 Array.prototype.remove = function(item){
 	var idx = this.indexOf(item);

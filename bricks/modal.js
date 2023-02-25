@@ -25,20 +25,20 @@ class Modal extends JsWidget {
 		var e = document.createElement('div');
 		e.style.display = "none"; /* Hidden by default */
 		e.style.position = "fixed"; /* Stay in place */
-		e.style.zIndex = get(this.opts, 'org_index', 0) + 1; /* Sit on top */
+		e.style.zIndex = this.opts.get('org_index', 0) + 1; /* Sit on top */
 		e.style.paddingTop = "100px"; /* Location of the box */
 		e.style.left = 0;
 		e.style.top = 0;
 		e.style.width = "100%"; /* Full width */
 		e.style.height = "100%"; /* Full height */
 		// e.style.overflow = "auto"; /* Enable scroll if needed */
-		e.style.backgroundColor = get(this.opts, 'bgcolor', 'rgba(0,0,0,0.4)'); /* Fallback color */
+		e.style.backgroundColor = this.opts.get('bgcolor', 'rgba(0,0,0,0.4)'); /* Fallback color */
 		this.dom_element = e;
 		var body = document.createElement('div');
 		body.style.position = "absolute";
 		body.style.backgroundColor='rgb(1,0,0)';
-		body.style.width = get(this.opts, 'width', "70%");
-		body.style.height = get(this.opts, 'height', "70%");
+		body.style.width = this.opts.get('width', "70%");
+		body.style.height = this.opts.get('height', "70%");
 		e.appendChild(body);
 		var c = document.createElement('div');
 		c.style.color = "#aaaaaa";
@@ -72,7 +72,7 @@ class Modal extends JsWidget {
 		if (this.opts.contentCSS)
 			ct.classList.add(this.opts.contentCSS);
 		body.appendChild(ct);
-		archorize(body, get(this.opts, 'archor', 'cc'));
+		archorize(body, this.opts.get('archor', 'cc'));
 
 		this.content = ct;
 		this.dom_element.bricks_widget = this;

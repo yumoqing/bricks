@@ -4,6 +4,7 @@ class Button extends Layout {
 		height:100%,
 		width:100%,
 		item_size:
+		name:
 		icon:
 		text:
 		css:
@@ -13,41 +14,62 @@ class Button extends Layout {
 	constructor(opts){
 		super(opts);
 		this.create('button');
+		this.set_id(this.opts.nmae);
 		this.opts_setup();
 		console.trace();
 	}
+	set_container_hcss(){
+		var e = this.dom_element;
+		e.style.display = 'flex';
+		e.style.justifyContent = 'center'; /* horizontal alignment */
+		e.style.alignItem = 'center'
+	}
+	set_container_vcss(){
+		var e = this.dom_element;
+		e.style.display = 'flex';
+		e.style.flexDirection = 'column';
+		e.style.textAlign = 'center';
+		e.style.justifyContent = 'center'; /* horizontal alignment */
+		e.style.alignItem = 'center'
+	}
 	opts_setup(){
-		var w;
 		if (this.opts.orientation && this.opts.orientation == 'horizontal'){
-			w = new HBox({});
+			this.set_container_hcss();
 			this.orient = 'h';
 		} else {
-			w = new VBox({});
+			this.set_container_vcss();
 			this.orient = 'v';
 		}
-		w.set_width('100%');
-		w.set_height('100%');
 		if (this.opts.css){
 			this.set_css(this.opts.css);
 		}
 		var item_size = this.opts.item_size || '30px';
 		if (this.opts.icon){
-			var icon = new Image({url:this.opts.icon})
+			var icon = new Image({
+				url:this.opts.icon,
+				height:item_size,
+				width:item_size
+			})
 			icon.set_width(item_size);
 			icon.set_height(item_size);
-			if (this.orient == 'v')
-				icon.h_center();
-			w.add_widget(icon);
+			this.add_widget(icon);
+			icon.bind('click', this.target_clicked.bind(this));
 		}
 		if (this.opts.text){
 			var txt = new Text({
-						text:this.opts.text, 
+						height:item_size,
+						width:0,
+						otext:this.opts.text, 
 						fontsize:item_size,	
 						i18n:true})
-			txt.set_height(item_size);
-			w.add_widget(txt);
+			this.add_widget(txt);
+			txt.bind('click', this.target_clicked.bind(this));
 		}
-		this.add_widget(w);
+	}
+	target_clicked(event){
+		console.log('target_clicked() .... called ');
+		event.stopPropagation();
+		this.dispatch('click', this.opts);
 	}
 }
 

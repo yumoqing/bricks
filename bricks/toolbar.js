@@ -61,8 +61,7 @@ class Toolbar extends BoxLayout {
 				"i18n":true
 			}
 		})
-		var b = new Bricks();
-		var w = await b.widgetBuild(options);
+		var w = await widgetBuild(options);
 		if (! w){
 			console.log('Toolbar(): build widget failed', options);
 			return

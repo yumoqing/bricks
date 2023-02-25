@@ -4,6 +4,7 @@
     <link href="/bricks/css/bricks.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
+  
   <script src="/bricks/bricks.js"></script>
     <script type="text/javascript">
 		const opts = 
@@ -61,6 +62,45 @@
 						"text":"Pic Viewer",
 						"i18n":true
 					}
+				},
+				{
+					"widgettype":"HBox",
+					"options":{
+					},
+					"subwidgets":[
+						{
+							"widgettype":"Button",
+							"options":{
+								"text":"A",
+								"item_size":"30px"
+							},
+							"binds":[
+								{
+									"wid":"self",
+									"event":"click",
+									"actiontype":"script",
+									"target":"app",
+									"script":"bricks_app.textsize_bigger()"
+								}
+							]
+						},
+						{
+							"widgettype":"Button",
+							"options":{
+								"text":"A",
+								"item_size":"20px"
+							},
+							"binds":[
+								{
+									"wid":"self",
+									"event":"click",
+									"actiontype":"script",
+									"target":"app",
+									"script":"bricks_app.textsize_smaller()"
+								}
+							]
+						}
+					]
 				}
 			]
 		}

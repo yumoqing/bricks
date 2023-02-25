@@ -1,0 +1,52 @@
+
+
+  <html>
+  <head>
+  <link rel="stylesheet" href="/bricks/css/bricks.css">
+  </head>
+  <body>
+  <script src="/bricks/bricks.js"></script>
+
+	<script>
+		const opts = 
+{
+	"widget": {
+		"widgettype":"Accordion",
+		"options":{
+			"item_size":'28px',
+			"items":[
+				{
+					"name":"test1",
+					"icon":"/imgs/t.png",
+					"text":"accordion 1 test",
+					"content":{
+						"widgettype":"Text",
+						"options":{
+							"text":"text content 1",
+							"i81n":true
+						}
+					}
+				},
+				{
+					"name":"test2",
+					"icon":"/imgs/t.png",
+					"text":"accordion 2 test",
+					"content":{
+						"widgettype":"Text",
+						"options":{
+							"text":"text content 2",
+							"i81n":true
+						}
+					}
+				}
+			]
+		}
+	}
+}
+
+		;
+		const app = new BricksApp(opts);
+		app.run();
+	</script>
+</body>
+</html>

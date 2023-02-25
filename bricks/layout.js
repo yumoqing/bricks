@@ -20,9 +20,15 @@ class Layout extends JsWidget {
 		}
 	}
 	add_widget(w, index){
-		w.parent = this;
-		this.children.push(w);
-		this.dom_element.appendChild(w.dom_element);
+		if (! index || index>=this.children.length){
+			w.parent = this;
+			this.children.push(w);
+			this.dom_element.appendChild(w.dom_element);
+			return
+		}
+		var pos_w = this.children[index];
+		this.dom_element.insertBefore(w.dom_element, pos_w.dom_element);
+		this.children.insert(index+1, w);
 	}
 	remove_widget(w){
 		w.parent = null;
@@ -72,7 +78,7 @@ class BoxLayout extends Layout {
 		}
 		this.child_jss = {
 		}
-		this.orientation = get(options, 'orientation', 'vertical');
+		this.orientation = options.get('orientation', 'vertical');
 		if (this.orientation in ['vertical', 'horizontal']){
 			this.orientation = 'vertical';
 		}

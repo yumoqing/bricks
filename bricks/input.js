@@ -338,7 +338,7 @@ class _Input {
 		this.uitypes[Klass.uitype] = Klass;
 	}
 	factory(uitype, options){
-		var klass = get(this.uitypes, uitype);
+		var klass = this.uitypes.get( uitype);
 		if (klass){
 			return new klass(options);
 		}
