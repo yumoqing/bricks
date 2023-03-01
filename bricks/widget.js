@@ -36,6 +36,9 @@ class JsWidget {
 	set_css(css){
 		this.dom_element.classList.add(css);
 	}
+	set_cssObject(cssobj){
+		this.dom_element.style.update(cssobj);
+	}
 	is_container(){
 		return this._container;
 	}

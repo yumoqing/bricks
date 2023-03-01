@@ -1,7 +1,21 @@
+.vbox {
+	display: flex;
+	flex-direction:column;
+}
+
+.hbox {
+	display:flex;
+	flex-direction:row;
+}
+
 .vtoolbar {
 	heigth:100%;
 	background-color:#f1f1f1;
 	border:1px solid #ccc;
+}
+
+.selected {
+	background-color:#651018;
 }
 
 .htoolbar {
@@ -33,3 +47,16 @@
 	background-color:#f8f8f8;
 	border:2px solid #888;
 }
+
+.multicolumns {
+	column-width:340px;
+	colomn-gap:10px'
+}
+
+.inputbox {
+	background-color: rgb(207, 232, 220);
+	border: 2px solid rgb(79, 185, 227);
+	padding: 10px;
+	margin: 0 0 1em 0;
+}
+

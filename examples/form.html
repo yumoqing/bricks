@@ -1,0 +1,134 @@
+  <html>
+  <head>
+<link rel="stylesheet" href="/bricks/css/bricks.css">
+  </head>
+  <body>
+  <script src="/bricks/bricks.js"></script>
+	<script>
+		const opts = 
+{
+	"widget": {
+		"widgettype":"Form",
+		"options":{
+			"submit_url":"/ttt/ttt.dspy",
+			"title":"Test Form",
+			"description":"test input implemented",
+			"fields":[
+				{
+					"uitype":"email",
+					"name":"email",
+					"label":"Email",
+					'required':true
+				},
+				{
+					"uitype":"tel",
+					"name":"tel",
+					"pattern":"{\d}3-{\d}4-{\d}4",
+					"label":"Tel",
+					'required':true
+				},
+				{
+					"uitype":"file",
+					"name":"file",
+					"label":"File",
+					'required':true
+				},
+				{
+					"uitype":"str",
+					"minlength":3,
+					"length":30,
+					"value":"tlegre",
+					"name":"name",
+					"label":"Name",
+					'required':true
+				},
+				{
+					"uitype":"int",
+					"minlength":3,
+					"length":30,
+					"value":12432,
+					"name":"integer",
+					"label":"Integer",
+					'required':true
+				},
+				{
+					"uitype":"float",
+					"dec_length":3,
+					"length":25,
+					"name":"float",
+					"label":"Float"
+				},
+				{
+					"uitype":"date",
+					"name":"date",
+					"label":"Date",
+					'required':true
+				},
+				{
+					"uitype":"password",
+					"minlength":3,
+					"length":30,
+					"name":"password",
+					"label":"Password",
+					'required':true
+				},
+				{
+					"uitype":"checkbox",
+					"name":"checkbox",
+					"label":"CheckBox",
+					"value":2,
+					"data":[
+						{
+							"value":1,
+							"text":"AAAAAAAA"
+						},
+						{
+							"value":2,
+							"text":"BBBBBBB"
+						},
+						{
+							"value":3,
+							"text":"CCCCCCCCC"
+						}
+					],
+					'required':true
+				},
+				{
+					"uitype":"code",
+					"name":"code",
+					"label":"Code",
+					"value":2,
+					"data":[
+						{
+							"value":1,
+							"text":"AAAAAAAA"
+						},
+						{
+							"value":2,
+							"text":"BBBBBBB"
+						},
+						{
+							"value":3,
+							"text":"CCCCCCCCC"
+						}
+					],
+					'required':true
+				},
+				{
+					"uitype":"text",
+					"name":"text",
+					"value":"This is a test",
+					"label":"Text",
+					'required':true
+				}
+			]
+		}
+	}
+}
+
+		;
+		const app = new BricksApp(opts);
+		app.run();
+	</script>
+</body>
+</html>

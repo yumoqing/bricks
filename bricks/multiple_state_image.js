@@ -1,4 +1,4 @@
-class MultipleStateImage extends JsWidget {
+class MultipleStateImage extends Layout {
 	/* 
 	{
 		state:
@@ -30,16 +30,20 @@ class MultipleStateImage extends JsWidget {
 	}
 
 	change_state(event){
-		event.preventPropagation();
+		event.stopPropagation();
 		var states = Object.keys(this.opts.sources);
 		for (var i=0;i<states.length;i++){
 			if (states[i] == this.state){
-				k = i + 1;
+				var k = i + 1;
 				if (k >= states.length) k = 0;
 				this.state = states[k];
 				this.img.set_source(this.opts.sources[this.state]);
 				this.dispatch('state_changed', this.state);
+				break;
 			}
 		}
 	}
 }
+
+Factory.register('MultipleStateImage', MultipleStateImage);
+

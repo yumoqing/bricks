@@ -1,3 +1,17 @@
+class _TypeIcons {
+	constructor(){
+		this.kv = {}
+	}
+	get(n, defaultvalue){
+		return this.kv.get(n, defaultvalue);
+	}
+	register(n, icon){
+		this.kv[n] = icon;
+	}
+}
+
+TypeIcons = new _TypeIcons();
+
 /**
  * Current Script Path
  *
@@ -8,14 +22,26 @@
 var currentScriptPath = function () {
 	var currentScript;
 	if (document.currentScript){
-		currentScript = document.currentScript;
+		currentScript = document.currentScript.src;
+		console.log('has currentScriot');
 	} else {
+		console.log('has not currentScriot');
 		var scripts = document.querySelectorAll( 'script[src]' );
+		if (scripts.length < 1){
+			return null;
+		}
 		currentScript = scripts[ scripts.length - 1 ].src;
 	}
+	console.log('currentScript=', currentScript);
     var currentScriptChunks = currentScript.split( '/' );
     var currentScriptFile = currentScriptChunks[ currentScriptChunks.length - 1 ];
     return currentScript.replace( currentScriptFile, '' );
+}
+
+var bricks_path = currentScriptPath();
+
+var bricks_resource = function(name){
+	return bricks_path + name;
 }
 
 /**

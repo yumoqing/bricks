@@ -4,7 +4,6 @@ class Layout extends JsWidget {
 		this._container = true;
 		this.children = [];
 		this.create('div');
-		console.log('this=', this);
 	}
 
 	opts_handle(){

@@ -1,0 +1,144 @@
+  <html>
+  <head>
+<style>
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+}
+
+.header-cell,
+.data-cell {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+@media screen and (max-width: 600px) {
+  .grid-container {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
+</style>
+
+  </head>
+  <body>
+  <div>Test Grid table </div>
+  <div id="grid-container">
+  </div>
+	<script>
+class GridData {
+  constructor(data, container) {
+    this.data = data;
+    this.container = container;
+    this.columns = Object.keys(data[0]).length;
+    this.rows = data.length;
+    this.minColumnWidth = 100; // minimum column width in pixels
+  }
+
+  render() {
+    // Create a grid container element
+    const gridContainer = document.createElement('div');
+    gridContainer.classList.add('grid-container');
+
+    // Create the header cells
+    for (let i = 0; i < this.columns; i++) {
+      const headerCell = document.createElement('div');
+      headerCell.classList.add('header-cell');
+      headerCell.textContent = Object.keys(this.data[0])[i];
+      headerCell.setAttribute('data-col', i);
+      headerCell.style.gridArea = `1 / ${i + 1} / 2 / ${i + 2}`;
+      headerCell.addEventListener('mousedown', this.startResize.bind(this));
+      gridContainer.appendChild(headerCell);
+    }
+
+    // Create the data cells
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.columns; j++) {
+        const dataCell = document.createElement('div');
+        dataCell.classList.add('data-cell');
+        dataCell.setAttribute('data-col', j);
+        dataCell.textContent = Object.values(this.data[i])[j];
+        dataCell.style.gridArea = `${i + 2} / ${j + 1} / ${i + 3} / ${j + 2}`;
+        gridContainer.appendChild(dataCell);
+      }
+    }
+
+    // Add the grid container to the container element
+    this.container.appendChild(gridContainer);
+  }
+
+  startResize(e) {
+    this.resizing = true;
+    this.currentCol = e.target.getAttribute('data-col');
+    this.initialX = e.clientX;
+    this.currentWidth = parseInt(
+      document.defaultView.getComputedStyle(e.target).width,
+      10
+    );
+    document.documentElement.addEventListener('mousemove', this.resize.bind(this));
+    document.documentElement.addEventListener('mouseup', this.stopResize.bind(this));
+  }
+
+  /*
+  resize(e) {
+    if (this.resizing) {
+      const deltaX = e.clientX - this.initialX;
+      const newWidth = this.currentWidth + deltaX;
+      if (newWidth > this.minColumnWidth) {
+        document
+          .querySelectorAll(`[data-col="${this.currentCol}"]`)
+          .forEach((cell) => (cell.style.width = `${newWidth}px`));
+      }
+    }
+  }
+  */
+  resize(e) {
+  if (this.resizing) {
+    const deltaX = e.clientX - this.initialX;
+    const newWidth = this.currentWidth + deltaX;
+    if (newWidth > this.minColumnWidth) {
+      // Set the width of the current column
+      document
+        .querySelectorAll(`[data-col="${this.currentCol}"]`)
+        .forEach((cell) => (cell.style.width = `${newWidth}px`));
+
+      // Calculate the total width of all the columns
+      let totalWidth = 0;
+      document
+        .querySelectorAll('.header-cell')
+        .forEach((cell) => (totalWidth += parseInt(cell.style.width)));
+
+      // Calculate the width of each column based on the total width
+      const columnWidths = Array.from(
+        document.querySelectorAll('.header-cell')
+      ).map((cell) => `minmax(${this.minColumnWidth}px, ${cell.style.width})`);
+      const gridTemplateColumns = columnWidths.join(' ');
+
+      // Set the grid-template-columns property on the grid container
+      document.querySelector('.grid-container').style.gridTemplateColumns =
+        gridTemplateColumns;
+    }
+  }
+}
+
+
+  stopResize(e) {
+    this.resizing = false;
+    document.documentElement.removeEventListener('mousemove', this.resize);
+    document.documentElement.removeEventListener('mouseup', this.stopResize);
+  }
+}
+
+const data = [
+  { name: 'John', age: 25, city: 'New York' },
+  { name: 'Mary', age: 30, city: 'London' },
+  { name: 'Bob', age: 35, city: 'Paris' },
+];
+
+const container = document.getElementById('grid-container');
+
+const grid = new GridData(data, container);
+grid.render();
+	</script>
+</body>
+</html>

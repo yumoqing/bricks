@@ -1,6 +1,6 @@
 class Image extends JsWidget {
 	constructor(opts){
-		super();
+		super(opts);
 		this.opts = opts;
 		this.create('img');
 		this.options_parse();
@@ -20,7 +20,7 @@ class Image extends JsWidget {
 	}
 	set_source(url){
 		this.source = url;
-		thjis.dom_element.src = url;
+		this.dom_element.src = url;
 	}
 }
 

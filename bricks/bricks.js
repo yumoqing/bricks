@@ -56,7 +56,7 @@ var widgetBuild = async function(desc){
 	}
 	let klass = Factory.get(desc.widgettype);
 	if (! klass){
-		console.log('widgetBuild():',desc.widgettype, 'not registered');
+		console.log('widgetBuild():',desc.widgettype, 'not registered', Factory.widgets_kw);
 		return null;
 	}
 	let w = new klass(desc.options);
@@ -82,7 +82,6 @@ var widgetBuild = async function(desc){
 			buildBind(w, desc.binds[i]);
 		}
 	}
-	console.log('w=', w);
 	return w;
 }
 
@@ -127,9 +126,7 @@ var buildEventHandler = function(w, desc){
 			return buildMethodHandler(w, target, rtdata, desc);
 			break;
 		case 'script':
-			console.log('buildEventHandler():here');
 			var f = buildScriptHandler(w, target, rtdata, desc);
-			console.log('buildEventHandler():here1--', f);
 			return f;
 			break;
 		case 'event':
@@ -159,6 +156,7 @@ var buildRegisterFunctionHandler = function(w, target, rtdata, desc){
 	var f = registerfunctions.get(desc.rfname);
 	if( ! f){
 		console.log('rfname:', desc.rfname, 'not registed', desc);
+		return null;
 	}
 	var params = desc.params || {};
 	if (rtdata){
@@ -241,7 +239,6 @@ var getWidgetById = function(id, from_widget){
 		console.log('getWidgetById():', id, el, 'widget');
 		return el.bricks_widget;
 	}
-	console.log('getWidgetById():', id, el);
 	return el;
 }
 
@@ -253,6 +250,7 @@ class BricksApp {
 			"language":
 			"i18n":{
 				"url":'rrr',
+				"default_lang":'en'
 			},
 			"widget":{
 				"widgettype":"Text",
@@ -271,8 +269,7 @@ class BricksApp {
 			this.lang = navigator.language;
 		}
 		this.textList = [];
-		this.i18n = new I18n();
-		schedule_once(this.build.bind(this), 0.01);
+		this.i18n = new I18n(opts.get('i18n', {}));
 	}
 	get_textsize(ctype){
 		var tsize = this.charsize;
@@ -306,29 +303,21 @@ class BricksApp {
 		this.i18n.setup_dict(d);
 	}
 	async build(){
-		console.log('App.build() called ... ');
 		var opts = structuredClone(this.opts.widget);
 		var w = await widgetBuild(opts);
 		return w
 	}
 	async run(){
-		console.log('App.run() called ... ');
-		if (this.opts.i18n) {
-			this.setup_i18n();
-		}
-		console.log('before ..........................');
+		await this.change_language(this);
 		var w = await this.build();
-		console.log('after  ..........................');
 		this.root = w;
 		Body.add_widget(w);
 	}
 	textsize_bigger(){
-		console.log('textsize_bigger() called ..');
 		this.charsize = this.charsize * 1.05;
 		this.text_resize();
 	}
 	textsize_smaller(){
-		console.log('textsize_smaller() called ..');
 		this.charsize = this.charsize * 0.95;
 		this.text_resize();
 	}
@@ -343,7 +332,7 @@ class BricksApp {
 	}
 	change_language = async function(lang){
 		this.lang = lang;
-		await this.setup_i18n();
+		await this.i18n.change_lang(lang);
 		for (var i=0;i<this.textList.length;i++){
 			if(this.textList[i].deref()){
 				var w = this.textList[i].deref();
