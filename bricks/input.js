@@ -5,8 +5,6 @@ class UiType extends JsWidget {
 		this.required = opts.required || false;
 		this.ctype = 'text';
 		this.value = '';
-		this.set_fontsize = Text.prototype.set_fontsize.bind(this);
-		this.change_fontsize = Text.prototype.change_fontsize.bind(this);
 	}
 
 	getValue(){
@@ -50,6 +48,7 @@ class UiStr extends UiType {
 	constructor(opts){
 		super(opts);
 		this.create('input');
+		this.sizable();
 		this.set_fontsize();
 	}
 	create(tagname){
@@ -242,6 +241,57 @@ class UiFile extends UiStr {
 	}
 }
 
+class UiCheck extends UiType {
+	static uitype = 'check';
+	constructor(opts){
+		super(opts);
+		UiCheck.prototype.update(Layout.prototype);
+		this.add_widget = Layout.prototype.add_widget.bind(this);
+		this.create('div');
+		this.dom_element.style.width = 'auto';
+		this.dom_element.style.height = 'auto';
+		var state = 'unchecked';
+		if (opts.value){
+			state = 'checked';
+		}
+		this.ms_icon = new MultipleStateIcon({
+			state:state,
+			sources:{
+				checked:bricks_resource('imgs/checkbox-checked.png'),
+				unchecked:bricks_resource('imgs/checkbox-unchecked.png')
+			}
+		});
+		
+		this.add_widget(this.ms_icon)
+		this.sizable_elements.push(this.ms_icon)
+		this.ms_icon.bind('state_changed', this.set_value_from_input.bind(this));
+
+		this.sizable();
+		this.set_fontsize();
+	}
+	set_value_from_input(e){
+		var v;
+		if (this.ms_icon.state=='checked')
+			v = true;
+		else
+			v = false;
+		this.value = v;
+		var o = {};
+		o[this.name] = this.value;
+		this.dispatch('changed', o);
+	}
+	setValue(v){
+		this.value = v;
+		if (v)
+			this.ms_icon.set_state('checked');
+		else 
+			this.ms_icon.set_state('unchecked');
+	}
+	resultValue(){
+		return this.value;
+	}
+}
+
 class UiCheckBox extends UiType {
 	static uitype='checkbox';
 	/*
@@ -267,6 +317,12 @@ class UiCheckBox extends UiType {
 	*/
 	constructor(opts){
 		super(opts);
+		this.valueField = opts.valueField || 'value';
+		this.textField = opts.textField || 'text';
+		this.value = this.opts.value || this.opts.defaultValue||[];
+		if (! Array.isArray(this.value)){
+			this.value = [ this.value ];
+		}
 		this.create('fieldset');
 		this.set_fontsize();
 		this.el_legend = this._create('legend');
@@ -275,45 +331,43 @@ class UiCheckBox extends UiType {
 		if (this.opts.dataurl){
 			schedule_once(this.load_data_onfly.bind(this), 0.01);
 		} else {
-			this.build_checkboxs(this.opts.data);
+			this.data = opts.data;
+			this.build_checkboxs();
 		}
 	}
-	build_checkboxs(data){
+	build_checkboxs(){
+		var data = this.data;
 		this.input_boxs = [];
-		this.value = this.opts.value || this.opts.defaultValue||[];
-		if (! Array.isArray(this.value)){
-			this.value = [ this.value ];
-		}
 		for (var i=0; i<data.length;i++){
-			var div = this._create('div');
-			this.dom_element.appendChild(div);
-			var b = this._create('input');
-			b.type = 'checkbox';
-			b.id = this.opts.name + i;
-			b.name = this.opts.name;
-			b.value = data[i][this.opts.valueField||'value'];
-			if (this.value.indexOf(b.value) >= 0){
-				b.checked = true;
+			var hbox = new HBox({height:"auto",width:"100%"});
+			var opts = {}
+			var value = data[i][this.valueField];
+			if (this.value == value){
+				opts.value = true;
 			}
-			b.addEventListener('change', this.set_value_from_input.bind(this));
-			div.appendChild(b);
-			var lbl = this._create('label');
-			lbl.innerHTML = bricks_app.i18n._(data[i][this.opts.textField||'text']);
-			lbl.for = b.id;
-			div.appendChild(lbl);
-			this.input_boxs.push(b);
-			div.appendChild(lbl);
+			var check = new UiCheck(opts);
+			var otext = data[i][this.textField];
+			var txt = new Text({
+				otext:otext,
+				i18n:true});
+			check.bind('changed', this.set_value_from_input.bind(this));
+			hbox.add_widget(check);
+			hbox.add_widget(txt);
+			this.add_widget(hbox);
+			this.input_boxs.push(check);
 		}
 	}
 	async load_data_onfly(){
 		var data = await jcall(this.opts.dataurl, {
 					"method":this.opts.method||'GET',
 					"params":this.opts.params});
-		this.build_checkboxs(data);
+		this.data = data;
+		this.build_checkboxs();
 	}
 	set_value_from_input(event){
+		event.stopPropagation();
 		var e = event.target;
-		if (e.checked){
+		if (e.state=='checked'){
 			this.value.push(e.value);
 		} else {
 			this.value.remove(e.value)
@@ -332,8 +386,10 @@ class UiCheckBox extends UiType {
 			this.value = [v];
 		}
 		for (var i=0; i<this.input_boxs.length; i++){
-			if (this.value.indexOf(this.input_boxs[i].value) >= 0){
-				this.input_boxs[i].checked = true;
+			if (this.value = this.data[i][this.valueField]){
+				this.input_boxs[i].set_state('checked');
+			} else {
+				this.input_boxs[i].set_state('unchecked');
 			}
 		}
 	}
@@ -382,6 +438,8 @@ class UiText extends UiType {
 		this.create('textarea');
 		this.set_fontsize();
 		this.build();
+		this.sizable();
+		this.set_fontsize();
 	}
 	build(){
 		var e = this.dom_element;
@@ -420,7 +478,6 @@ class UiCode extends UiType {
 	constructor(opts){
 		super(opts);
 		this.create('select');
-		this.set_fontsize();
 		this.data = this.opts.data;
 		this.build();
 	}
@@ -461,8 +518,11 @@ class UiCode extends UiType {
 				o.selected = true;
 			}
 			e.appendChild(o);
+			this.sizable_elements.push(o);
 		}
 		this.bind('input', this.set_value_from_input.bind(this))
+		this.sizable();
+		this.set_fontsize();
 	}
 	set_value_from_input(event){
 		var v = this.dom_element.innerText;
@@ -513,6 +573,7 @@ Input.register('UiTel', UiTel);
 Input.register('UiDate', UiDate);
 Input.register('UiInt', UiInt);
 Input.register('UiFloat', UiFloat);
+Input.register('UiCheck', UiCheck);
 Input.register('UiCheckBox', UiCheckBox);
 Input.register('UiEmail', UiEmail);
 Input.register('UiFile', UiFile);

@@ -4,10 +4,9 @@
   <body>
   <div>
   <button id='btn' onclick="showModal();" >show modal</button>
-<a id="testing" href="#" onclick="alert('did stuff inline');">Click me</a>
   </div>
 
-  <script src="http://kimird.com/bricks/bricks.js"></script>
+  <script src="/bricks/bricks.js"></script>
 	<script>
 		const opts = 
 {
@@ -20,13 +19,6 @@
 					"widgettype":"Title1",
 					"options":{
 						"text":"Pic Viewer",
-						"i18n":true
-					}
-				},
-				{
-					"widgettype":"urlwidget",
-					"options":{
-						"url":"/bricks/image.tmpl",
 						"i18n":true
 					}
 				},
@@ -59,8 +51,8 @@
 		var btn = document.getElementById('btn')
 		btn.innerText = 'ShowModal';
 		var showModal = function(){
-			var m = document.getElementById('mymodal');
-			m.style.display = 'block';
+			var m = getWidgetById('mymodal', Body);
+			m.open();
 			console.log('clicked');
 		}
 	</script>

@@ -1,4 +1,11 @@
 class Image extends JsWidget {
+	/* 
+	{
+		source:
+		height:
+		width:
+	}
+	*/
 	constructor(opts){
 		super(opts);
 		this.opts = opts;
@@ -24,4 +31,23 @@ class Image extends JsWidget {
 	}
 }
 
+class Icon extends Image {
+	constructor(opts){
+		super(opts);
+		this.sizable();
+		this.set_fontsize();
+	}
+}
+
+class BlankIcon extends JsWidget {
+	constructor(opts){
+		super(opts);
+		this.create('div');
+		this.sizable();
+		this.set_fontsize();
+	}
+}
+
 Factory.register('Image', Image);
+Factory.register('Icon', Icon);
+Factory.register('BlankIcon', BlankIcon);

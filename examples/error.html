@@ -1,0 +1,105 @@
+  <html>
+  <head>
+<link rel="stylesheet" href="/bricks/css/bricks.css">
+  </head>
+  <body>
+  <script src="/bricks/bricks.js"></script>
+	<script>
+		const opts = 
+{
+	"widget": {
+		"widgettype":"Tree",
+		"options":{
+			"idField":"id",
+			"textField":"text",
+			"data":[
+				{
+					"id":1,
+					"text":"node1",
+					"is_leaf":false,
+					"children":[
+						{
+							"id":11,
+							"text":"node11",
+							"is_leaf":false,
+							"children":[
+								{
+									"id":112,
+									"text":"node.12",
+									"is_leaf":false,
+									"children":[
+										{
+											"id":1112,
+											"text":"node1112",
+											"is_leaf":true
+										},
+										{
+											"id":1113,
+											"text":"node113",
+											"is_leaf":true
+										}
+									]
+								},
+								{
+									"id":113,
+									"text":"node113",
+									"is_leaf":true
+								}
+							]
+						},
+						{
+							"id":12,
+							"text":"node12",
+							"is_leaf":true
+						},
+						{
+							"id":13,
+							"text":"node13",
+							"is_leaf":true
+						}
+					]
+				},
+				{
+					"id":2,
+					"text":"node2",
+					"is_leaf":false,
+					"children":[
+						{
+							"id":21,
+							"text":"node21",
+							"is_leaf":true
+						},
+						{
+							"id":22,
+							"text":"node22",
+							"is_leaf":true
+						},
+						{
+							"id":23,
+							"text":"node23",
+							"is_leaf":true
+						}
+					]
+				},
+				{
+					"id":3,
+					"text":"node3",
+					"is_leaf":true
+				}
+			]
+		}
+	}
+}
+
+		;
+		const app = new BricksApp(opts);
+		app.run();
+		var m = new Error({
+			"title":"TEst Message",
+			"message":"This is a test message",
+			"auto_open":true,
+			"timeout":30
+		})
+	</script>
+</body>
+</html>

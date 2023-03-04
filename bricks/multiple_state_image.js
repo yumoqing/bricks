@@ -45,5 +45,32 @@ class MultipleStateImage extends Layout {
 	}
 }
 
+class MultipleStateIcon extends Icon {
+	constructor(opts){
+		opts.source = opts.sources[opts.state];
+		super(opts);
+		this.state = opts.state;
+		this.sources = opts.sources;
+		this.bind('click', this.change_state.bind(this));
+	}
+	change_state(event){
+		event.stopPropagation();
+		var states = Object.keys(this.sources);
+		for (var i=0;i<states.length;i++){
+			if (states[i] == this.state){
+				var k = i + 1;
+				if (k >= states.length) k = 0;
+				this.set_state(states[k]);
+				this.dispatch('state_changed', this.state);
+				break;
+			}
+		}
+	}
+	set_state(state){
+		this.state = state;
+		this.set_source(this.sources[state]);
+	}
+
+}
 Factory.register('MultipleStateImage', MultipleStateImage);
 

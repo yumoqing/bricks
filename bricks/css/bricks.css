@@ -1,3 +1,31 @@
+.griddata {
+	display:grid;
+	grid-gap:1px;
+}
+.message {
+	padding:10px;
+	width:30%;
+	height:30%;
+	background-color:#f0f0f0;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	margin-bottom: 10px;
+}
+.error {
+	padding:10px;
+	width:30%;
+	height:30%;
+	background-color:#f0f0f0;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	margin-bottom: 10px;
+}
+.message >.title {
+	background-color:#3030f0;
+}
+.error >.title {
+	background-color:#f03030;
+}
 .vbox {
 	display: flex;
 	flex-direction:column;

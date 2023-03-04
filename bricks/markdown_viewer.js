@@ -19,6 +19,11 @@ class MdText extends JsWidget {
 		var f = this.build.bind(this);
 		this.load_event = new Event('loaded');
 		schedule_once(f, 0.01);
+		this.dom_element.style.overFlow='auto';
+		window.addEventListener('scroll', this.show_scroll.bind(this));
+	}
+	show_scroll(event){
+		console.log('scrollY=', window.scrollY);
 	}
 	build = async function(){
 		this._build(this.opts.md_url);
@@ -59,6 +64,12 @@ class MarkdownViewer extends VBox {
 		});
 		this.add_widget(this.mdtext);
 		this.mdtext.bind('loaded', this.add_back_stack.bind(this));
+		this.dom_element.style.overflow='auto';
+		this.dom_element.style.height='100%';
+		this.bind('scroll', this.show_scroll.bind(this));
+	}
+	show_scroll(event){
+		console.log('scrollY=', window.scrollY);
 	}
 	createBackButton = async function(){
 		var desc = {

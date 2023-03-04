@@ -11,16 +11,17 @@ class TreeNode extends VBox {
 			this.params['type'] = this.data[this.tree.opts.typeField];
 		}
 		var n = new HBox({
-				height:this.tree.row_height,
+				height:'auto',
 				width:'100%'
 		})
+		n.dom_element.style.margin = bricks_app.charsize * 0.2;
 		this.add_widget(n);
 		n.bind('click', this.tree.node_click_handle.bind(this.tree, this));
 		this.node_widget = n;
 		this.create_node_content(n);
 		if (! this.data.is_leaf) {
 			this.container = new VBox({});
-			this.container.dom_element.style.marginLeft = '15px';
+			this.container.dom_element.style.marginLeft = bricks_app.charsize;
 			this.add_widget(this.container);
 			this.container.hide();
 			if (this.data.children){
@@ -59,17 +60,15 @@ class TreeNode extends VBox {
 		this.container.hide();
 	}
 	create_node_content(widget){
-		var img_size = this.tree.row_height;
+		var img_size = bricks_app.charsize;
 		if (this.is_leaf){
-			widget.add_widget(new VBox({
-					width:img_size,
-					height:img_size}));
+			widget.add_widget(new BlankIcon({}));
 		} else {
 			var srcs = this.tree.opts.node_state_imgs || {};
 			var sources = {};
 			sources['open'] = srcs.get('open', bricks_resource('imgs/down_arrow.png'));
 			sources['close'] = srcs.get('close', bricks_resource('imgs/right_arrow.png'));
-			this.trigle = new MultipleStateImage({
+			this.trigle = new MultipleStateIcon({
 				state:'close',
 				sources:sources,
 				height:img_size,
@@ -86,10 +85,9 @@ class TreeNode extends VBox {
 		if (!icon){
 			icon = bricks_resource('imgs/folder.png');
 		}
-		var img = new Image({
-			source:icon,
-			height:img_size,
-			width:img_size});
+		var img = new Icon({
+			source:icon
+		});
 		widget.add_widget(img);
 		var txt = this.data[this.tree.opts.textField];
 		widget.add_widget(

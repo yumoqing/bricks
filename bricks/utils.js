@@ -150,6 +150,15 @@ var obj_fmtstr = function(obj, fmt){
 	return s;
 }
 
+Object.prototype.copy = function(){
+	var o = {}
+	for ( k in this){
+		if (this.hasOwnProperty(k)){
+			o[k] = this[k];
+		}
+	}
+	return o;
+}
 Object.prototype.get = function(name, defvalue){
 	return objget(this, name, defvalue);
 }

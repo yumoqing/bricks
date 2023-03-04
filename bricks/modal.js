@@ -102,15 +102,16 @@ class Modal extends JsWidget {
 	open(){
 		console.log('modal():open called ............');
 		if (this.opts.auto_close){
+			console.log('modal():auto_close ........');
 			var f = this.click_handler.bind(this);
-			window.addEventListener('click', f);
+			this.bind('click', f);
 		}
 		this.dom_element.style.display = "";
 	}
 	dismiss(){
 		this.dom_element.style.display = "none";
 		if (this.opts.auto_close){
-			window.removeEventListener('click', this.click_handler);
+			this.unbind('click', this.click_handler.bind(this));
 		}
 	}
 }

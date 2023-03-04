@@ -5,6 +5,31 @@ class JsWidget {
 		this.opts = options;
 		this._container = false;
 		this.parent = null;
+		this.sizable_elements = [];
+	}
+	sizable(){
+		bricks_app.text_ref(this);
+	}
+	change_fontsize(ts){
+		if (! this.specified_fontsize){
+			this.dom_element.style.fontSize = ts;
+			for(var i=0;i<this.sizable_elements.length;i++){
+				this.sizable_elements[i].style.fontSize = ts;
+			}
+		}
+	}
+	set_fontsize(){
+		var fontsize;
+		if (this.opts.fontsize){
+			this.specified_fontsize = true;
+			fontsize = this.opts.fontsize;
+		} else {
+			fontsize = bricks_app.get_textsize(this.ctype);
+		}
+		this.dom_element.style.fontSize = fontsize;
+		for(var i=0;i<this.sizable_elements.length;i++){
+			this.sizable_elements[i].style.fontSize = fontsize;
+		}
 	}
 	h_center(){
 		this.dom_element.style.marginLeft = 'auto';
@@ -91,27 +116,8 @@ class TextBase extends JsWidget {
 		this.specified_fontsize = false;
 		this.create("div");
 		this.set_attrs();
-		bricks_app.text_ref(this);
-	}
-	change_fontsize(ts){
-		if (! this.specified_fontsize){
-			this.dom_element.style.fontSize = ts;
-		}
-	}
-	set_fontsize(){
-		var fontsize;
-		if (this.opts.fontsize){
-			this.specified_fontsize = true;
-			fontsize = this.opts.fontsize;
-		} else {
-			fontsize = bricks_app.get_textsize(this.ctype);
-		}
-		this.dom_element.style.fontSize = fontsize;
-		if (this.ctype != 'text'){
-			this.dom_element.style.fontWeight = 'bold';
-		} else {
-			this.dom_element.style.fontWeight = 'normal';
-		}
+		this.dom_element.style.fontWeight = 'bold';
+		this.sizable();
 	}
 	set_attrs(){
 		if (this.opts.hasOwnProperty('text')){
@@ -130,7 +136,6 @@ class TextBase extends JsWidget {
 			console.log('otext=', this.otext, 'text=', this.text);
 		}
 		this.dom_element.innerHTML = this.text;
-		this.set_fontsize();
 	}
 	set_i18n_text(){
 		if ( !this.otext){
@@ -158,6 +163,7 @@ class Title1 extends TextBase {
 		super(options);
 		this.ctype = 'title1';
 		this.set_fontsize();
+		this.dom_element.style.fontWeight = 'bold';
 	}
 }
 
@@ -166,6 +172,7 @@ class Title2 extends TextBase {
 		super(options);
 		this.ctype = 'title2';
 		this.set_fontsize();
+		this.dom_element.style.fontWeight = 'bold';
 	}
 }
 
@@ -174,6 +181,7 @@ class Title3 extends TextBase {
 		super(options);
 		this.ctype = 'title3';
 		this.set_fontsize();
+		this.dom_element.style.fontWeight = 'bold';
 	}
 }
 
@@ -182,6 +190,7 @@ class Title4 extends TextBase {
 		super(options);
 		this.ctype = 'title4';
 		this.set_fontsize();
+		this.dom_element.style.fontWeight = 'bold';
 	}
 }
 
@@ -190,6 +199,7 @@ class Title5 extends TextBase {
 		super(options);
 		this.ctype = 'title5';
 		this.set_fontsize();
+		this.dom_element.style.fontWeight = 'bold';
 	}
 }
 
@@ -198,6 +208,7 @@ class Title6 extends TextBase {
 		super(options);
 		this.ctype = 'title6';
 		this.set_fontsize();
+		this.dom_element.style.fontWeight = 'bold';
 	}
 }
 

@@ -10,6 +10,7 @@ class Toolbar extends BoxLayout {
 		icon:
 		name:
 		label:
+		css:
 	}
 
 	event:
@@ -42,32 +43,21 @@ class Toolbar extends BoxLayout {
 	}
 	createTool = async function(desc){
 		var options = {
-			"widgettype":"HBox",
-			"options":{},
-			"subwidgets":[]
-		}
-		if (desc.icon){
-			options.subwidgets.push({
-				"widgettype":"Image",
-				"options":{
-					"source":desc.icon
-				}
-			})
-		}
-		options.subwidgets.push({
-			"widgettype":"Text",
+			"widgettype":"Button",
 			"options":{
-				"otext":desc.label||desc.name,
-				"i18n":true
+				orientation:"horizontal",
+				icon:desc.icon,
+				text:desc.label,
+				name:desc.name,
+				css:desc.css
 			}
-		})
+		};
+		console.log('options=', options, '---------', desc);
 		var w = await widgetBuild(options);
 		if (! w){
 			console.log('Toolbar(): build widget failed', options);
 			return
 		}
-		console.log('Toolbar():createTool(): w = ', w);
-		w.dom_element.classList.add(this.preffix_css + '-button');
 		w.bind('click', this.do_handle.bind(this, w));
 		w.tool_opts = desc;
 		this.add_removable(w);
