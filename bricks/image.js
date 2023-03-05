@@ -34,8 +34,21 @@ class Image extends JsWidget {
 class Icon extends Image {
 	constructor(opts){
 		super(opts);
+		this.opts.width = bricks_app.charsize;
+		this.opts.height = bricks_app.charsize;
+		this.ctype = 'text';
 		this.sizable();
 		this.set_fontsize();
+	}
+	change_fontsize(ts){
+		var siz = bricks_app.charsize;
+		this.set_width(siz);
+		this.set_height(siz);
+	}
+	set_fontsize(){
+		var siz = bricks_app.charsize;
+		this.set_width(siz);
+		this.set_height(siz);
 	}
 }
 
@@ -43,8 +56,21 @@ class BlankIcon extends JsWidget {
 	constructor(opts){
 		super(opts);
 		this.create('div');
+		this.opts.width = bricks_app.charsize;
+		this.opts.height = bricks_app.charsize;
+		this.ctype = 'text';
 		this.sizable();
 		this.set_fontsize();
+	}
+	change_fontsize(ts){
+		var siz = bricks_app.charsize;
+		this.set_width(siz);
+		this.set_height(siz);
+	}
+	set_fontsize(){
+		var siz = bricks_app.charsize;
+		this.set_width(siz);
+		this.set_height(siz);
 	}
 }
 

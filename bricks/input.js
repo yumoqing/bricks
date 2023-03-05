@@ -1,4 +1,4 @@
-class UiType extends JsWidget {
+class UiType extends Layout {
 	constructor(opts){
 		super(opts);
 		this.name = this.opts.name;
@@ -94,24 +94,30 @@ class UiStr extends UiType {
 	onfocus(event){
 		this.dom_element.classList.add(this.actived_css);
 	}
+	check_pattern(value){
+		var r = new RegExp(this.pattern);
+		var v = value.match(r);
+		if (! v || v[0] == ''){
+			return null;
+		}
+		return v[0];
+	}
 	set_value_from_input(event){
 		var e = event.target;
-		var r = new RegExp(this.pattern);
 		if (e.value == ''){
 			this.value = '';
-		} else {
-			if (e.type != 'file'){
-				var v = e.value.match(r);
-				if (! v || v[0] == ''){
-					e.value = this.value;
-					return;
-				}
-				e.value = v[0];
-				this.value = v[0];
-			} else {
-				this.value = e.value;
-			}
+			return
+		} 
+		if (e.type == 'file'){
+			this.value = e.value;
+			return;
 		}
+		var v = this.check_pattern(e.value);
+		if (v == null){
+			e.value = this.value;
+			return
+		}
+		this.value = v;
 		var o = this.getValue();
 		this.dispatch('changed', o);
 	}
@@ -174,6 +180,7 @@ class UiFloat  extends UiInt {
 	*/
 	constructor(options){
 		super(options);
+		this.pattern = '\\d*\\.?\\d+';
 		var dec_len = this.opts.dec_len || 2;
 		var step = 1;
 		for (var i=0; i<dec_len; i++)
@@ -263,11 +270,8 @@ class UiCheck extends UiType {
 		});
 		
 		this.add_widget(this.ms_icon)
-		this.sizable_elements.push(this.ms_icon)
 		this.ms_icon.bind('state_changed', this.set_value_from_input.bind(this));
 
-		this.sizable();
-		this.set_fontsize();
 	}
 	set_value_from_input(e){
 		var v;
@@ -349,7 +353,9 @@ class UiCheckBox extends UiType {
 			var otext = data[i][this.textField];
 			var txt = new Text({
 				otext:otext,
+				align:'left',
 				i18n:true});
+			txt.ht_left();
 			check.bind('changed', this.set_value_from_input.bind(this));
 			hbox.add_widget(check);
 			hbox.add_widget(txt);
