@@ -91,13 +91,8 @@ class Toolbar extends BoxLayout {
 	}
 	add_removable(item){
 		if (! item.tool_opts.removable) return;
-		var img_src = currentScriptPath() + 'imgs/delete.png';
-		var opts = {
-			source:img_src,
-			width:'24px',
-			heigh:'24px'
-		};
-		var image = new Image(opts);
+		var img_src = bricks_resource('imgs/delete.png');
+		var image = new Icon({url:img_src});
 		if (image){
 			item.add_widget(image);
 			image.bind('click',this.remove_item.bind(this, item));

@@ -25,16 +25,13 @@ class Accordion extends VBox {
 		var content_css = this.opts.css || 'accordion' + '-content';
 		for (var i=0; i< items.length; i++){
 			var opts = {
-				height:item_size,
-				item_size:item_size,
 				name:items[i].name,
 				icon:items[i].icon,
 				text:items[i].text,
-				orientation:'horizontal',
-				css:item_css
+				height:'auto',
+				orientation:'horizontal'
 			}
 			var b = new Button(opts);
-			b.set_height(item_size);
 			b.bind('click', this.change_content.bind(this));
 			this.items.push(b);
 			this.add_widget(b);
@@ -42,13 +39,18 @@ class Accordion extends VBox {
 		this.content = new VBox({});
 	}
 	async change_content(evnet){
-		var name = event.params.name;
+		var b = event.target.bricks_widget;
+		var name = b.opts.name;
+		console.log('accordion: button=', b, 'name=', name);
 		var pos = -1;
 		for (var i=0; i< this.opts.items.length; i++){
 			if (name == this.opts.items[i].name){
 				pos = i;
 				break
 			}
+		}
+		if (pos==-1){
+			debug('Accordion():name=',name, 'not found in items',this.opts.items);
 		}
 		var c = this.subcontents.get(name);
 		if (! c){

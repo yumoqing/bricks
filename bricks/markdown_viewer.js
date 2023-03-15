@@ -18,9 +18,9 @@ class MdText extends JsWidget {
 		this.create('div');
 		var f = this.build.bind(this);
 		this.load_event = new Event('loaded');
-		schedule_once(f, 0.01);
 		this.dom_element.style.overFlow='auto';
 		window.addEventListener('scroll', this.show_scroll.bind(this));
+		schedule_once(f, 0.01);
 	}
 	show_scroll(event){
 		console.log('scrollY=', window.scrollY);
@@ -56,11 +56,12 @@ class MarkdownViewer extends VBox {
 		super(options);
 		this.create('div');
 		this.back_stack = [];
+		this.md_url = this.absurl(this.opts.md_url);
 		if (this.opts.navigator){
 			this.createBackButton();
 		}
 		this.mdtext = new MdText({
-			md_url:this.opts.md_url
+			md_url:this.md_url
 		});
 		this.add_widget(this.mdtext);
 		this.mdtext.bind('loaded', this.add_back_stack.bind(this));

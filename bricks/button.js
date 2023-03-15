@@ -3,7 +3,7 @@ class Button extends Layout {
 		orientation:
 		height:100%,
 		width:100%,
-		item_size:
+		item_rate:
 		name:
 		icon:
 		text:
@@ -30,6 +30,7 @@ class Button extends Layout {
 			style.flexDirection = 'column';
 			this.orient = 'v';
 		}
+		this.item_rate = opts.item_rate || 1;
 		this.set_id(this.opts.nmae);
 		this.opts_setup();
 		this.dom_element.style.update(style);
@@ -41,6 +42,7 @@ class Button extends Layout {
 		var item_size = this.opts.item_size || bricks_app.charsize;
 		if (this.opts.icon){
 			var icon = new Icon({
+				rate:this.item_rate,
 				url:this.opts.icon
 			})
 			this.add_widget(icon);
@@ -48,10 +50,8 @@ class Button extends Layout {
 		}
 		if (this.opts.text){
 			var txt = new Text({
-						height:item_size,
-						width:0,
+						rate:this.item_rate,
 						otext:this.opts.text, 
-						fontsize:item_size,	
 						i18n:true})
 			this.add_widget(txt);
 			txt.bind('click', this.target_clicked.bind(this));

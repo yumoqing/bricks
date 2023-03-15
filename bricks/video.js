@@ -16,8 +16,7 @@ class VideoPlayer extends VBox {
 	<script src="https://cdn.jsdelivr.net/npm/indigo-player@1/lib/indigo-pla    yer.js"></script>
 	options 
 	{
-		source:
-		srctype:'mp4'
+		url:
 	}
 	*/
 	constructor(options){
@@ -31,6 +30,15 @@ class VideoPlayer extends VBox {
 		this.dom_element.innerHTML = `<video width="100%" controls ${autoplay} > \
 		<source src=${url} /> \
 		</video>`;
+		this.video = this.dom_element.querySelector('video');
 	}
+	toggle_play(){
+		if (this.video.paused){
+			this.video.play();
+		} else {
+			this.video.pause();
+		}
+	}
+		
 }
 Factory.register('VideoPlayer', VideoPlayer);

@@ -45,31 +45,35 @@ dispatch_event:
 params:
 class Bricks {
 */
-var widgetBuild = async function(desc){
+var widgetBuild = async function(desc, widget){
+	if (! widget){
+		widget = Body;
+	}
 	const klassname = desc.widgettype;
 	var base_url = null;
-	if (klassname === 'urlwidget'){
-		let url = desc.options.url;
+	if (klassname == 'urlwidget'){
+		let url = absurl(desc.options.url, widget);
+		base_url = url;
 		let method = desc.options.method || 'GET';
 		let opts = desc.options.params || {};
 		desc = await jcall(url, { "method":method, "params":opts});
+	} else {
+		base_url = widget.baseURI;
 	}
 	let klass = Factory.get(desc.widgettype);
 	if (! klass){
 		console.log('widgetBuild():',desc.widgettype, 'not registered', Factory.widgets_kw);
 		return null;
 	}
+	desc.options.baseURI = base_url;
 	let w = new klass(desc.options);
-	if (base_url) {
-		w.set_baseURL(base_url);
-	}
 	if (desc.hasOwnProperty('id')){
 		w.set_id(desc.id);
 	}
 	if (desc.hasOwnProperty('subwidgets')){
 		for (let i=0; i<desc.subwidgets.length; i++){
 			let sdesc = desc.subwidgets[i];
-			let sw = await widgetBuild(sdesc);
+			let sw = await widgetBuild(sdesc, w);
 			if ( sw ){
 				w.add_widget(sw);
 			} else {
@@ -87,17 +91,20 @@ var widgetBuild = async function(desc){
 
 var buildBind = function(w, desc){
 	var widget = getWidgetById(desc.wid, w);
-	var handler = buildEventHandler(w, desc);
-	if (! handler){
-		console.log('buildBind(): handler is null', desc);
-		return;
-	}
+	var handler = universal_handler.bind(w, w, desc);
 	if (desc.conform){
-		var conform_widget = widgetBuild(desc.conform);
+		var conform_widget = widgetBuild(desc.conform, w);
 		conform_widget.bind('on_conform', handler);
 		handler = conform_widget.open.bind(conform_widget);
 	}
 	widget.bind(desc.event, handler);
+}
+var universal_handler = function(widget, desc, event){
+	var f = buildEventHandler(widget, desc);
+	if (f){
+		return f(event);
+	}
+	debug('universal_handler() error, desc=', desc);
 }
 var buildEventHandler = function(w, desc){
 	var target = getWidgetById(desc.target, w);
@@ -113,9 +120,12 @@ var buildEventHandler = function(w, desc){
 			params:desc.dataparams,
 			script:desc.datascript
 		}
-		rtdata = getRealtimeData(data_desc);
+		rtdata = getRealtimeData(w, data_desc);
 	}
 	switch (desc.actiontype){
+		case 'urlwidget':
+			return buildUrlwidgetHandler(w, target, rtdata, desc);
+			break;
 		case 'bricks':
 			return buildBricksHandler(w, target, rtdata, desc);
 			break;
@@ -137,20 +147,61 @@ var buildEventHandler = function(w, desc){
 			break;
 	}
 }
-var buildBrickHandler = function(w, target, rtdata, desc){
-	var f = function(target, mode, options){
-		var w = widgetBuild(options);
+var getRealtimeData = function(w, desc){
+	var target = getWidgetById(desc.widget, w);
+	if (! target){
+		console.log('target miss', desc);
+		return null
+	}
+	if (desc.method){
+		f = buildMethodHandler(null, target, null, desc)
+		return f();
+	}
+	if (desc.script){
+		f = buildScriptHandler(null, target, null, desc)
+		return f();
+	}
+	debug('getRealtimeData():desc=', desc, 'f=', f);
+	return null;
+}
+
+var buildUrlwidgetHandler = function(w, target, rtdata, desc){
+	var f = async function(target, mode, options){
+		console.log('target=', target, 'mode=', mode, 'options=', options);
+		var w = await widgetBuild(options, w);
+		if (!w){
+			console.log('options=', options, 'widgetBuild() failed');
+			return;
+		}
 		if (mode == 'replace'){
 			target.clear_widgets();
 		}
 		target.add_widget(w);
 	}
-	var options = {};
-	options.update(desc.options);
-	if (options.params || rtdata){
-		options.update(options.params.update(rtdata));
+	var options = desc.options.copy();
+	options.params.update(rtdata);
+	var opts = {
+		"widgettype":"urlwidget",
+		"options":options
 	}
-	return f.bind(target, desc.mode || 'replace', options);
+	return f.bind(target, target, desc.mode || 'replace', opts);
+}
+var buildBricksHandler = function(w, target, rtdata, desc){
+	var f = async function(target, mode, options){
+		console.log('target=', target, 'mode=', mode, 'options=', options);
+		var w = await widgetBuild(options, w);
+		if (!w){
+			console.log('options=', options, 'widgetBuild() failed');
+			return;
+		}
+		if (mode == 'replace'){
+			target.clear_widgets();
+		}
+		target.add_widget(w);
+	}
+	var options = desc.options.copy();
+	options.options.update(rtdata);
+	return f.bind(target, target, desc.mode || 'replace', options);
 }
 var buildRegisterFunctionHandler = function(w, target, rtdata, desc){
 	var f = registerfunctions.get(desc.rfname);
@@ -158,7 +209,10 @@ var buildRegisterFunctionHandler = function(w, target, rtdata, desc){
 		console.log('rfname:', desc.rfname, 'not registed', desc);
 		return null;
 	}
-	var params = desc.params || {};
+	var params = {};
+	if (desc.params){
+		params.update(desc.params);
+	}
 	if (rtdata){
 		params.update(rtdata);
 	}
@@ -166,25 +220,19 @@ var buildRegisterFunctionHandler = function(w, target, rtdata, desc){
 }
 var buildMethodHandler = function(w, target, rtdata, desc){
 	var f = target[desc.method];
-	var params = desc.params || {};
-	if (rtdata){
-		params.update(rtdata);
-	}
+	var params = {};
+	params.updates(desc.params, rtdata);
 	return f.bind(target, params);
 }
 var buildScriptHandler = function(w, target, rtdata, desc){
-	var params = desc.params||{}
-	if (rtdata){
-		params.update(rtdata);
-	}
+	var params = {};
+	params.updates(desc.params, rtdata);
 	var f = new Function('target', 'params', 'event', desc.script);
-	return f.bind(target, params);
+	return f.bind(target, target, params);
 }
 var buildDispatchEventHandler = function(w, target, rtdata, desc){
-	var params = desc.params || {}
-	if (rtdata){
-		params.update(rtdata);
-	}
+	var params = {};
+	params.updates(desc.params, rtdata);
 	var f = function(target, event_name, params){
 		target.dispatch(event_name, params);
 	}
@@ -304,7 +352,7 @@ class BricksApp {
 	}
 	async build(){
 		var opts = structuredClone(this.opts.widget);
-		var w = await widgetBuild(opts);
+		var w = await widgetBuild(opts, Body);
 		return w
 	}
 	async run(){

@@ -21,12 +21,12 @@ class TreeNode extends VBox {
 		this.create_node_content(n);
 		if (! this.data.is_leaf) {
 			this.container = new VBox({});
-			this.container.dom_element.style.marginLeft = bricks_app.charsize;
 			this.add_widget(this.container);
-			this.container.hide();
+			this.container.dom_element.style.marginLeft = bricks_app.charsize + 'px';
 			if (this.data.children){
 				this.tree.create_node_children(this, this.data.children);
 			}
+			this.container.hide();
 		}
 	}
 	selected(flg){
@@ -70,7 +70,7 @@ class TreeNode extends VBox {
 			sources['close'] = srcs.get('close', bricks_resource('imgs/right_arrow.png'));
 			this.trigle = new MultipleStateIcon({
 				state:'close',
-				sources:sources,
+				urls:sources,
 				height:img_size,
 				width:img_size
 			});
@@ -86,7 +86,7 @@ class TreeNode extends VBox {
 			icon = bricks_resource('imgs/folder.png');
 		}
 		var img = new Icon({
-			source:icon
+			url:icon
 		});
 		widget.add_widget(img);
 		var txt = this.data[this.tree.opts.textField];
@@ -163,8 +163,30 @@ class Tree extends VBox {
 		}
 		this.selected_node = node;
 		node.selected(true);
-		this.dispatch('node_clicked', node);
+		this.dispatch('node_click', node);
 	}
 }
 
+class PolymorphyTree extends Tree {
+	/*
+	{
+		root:[t1],
+		nodetypes:{
+			t1:{
+				idField:
+				typeField:
+				textField:
+				icon:
+				contextmenu:
+				subtypes:[]
+			}
+		}
+		data:
+		dataurl:
+	}
+	*/
+	constructor(opts){
+		super(opts);
+	}
+}
 Factory.register('Tree', Tree);

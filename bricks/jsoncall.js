@@ -21,6 +21,19 @@ class HttpText {
 			"_webbricks_":1
 		}
 	}
+	url_parse(url){
+		var a = url.split('?');
+		if (a.length == 1) return url;
+		url = a[0];
+		var a = a[1].split('&');
+		for (var i=0;i<a.length;i++){
+			var b;
+			b = a[i].split('=');
+			this.params[b[0]] = b[1];
+		}
+		return url;
+	}
+
 	async get_result_data(resp){
 		return await resp.text();
 	}
@@ -45,6 +58,7 @@ class HttpText {
 	}
 
 	async httpcall(url, {method='GET', headers=null, params=null}={}){
+		url = this.url_parse(url);
 		var data = this.add_own_params(params);
 		var header = this.add_own_headers(headers);
 		var _params = {

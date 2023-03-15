@@ -2,7 +2,18 @@
 class JsWidget {
 	dom_element = null;
 	constructor(options){
+		if (!options){
+			options = {}
+		}
 		this.opts = options;
+		if (options.width){
+			this.width = opts.width;
+		}
+		if (options.height){
+			this.height = opts.height;
+		}
+		this.css = options.css;
+		this.baseURI = options.baseURI;
 		this._container = false;
 		this.parent = null;
 		this.sizable_elements = [];
@@ -11,7 +22,11 @@ class JsWidget {
 		bricks_app.text_ref(this);
 	}
 	change_fontsize(ts){
+		ts = convert2int(ts);
 		if (! this.specified_fontsize){
+			var rate = this.rate || 1;
+			ts = ts * rate;
+			ts = ts + 'px';
 			this.dom_element.style.fontSize = ts;
 			for(var i=0;i<this.sizable_elements.length;i++){
 				this.sizable_elements[i].style.fontSize = ts;
@@ -26,6 +41,10 @@ class JsWidget {
 		} else {
 			fontsize = bricks_app.get_textsize(this.ctype);
 		}
+		fontsize = convert2int(fontsize);
+		var rate = this.rate || 1;
+		fontsize = rate * fontsize;
+		fontsize = fontsize + 'px';
 		this.dom_element.style.fontSize = fontsize;
 		for(var i=0;i<this.sizable_elements.length;i++){
 			this.sizable_elements[i].style.fontSize = fontsize;
@@ -77,8 +96,15 @@ class JsWidget {
 	set_id(id){
 		this.dom_element.id = id;
 	}
-	set_baseURL(url){
-		this.baseURL = url;
+	set_baseURI(url){
+		this.baseURI = url;
+	}
+	absurl(url){
+		console.log('self.baseURI=', this.baseURI);
+		if (this.baseURI){
+			return absurl(url, this);
+		}
+		return url
 	}
 	show(){
 		this.dom_element.style.display = '';
@@ -104,7 +130,7 @@ class TextBase extends JsWidget {
 	/* {
 		otext:
 		i18n:
-		fontsize:
+		rate:
 		halign:
 		valign:
 		css
@@ -113,10 +139,11 @@ class TextBase extends JsWidget {
 	constructor(options){
 		super(options);
 		this.opts = options;
+		this.rate = this.opts.rate || 1;
 		this.specified_fontsize = false;
 		this.create("div");
 		this.set_attrs();
-		this.dom_element.style.fontWeight = 'bold';
+		this.dom_element.style.fontWeight = 'normal';
 		this.sizable();
 	}
 	set_attrs(){

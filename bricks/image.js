@@ -1,7 +1,7 @@
 class Image extends JsWidget {
 	/* 
 	{
-		source:
+		url:
 		height:
 		width:
 	}
@@ -13,8 +13,8 @@ class Image extends JsWidget {
 		this.options_parse();
 	}
 	options_parse(){
-		if (this.opts.hasOwnProperty('source')){
-			this.set_source(this.opts.source);
+		if (this.opts.hasOwnProperty('url')){
+			this.set_url(this.opts.url);
 		}
 		if (this.opts.hasOwnProperty('width')){
 			this.width = this.opts.width;
@@ -25,8 +25,8 @@ class Image extends JsWidget {
 			this.dom_element.style.height = this.height;
 		}
 	}
-	set_source(url){
-		this.source = url;
+	set_url(url){
+		this.url = url;
 		this.dom_element.src = url;
 	}
 }
@@ -50,6 +50,12 @@ class Icon extends Image {
 		this.set_width(siz);
 		this.set_height(siz);
 	}
+	set_width(siz){
+		this.dom_element.width = siz;
+	}
+	set_height(siz){
+		this.dom_element.height = siz;
+	}
 }
 
 class BlankIcon extends JsWidget {
@@ -63,14 +69,22 @@ class BlankIcon extends JsWidget {
 		this.set_fontsize();
 	}
 	change_fontsize(ts){
-		var siz = bricks_app.charsize;
+		var siz = bricks_app.charsize + 'px';
 		this.set_width(siz);
 		this.set_height(siz);
 	}
 	set_fontsize(){
-		var siz = bricks_app.charsize;
+		var siz = bricks_app.charsize + 'px';
 		this.set_width(siz);
 		this.set_height(siz);
+	}
+	set_width(siz){
+		this.dom_element.width = siz;
+		this.dom_element.style.width = siz;
+	}
+	set_height(siz){
+		this.dom_element.height = siz;
+		this.dom_element.style.height = siz;
 	}
 }
 

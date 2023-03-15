@@ -15,6 +15,11 @@ class UiType extends Layout {
 	focus(){
 		this.dom_element.focus();
 	}
+	reset(){
+		var v = this.opts.value||this.opts.defaultvalue|| '';
+		this.setValue(v);
+	}
+
 	setValue(v){
 		this.vlaue = v;
 	}
@@ -246,6 +251,9 @@ class UiFile extends UiStr {
 		if (this.opts.multiple) 
 			this.dom_element.multiple = true;
 	}
+	setValue(v){
+		this.value = v;
+	}
 }
 
 class UiCheck extends UiType {
@@ -263,7 +271,7 @@ class UiCheck extends UiType {
 		}
 		this.ms_icon = new MultipleStateIcon({
 			state:state,
-			sources:{
+			urls:{
 				checked:bricks_resource('imgs/checkbox-checked.png'),
 				unchecked:bricks_resource('imgs/checkbox-unchecked.png')
 			}
@@ -392,10 +400,10 @@ class UiCheckBox extends UiType {
 			this.value = [v];
 		}
 		for (var i=0; i<this.input_boxs.length; i++){
-			if (this.value = this.data[i][this.valueField]){
-				this.input_boxs[i].set_state('checked');
+			if (this.value.includes(this.data[i][this.valueField])){
+				this.input_boxs[i].setValue(true);
 			} else {
-				this.input_boxs[i].set_state('unchecked');
+				this.input_boxs[i].setValue(false);
 			}
 		}
 	}
@@ -442,7 +450,6 @@ class UiText extends UiType {
 	constructor(opts){
 		super(opts);
 		this.create('textarea');
-		this.set_fontsize();
 		this.build();
 		this.sizable();
 		this.set_fontsize();
@@ -452,8 +459,8 @@ class UiText extends UiType {
 		e.id = e.name = this.opts.name;
 		e.rows = this.opts.rows || 5;
 		e.cols = this.opts.cols || 40;
-		e.innerText = this.opts.value || this.opts.defaultvalue || '';
-		this.value = e.innerText;
+		// this.setValue(this.opts.value || this.opts.defaultvalue || '');
+		this.reset();
 		this.bind('input', this.set_value_from_input.bind(this))
 	}
 	set_value_from_input(event){
@@ -461,6 +468,16 @@ class UiText extends UiType {
 	}
 	resultValue(){
 		return this.value;
+	}
+	setValue(v){
+		this.value = v;
+		this.dom_element.innerText = '';
+		this.dom_element.innerText = v;
+		debug('UiText: v=', v);
+	}
+	reset(){
+		var v = this.opts.value || this.opts.defaultvalue||'';
+		this.setValue(v);
 	}
 }
 
@@ -531,7 +548,6 @@ class UiCode extends UiType {
 		this.set_fontsize();
 	}
 	set_value_from_input(event){
-		var v = this.dom_element.innerText;
 		for (var i=0; i<this.option_widgets.length; i++){
 			if (this.option_widgets[i].checked){
 				this.value = this.option_widgets[i].value;
@@ -540,6 +556,20 @@ class UiCode extends UiType {
 	}
 	resultValue(){
 		return this.value;
+	}
+	setValue(v){
+		this.value = v;
+		for (var i=0; i<this.option_widgets.length; i++){
+			if (this.value == this.option_widgets[i].value){
+				this.option_widgets[i].checked = true
+			} else {
+				this.option_widgets[i].checked = true
+			}
+		}
+	}
+	reset(){
+		var v = this.opts.value||this.opts.defaultvalue||'';
+		this.setValue(v);
 	}
 }
 
@@ -573,6 +603,76 @@ class _Input {
 	}
 }
 
+class UiAudio extends UiStr {
+	static uitype = 'audio';
+	constructor(opts){
+		super(opts);
+		this.autoplay = opts.autoplay;
+		this.readonly = opts.readonly;
+		this.icon = new Icon({
+			url: bricks_resource('imgs/right_arrow.png')});
+		this.add_widget(this.icon);
+		this.icon.bind('click', this.play_audio.bind(this));
+		this.player = new Audio({
+			url:this.value
+			});
+		if (this.autoplay){
+			schedule_once(this.autoplay_audio.bind(this), 1);
+		}
+
+	}
+	autoplay_audio(){
+		this.icon.dispatch('click');
+	}
+	play_audio(){
+		this.player.toggle_play();
+	}
+	play_audio(){
+		if(this.value!=this.player.src){
+			this.player.stop();
+			this.player.set_source(this.value);
+			this.player.play();
+			return
+		}
+		this.player.toggle_play();
+		this.btn.dispatch('click');
+	}
+}
+class UiVideo extends UiStr {
+	static uitype = 'video';
+	constructor(opts){
+		super(opts);
+		this.autoplay = opts.autoplay;
+		this.readonly = opts.readonly;
+		this.icon = new Icon({
+			url: bricks_resource('imgs/right_arrow.png')});
+		this.add_widget(this.icon);
+		this.icon.bind('click', this.play_audio.bind(this));
+		this.player = new VideoPlayer({
+			url:this.value
+			});
+		if (this.autoplay){
+			schedule_once(this.autoplay_audio.bind(this), 1);
+		}
+
+	}
+	autoplay_audio(){
+		this.icon.dispatch('click');
+	}
+	play_audio(){
+		this.player.toggle_play();
+	}
+	play_audio(){
+		if(this.value!=this.player.src){
+			this.player.stop();
+			this.player.set_source(this.value);
+			this.player.play();
+			return
+		}
+		this.player.toggle_play();
+		this.btn.dispatch('click');
+	}
+}
 var Input = new _Input();
 Input.register('UiStr', UiStr);
 Input.register('UiTel', UiTel);
@@ -586,3 +686,5 @@ Input.register('UiFile', UiFile);
 Input.register('UiCode', UiCode);
 Input.register('UiText', UiText);
 Input.register('UiPassword', UiPassword);
+Input.register('UiAudio', UiAudio);
+Input.register('UiVideo', UiVideo);

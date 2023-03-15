@@ -1,6 +1,20 @@
+html, body {
+	height:100%;
+}
 .griddata {
 	display:grid;
 	grid-gap:1px;
+}
+.modal {
+	padding:10px;
+	color:#e8e8e8;
+	background-color:rgba(0.3,0.3,0.3,1);
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	margin-bottom: 10px;
+}
+.modal >.title {
+	background-color:#a0a0a0;
 }
 .message {
 	padding:10px;

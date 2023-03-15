@@ -3,7 +3,6 @@ class TabPanel extends Layout {
 	options
 	{
 		css:
-		tab_wide:
 		tab_long: 100%
 		tab_pos:"top"
 		items:[
@@ -35,12 +34,12 @@ class TabPanel extends Layout {
 		this.dom_element.style.height = '100%';
 		if (this.opts.tab_pos == 'top' ||  this.opts.tab_pos == 'bottom'){
 			this.panel = new VBox({});
-			var height = this.opts.tab_wide || '45px';
+			var height = this.opts.tab_wide || 'auto';
 			this.tab_container = new VBox({height:height});
 			this.tab_container.dom_element.style.width = this.opts.tab_long || '100%';
 		} else {
 			this.panel = new HBox({});
-			var width= this.opts.tab_wide || '70px';
+			var width= this.opts.tab_wide || 'auto';
 			this.tab_container = new VBox({width:width});
 			this.tab_container.dom_element.style.height = this.opts.tab_long || '100%';
 		}

@@ -1,7 +1,15 @@
 
 class AudioPlayer extends JsWidget {
+	/*
+	{
+		url:
+		autoplay:
+	}
+	*/
+
 	constructor(options){
 		super(options);
+		this.url = opt.url;
 		this.create('div');
 		this.audio = this._create('audio');
 		// this.audio.autoplay = this.opts.autoplay;
@@ -15,15 +23,12 @@ class AudioPlayer extends JsWidget {
 		this.audio.appendChild(s);
 		this.dom_element.appendChild(this.audio);
 	}
-	play_audio(){
-		var btns; // = this.audio.getElementsByClassName('play-pause bar paused');
-		btns = querySelectorAllShadows('.play-pause', this.audio);
-		if (btns.length > 0){
-			btns[0].click();
-			console.log('AudioPlayer():playing ...')
+	toggle_play(){
+		if (this.audio.paused){
+			this.audio.play();
+		} else {
+			this.audio.pause();
 		}
-		console.log('AudioPlayer():play button not found');
-		// this.audio.play();
 	}
 }
 

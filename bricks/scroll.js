@@ -1,4 +1,4 @@
-class HScrollPanel extends HBox {
+class HScrollPanel extends Layout {
 	/*
 	{
 		min_threshold:
@@ -41,7 +41,7 @@ class HScrollPanel extends HBox {
 	}
 }
 
-class VScrollPanel extends VBox {
+class VScrollPanel extends Layout {
 	/*
 	{
 		min_threshold:

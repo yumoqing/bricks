@@ -10,14 +10,31 @@
 		const opts = 
 {
 	"widget": {
-		"widgettype":"Button",
+		"widgettype":"HBox",
 		"options":{
-			"name":"test",
-			"icon":"/imgs/t.png",
-			"item_size":"24px",
-			"text":"this is a test",
-			"orientation":"horizontal"
-		}
+			"height":"auto",
+			"width":"100%"
+		},
+		"subwidgets":[
+			{
+				"widgettype":"Button",
+				"options":{
+					"name":"test",
+					"icon":"/bricks/imgs/submit.png",
+					"text":"test once",
+					"orientation":"horizontal"
+				}
+			},
+			{
+				"widgettype":"Button",
+				"options":{
+					"name":"test",
+					"icon":"/bricks/imgs/reset.png",
+					"text":"test twice",
+					"orientation":"horizontal"
+				}
+			}
+		]
 	}
 }
 

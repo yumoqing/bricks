@@ -168,8 +168,17 @@ Object.prototype.fmtstr = function(fmt){
 }
 
 Object.prototype.update = function(obj){
-	extend(this, obj);
+	if (obj){
+		extend(this, obj);
+	}
 }
+
+Object.prototype.updates = function(){
+	for (var i=0; i<arguments.length; i++){
+		extend(this, arguments[i]);
+	}
+}
+
 var archorize = function(ele,archor){
 	/* archor maybe one of the:
 	"tl", "tc", "tr",
@@ -232,4 +241,29 @@ Array.prototype.remove = function(item){
 		this.splice(idx, 1);
 	}
 	return this;
+}
+
+var absurl = function(url, widget){
+	if (url.startsWith('http://') || url.startsWith('https://')){
+		return url;
+	}
+	var base_uri = widget.baseURI;
+	if (url.startsWith('/')){
+		base_uri = Body.baseURI;
+		url = url.substring(1);
+	}
+	paths = base_uri.split('/');
+	delete paths[paths.length - 1];
+	var ret_url = paths.join('/') + url;
+	return ret_url;
+}
+
+var debug = function(...args){
+	console.log(...args);
+}
+
+var convert2int = function(s){
+	if (typeof(s) == 'number') return s;
+	var s1 = s.match(/\d+/);
+	return parseInt(s1[0]);
 }

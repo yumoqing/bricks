@@ -1,18 +1,14 @@
-class Modal extends JsWidget {
+class Modal extends Layout {
 	constructor(options){
 		/*
 		{
 			auto_open:
 			auto_close:
 			org_index:
-			x:
-			y:
 			width:
 			height:
 			bgcolor:
 			title:
-			titleCSS:
-			contentCSS:
 			archor: cc ( tl, tc, tr
 						cl, cc, cr
 						bl, bc, br )
@@ -20,6 +16,29 @@ class Modal extends JsWidget {
 		*/
 		super(options);
 		this.create();
+		this.set_width('100%');
+		this.set_height('100%');
+		this.ancestor_add_widget = Layout.prototype.add_widget.bind(this);
+		this.panel = new VBox({});
+		this.ancestor_add_widget(this.panel);
+		this.panel.set_width(this.opts.width);
+		this.panel.dom_element.style.backgroundColor = this.opts.bgcolor|| '#e8e8e8';
+		this.panel.set_height(this.opts.height);
+		this.panel.set_css('modal');
+		archorize(this.panel.dom_element, this.opts.get('archor', 'cc'));
+		this.create_title();
+		this.content = new VBox({width:'100%'});
+		this.panel.add_widget(this.content);
+	}
+	create_title(){
+		this.title_box = new HBox({width:'100%', height:'auto'});
+		this.title_box.set_css('title');
+		this.panel.add_widget(this.title_box);
+		this.title = new HBox({height:'100%'});
+		var icon = new Icon({url:bricks_resource('imgs/delete.png')});
+		icon.bind('click', this.dismiss.bind(this));
+		this.title_box.add_widget(this.title);
+		this.title_box.add_widget(icon);
 	}
 	create(){
 		var e = document.createElement('div');
@@ -31,68 +50,17 @@ class Modal extends JsWidget {
 		e.style.top = 0;
 		e.style.width = "100%"; /* Full width */
 		e.style.height = "100%"; /* Full height */
-		// e.style.overflow = "auto"; /* Enable scroll if needed */
-		e.style.backgroundColor = this.opts.get('bgcolor', 'rgba(0,0,0,0.4)'); /* Fallback color */
+		e.style.backgroundColor = 'rgba(0,0,0,0.4)'; /* Fallback color */
 		this.dom_element = e;
-		var body = document.createElement('div');
-		body.style.position = "absolute";
-		body.style.backgroundColor='rgb(1,0,0)';
-		body.style.width = this.opts.get('width', "70%");
-		body.style.height = this.opts.get('height', "70%");
-		e.appendChild(body);
-		var c = document.createElement('div');
-		c.style.color = "#aaaaaa";
-		c.style.float = "right";
-		c.style.fontSize = "28px";
-		c.style.fontWeight = "bold";
-		c.my_modal = this;
-		c.innerHTML = "&times;";
-		c.onclick = function(event){
-			var modal = event.target.my_modal;
-			modal.dismiss();
-		}
-		var title = document.createElement('div');
-		title.style.height = "40px";
-		title.style.width = '100%';
-		if (this.opts.titleCSS)
-			title.classList.add(this.opts.titleCSS);
-		if (this.opts.title){
-			title.appendChild(Title3({
-					"otext":this.opts.title,
-					"i18n":true
-				}))
-		}
-		title.appendChild(c);
-		body.appendChild(title);
-		var ct = document.createElement('div')
-		ct.style.overflow = "auto";
-		ct.style.width = '100%';
-		ct.style.height = '100%';
-		ct.style.backgroundColor = 'rgb(0, 255, 0)';
-		if (this.opts.contentCSS)
-			ct.classList.add(this.opts.contentCSS);
-		body.appendChild(ct);
-		archorize(body, this.opts.get('archor', 'cc'));
-
-		this.content = ct;
-		this.dom_element.bricks_widget = this;
-		this.content.bricks_widget = this;
-
 	}
 	
 	add_widget(w, index){
-		console.log('add_widget():w=', w);
-		if (index && this.content.children.length > index){
-			this.content.insertBefore(w.dom_element, this,content.children[index]);
-		} else {
-			this.content.appendChild(w.dom_element);
-		}
+		this.content.add_widget(w, index);
 		if (this.opts.auto_open){
 			this.open();
 		}
 	}
 	click_handler(event){
-		console.log('click_handler() called ...');
 		if (event.target == this.dom_element){
 			this.dismiss();
 		} else {
@@ -100,9 +68,7 @@ class Modal extends JsWidget {
 		}
 	}
 	open(){
-		console.log('modal():open called ............');
 		if (this.opts.auto_close){
-			console.log('modal():auto_close ........');
 			var f = this.click_handler.bind(this);
 			this.bind('click', f);
 		}
@@ -116,4 +82,41 @@ class Modal extends JsWidget {
 	}
 }
 
+class ModalForm extends Modal {
+	/*
+	{
+		auto_open:
+		auto_close:
+		org_index:
+		width:
+		height:
+		bgcolor:
+		archor: cc ( tl, tc, tr
+					cl, cc, cr
+					bl, bc, br )
+		title:
+		description:
+		dataurl:
+		submit_url:
+		fields:
+	}
+	*/
+	constructor(opts){
+		super(opts);
+		this.build_form();
+	}
+	build_form(){
+		var opts = {
+			title:this.opts.title,
+			description:this.opts.description,
+			dataurl:this.opts.dataurl,
+			submit_url:this.opts.submit_url,
+			fields:this.opts.fields
+		}
+		this.form = new Form(opts);
+		this.form.bind('submit', this.dismiss.bind(this));
+	}
+}
 Factory.register('Modal', Modal);
+Factory.register('ModalForm', ModalForm);
+	
