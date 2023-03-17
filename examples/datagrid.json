@@ -1,0 +1,83 @@
+{
+	"widgettype":"DataGrid",
+	"options":{
+		"dataurl":"get_iptvchannels.dspy",
+		"title":"Test",
+		"description":"get all iptv channels",
+		"fields":[
+			{
+				"name": "id", 
+				"uitype": "str", 
+				"datatype": "str", 
+				"label": "编号", 
+				"width": 210.0, 
+				"readonly": true
+			}, 
+			{
+				"name": "tv_group", 
+				"uitype": "str", 
+				"datatype": "str", 
+				"label": "频道组", 
+				"width": 210.0, 
+				"readonly": true}, 
+			{
+				"name": "tv_name", 
+				"uitype": "str", 
+				"datatype": "str", 
+				"label": "频道名称", 
+				"width": 210.0, 
+				"readonly": true
+			}, 
+			{
+				"name": "logo_url", 
+				"uitype": "str", 
+				"datatype": "str", 
+				"label": "台标url", 
+				"width": 210.0, 
+				"readonly": true
+			}, 
+			{
+				"name": "url", 
+				"uitype": "str", 
+				"datatype": "str", 
+				"label": "url", 
+				"width": 210.0, 
+				"readonly": true
+			}, 
+			{
+				"name": "media_type", 
+				"uitype": "str", 
+				"datatype": "str", 
+				"label": "媒体类型", 
+				"width": 210.0, 
+				"readonly": true
+			}, 
+			{
+				"name": "download_date", 
+				"uitype": "date", 
+				"datatype": "str", 
+				"label": "下载日期", 
+				"width": 140.0, 
+				"readonly": true
+			}, 
+			{
+				"name": "channel_delay", 
+				"uitype": "int", 
+				"datatype": "long", 
+				"label": "频道延迟", 
+				"width": 210.0, 
+				"dec": 0, 
+				"readonly": true
+			}, 
+			{
+				"name": "channel_grade", 
+				"uitype": "int", 
+				"datatype": "long", 
+				"label": "频道等级", 
+				"width": 210.0, 
+				"dec": 0, 
+				"readonly": true
+			}
+		]
+	}
+}

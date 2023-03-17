@@ -1,0 +1,19 @@
+{
+	"id":"mymodal",
+	"widgettype":"Modal",
+	"options":{
+		"auto_close":true,
+		"auto_open":true,
+		"width":"700px",
+		"height":"400px",
+		"archor":"cl"
+	},
+	"subwidgets":[
+		{
+			"widgettype":"Text",
+			"options":{
+				"text":"This is a test"
+			}
+		}
+	]
+}
