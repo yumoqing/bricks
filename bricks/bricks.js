@@ -1,3 +1,24 @@
+var tooltip = null;
+
+createTooltip = function(){
+	tooltip = document.createElement('div');
+	tooltip.className = 'tooltip';
+	tooltip.style.left = '50%';
+	tooltip.style.trabsform = 'translateX(-50%)';
+	var mouseoutHandler = (event) => {
+		event.target.removeChild(tooltip);
+	}
+	window.addEventListener('mouseover', event => {
+		if (!event.target.tooltop) return true;
+		tooltip.textContent = event.target.tooltip;
+		event.target.addEventListener(
+				'mouseout',
+				mouseoutHandler,
+				{once:true}
+		);
+	});
+}
+	
 let bricks_app = null;
 /*
 all type of bind action's desc has the following attributes:
@@ -9,6 +30,7 @@ datawidget:
 datascript:
 datamethod:
 datakwargs:
+rtdata:
 conform:
 and each type of binds specified attributes list following
 
@@ -91,14 +113,25 @@ var widgetBuild = async function(desc, widget){
 
 var buildBind = function(w, desc){
 	var widget = getWidgetById(desc.wid, w);
-	var handler = universal_handler.bind(w, w, desc);
+	if (!widget){
+		cnsole.log('desc wid not find', desc);
+		return;
+	}
+	var event = desc.event;
+	buildEventBind(w, widget, event, desc);
+}
+
+var buildEventBind = function(from_widget, widget, event, desc){
+	var handler = universal_handler.bind(from_widget, widget, desc);
 	if (desc.conform){
-		var conform_widget = widgetBuild(desc.conform, w);
+		var conform_widget = widgetBuild(desc.conform, widget);
 		conform_widget.bind('on_conform', handler);
 		handler = conform_widget.open.bind(conform_widget);
 	}
-	widget.bind(desc.event, handler);
+	widget.bind(event, handler);
+	
 }
+
 var universal_handler = function(widget, desc, event){
 	var f = buildEventHandler(widget, desc);
 	if (f){
@@ -113,7 +146,8 @@ var buildEventHandler = function(w, desc){
 		return null
 	}
 	var rtdata = null;
-	if (desc.datawidget){
+	if (desc.rtdata) rtdata = desc.rtdata;
+	else if (desc.datawidget){
 		var data_desc = {
 			widget:desc.datawidget,
 			method:desc.datamethod,
@@ -318,6 +352,7 @@ class BricksApp {
 		}
 		this.textList = [];
 		this.i18n = new I18n(opts.get('i18n', {}));
+		createTooltip();
 	}
 	get_textsize(ctype){
 		var tsize = this.charsize;

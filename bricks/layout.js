@@ -3,7 +3,6 @@ class Layout extends JsWidget {
 		super(options);
 		this._container = true;
 		this.children = [];
-		this.create('div');
 	}
 
 	opts_handle(){
@@ -89,7 +88,6 @@ class BoxLayout extends Layout {
 		}
 		*/
 		super(options);
-		this.create('div');
 		this.opts_handle();
 		this.container_jss = {
 			'display':'flex',

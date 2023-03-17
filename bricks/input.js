@@ -21,15 +21,18 @@ class UiType extends Layout {
 	}
 
 	setValue(v){
+		if (! v)
+			v = '';
 		this.vlaue = v;
+		this.dom_element.value = v;
 	}
-	disabled(f){
+	set_disabled(f){
 		this.dom_element.disabled = f;
 	}
-	readonly(f){
-		this.dom_element.readonly = f;
+	set_readonly(f){
+		this.dom_element.readOnly = f;
 	}
-	required(f){
+	set_required(f){
 		this.dom_element.required = f;
 		this.required = f;
 	}
@@ -46,36 +49,40 @@ class UiStr extends UiType {
 		length:
 		minlength:
 		tip:
+		width:
 		readonly:
 		required:
 	}
 	*/
 	constructor(opts){
 		super(opts);
-		this.create('input');
 		this.sizable();
 		this.set_fontsize();
+		if (opts.readonly) {
+			this.set_readonly("Y");
+		} else {
+			this.set_readonly(false);
+		}
+		if (opts.width){
+			this.dom_element.style.width = opts.width;
+		}
+		
 	}
-	create(tagname){
-		var el = UiType.prototype._create.bind(this)(tagname);
+	create(){
+		var el = this._create('input');
+		this.dom_element = el;
 		this.pattern = '.*';
 		el.type = 'text';
 		el.id = el.name = this.opts.name;
-		if (this.opts.readonly)
-			el.readonly = true;
-		else
-			el.readonly = false;
 		if (this.opts.required)
 			el.required = true;
 		if (this.opts.css){
-		
 			el.classList.add(this.opts.css);
 			this.actived_css = this.opts.css + '-actived';
 		} else {
 			el.classList.add('input');
 			this.actived_css = 'input_actived';
 		}
-		el.value = parseInt(this.value);
 		el.style.textAlign = this.opts.align || 'left';
 		if (this.opts.hasOwnProperty('length'))
 			el.maxlength = this.opts.length;
@@ -83,15 +90,14 @@ class UiStr extends UiType {
 			el.minlength = this.opts.minlength;
 		if (this.opts.hasOwnProperty('value'))
 			this.value = this.opts.value;
-		el.value = '' + this.value;
 		if (this.opts.defaultVlaue)
 			el.defaultValue = this.opts.defaultValue;
+		this.reset()
 		if (this.opts.tip)
 			el.placeholder = bricks_app.i18n._(this.opts.tip);
 		el.addEventListener('focus', this.onfocus.bind(this));
 		el.addEventListener('blur', this.onblur.bind(this));
 		el.addEventListener('input', this.set_value_from_input.bind(this))
-		this.dom_element = el;
 	}
 	onblur(event){
 		this.dom_element.classList.remove(this.actived_css);
@@ -130,6 +136,8 @@ class UiStr extends UiType {
 		return this.value;
 	}
 	setValue(v){
+		if (! v)
+			v = '';
 		this.value = v;
 		this.dom_element.value = '' + this.value;
 	}
@@ -172,7 +180,10 @@ class UiInt extends UiStr {
 		return parseInt(this.value);
 	}
 	setValue(v){
+		if (! v)
+			v = '';
 		this.value = '' + v;
+		this.dom_element.value = '' + v;
 	}
 
 }
@@ -196,7 +207,10 @@ class UiFloat  extends UiInt {
 		return parseFloat(this.value);
 	}
 	setValue(v){
+		if (! v)
+			v = '';
 		this.value = '' + v;
+		this.dom_element.value = '' + v;
 	}
 }
 class UiTel extends UiStr {
@@ -252,8 +266,10 @@ class UiFile extends UiStr {
 			this.dom_element.multiple = true;
 	}
 	setValue(v){
+		return;
 		this.value = v;
 	}
+
 }
 
 class UiCheck extends UiType {
@@ -262,7 +278,6 @@ class UiCheck extends UiType {
 		super(opts);
 		UiCheck.prototype.update(Layout.prototype);
 		this.add_widget = Layout.prototype.add_widget.bind(this);
-		this.create('div');
 		this.dom_element.style.width = 'auto';
 		this.dom_element.style.height = 'auto';
 		var state = 'unchecked';
@@ -335,7 +350,6 @@ class UiCheckBox extends UiType {
 		if (! Array.isArray(this.value)){
 			this.value = [ this.value ];
 		}
-		this.create('fieldset');
 		this.set_fontsize();
 		this.el_legend = this._create('legend');
 		var label = this.opts.label||this.opts.name;
@@ -346,6 +360,9 @@ class UiCheckBox extends UiType {
 			this.data = opts.data;
 			this.build_checkboxs();
 		}
+	}
+	create(){
+		this.dom_element = this._create('fieldset');
 	}
 	build_checkboxs(){
 		var data = this.data;
@@ -449,10 +466,12 @@ class UiText extends UiType {
 	*/
 	constructor(opts){
 		super(opts);
-		this.create('textarea');
 		this.build();
 		this.sizable();
 		this.set_fontsize();
+	}
+	create(){
+		var el = this._create('textarea');
 	}
 	build(){
 		var e = this.dom_element;
@@ -470,6 +489,7 @@ class UiText extends UiType {
 		return this.value;
 	}
 	setValue(v){
+		if (! v) v = '';
 		this.value = v;
 		this.dom_element.innerText = '';
 		this.dom_element.innerText = v;
@@ -500,9 +520,11 @@ class UiCode extends UiType {
 	static uitype='code';
 	constructor(opts){
 		super(opts);
-		this.create('select');
 		this.data = this.opts.data;
 		this.build();
+	}
+	create(){
+		var el = this._create('select');
 	}
 	build(){
 		this.dom_element.id = this.opts.name;
@@ -594,9 +616,7 @@ class _Input {
 	factory(options){
 		var klass = this.uitypes.get(options.uitype);
 		if (klass){
-			console.log('create input for:', options.uitype, '......', klass);
 			return new klass(options);
-			console.log('create input for:', options.uitype, 'XXXXXX');
 		}
 		console.log('create input for:', options.uitype, 'failed');
 		return null;

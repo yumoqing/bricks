@@ -79,8 +79,6 @@ class HttpText {
 		var result=null;
 		result = await this.get_result_data(fetchResult);
 		if (fetchResult.ok){
-			console.log('method=', method, 'url=', url, 'params=', params);
-			console.log('result=', result);
 			return result;
 		}
 		console.log('method=', method, 'url=', url, 'params=', params);

@@ -14,7 +14,6 @@ class MultipleStateImage extends Layout {
 	constructor(opts){
 		super(opts);
 		this.state = this.opts.state
-		this.create('div');
 		var desc = {
 			urls : this.opts.urls[this.state],
 			width:this.opts.width,

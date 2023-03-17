@@ -4,16 +4,26 @@ class Button extends Layout {
 		height:100%,
 		width:100%,
 		item_rate:
+		color:
 		name:
 		icon:
-		text:
+		label:
 		css:
+		action:{
+			target:
+			datawidget:
+			datamethod:
+			datascript:
+			dataparams:
+			rtdata:
+			actiontype:
+			...
+		}
 	*/
 
 
 	constructor(opts){
 		super(opts);
-		this.create('button');
 		var style = {
 			display:"flex",
 			justifyContent:"center",
@@ -23,6 +33,8 @@ class Button extends Layout {
 			height:"auto",
 			padding:"0.5rem"
 		};
+		if (opts.bgcolor) style.backgroundColor = opts.bgcolor;
+		if (opts.color) style.color = opts.color;
 		if (this.opts.orientation == 'horizontal'){
 			style.flexDirection = 'rows';
 			this.orient = 'h';
@@ -34,6 +46,9 @@ class Button extends Layout {
 		this.set_id(this.opts.nmae);
 		this.opts_setup();
 		this.dom_element.style.update(style);
+	}
+	create(){
+		this.dom_element = document.createElement('button');
 	}
 	opts_setup(){
 		if (this.opts.css){
@@ -48,11 +63,14 @@ class Button extends Layout {
 			this.add_widget(icon);
 			icon.bind('click', this.target_clicked.bind(this));
 		}
-		if (this.opts.text){
-			var txt = new Text({
+		if (this.opts.label){
+			var opts = {
 						rate:this.item_rate,
-						otext:this.opts.text, 
-						i18n:true})
+						color:this.opts.color,
+						bgcolor:this.opts.bgcolor,
+						otext:this.opts.label, 
+						i18n:true};
+			var txt = new Text(opts);
 			this.add_widget(txt);
 			txt.bind('click', this.target_clicked.bind(this));
 		}

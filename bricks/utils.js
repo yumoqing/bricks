@@ -23,7 +23,6 @@ var currentScriptPath = function () {
 	var currentScript;
 	if (document.currentScript){
 		currentScript = document.currentScript.src;
-		console.log('has currentScriot');
 	} else {
 		console.log('has not currentScriot');
 		var scripts = document.querySelectorAll( 'script[src]' );
@@ -32,7 +31,6 @@ var currentScriptPath = function () {
 		}
 		currentScript = scripts[ scripts.length - 1 ].src;
 	}
-	console.log('currentScript=', currentScript);
     var currentScriptChunks = currentScript.split( '/' );
     var currentScriptFile = currentScriptChunks[ currentScriptChunks.length - 1 ];
     return currentScript.replace( currentScriptFile, '' );

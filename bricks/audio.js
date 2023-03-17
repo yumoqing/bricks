@@ -10,7 +10,6 @@ class AudioPlayer extends JsWidget {
 	constructor(options){
 		super(options);
 		this.url = opt.url;
-		this.create('div');
 		this.audio = this._create('audio');
 		// this.audio.autoplay = this.opts.autoplay;
 		this.audio.controls = true;

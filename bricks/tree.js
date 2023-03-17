@@ -125,7 +125,6 @@ class Tree extends VBox {
 	*/
 	constructor(options){
 		super(options);
-		this.create('div');
 		this.set_height('100%');
 		this.row_height = this.opts.row_height || '35px';
 		this.multitype_tree = this.opts.multitype_tree||false;

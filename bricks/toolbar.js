@@ -22,7 +22,6 @@ class Toolbar extends BoxLayout {
 	*/
 	constructor(options){
 		super(options);
-		this.create('div');
 		this.toolList = [];
 		if (this.opts.orientation == 'vertical'){
 			this.bar = new VBox(options);
@@ -47,7 +46,7 @@ class Toolbar extends BoxLayout {
 			"options":{
 				orientation:"horizontal",
 				icon:desc.icon,
-				text:desc.label,
+				label:desc.label,
 				name:desc.name,
 				css:desc.css
 			}

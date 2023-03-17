@@ -9,8 +9,10 @@ class Image extends JsWidget {
 	constructor(opts){
 		super(opts);
 		this.opts = opts;
-		this.create('img');
 		this.options_parse();
+	}
+	create(){
+		this.dom_element = document.createElement('img');
 	}
 	options_parse(){
 		if (this.opts.hasOwnProperty('url')){
@@ -60,10 +62,9 @@ class Icon extends Image {
 
 class BlankIcon extends JsWidget {
 	constructor(opts){
+		opts.width = bricks_app.charsize;
+		opts.height = bricks_app.charsize;
 		super(opts);
-		this.create('div');
-		this.opts.width = bricks_app.charsize;
-		this.opts.height = bricks_app.charsize;
 		this.ctype = 'text';
 		this.sizable();
 		this.set_fontsize();

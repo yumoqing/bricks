@@ -15,7 +15,6 @@ class Modal extends Layout {
 		}
 		*/
 		super(options);
-		this.create();
 		this.set_width('100%');
 		this.set_height('100%');
 		this.ancestor_add_widget = Layout.prototype.add_widget.bind(this);

@@ -15,7 +15,6 @@ class MdText extends JsWidget {
 
 	constructor(options){
 		super(options);
-		this.create('div');
 		var f = this.build.bind(this);
 		this.load_event = new Event('loaded');
 		this.dom_element.style.overFlow='auto';
@@ -54,7 +53,6 @@ class MarkdownViewer extends VBox {
 	*/
 	constructor(options){
 		super(options);
-		this.create('div');
 		this.back_stack = [];
 		this.md_url = this.absurl(this.opts.md_url);
 		if (this.opts.navigator){

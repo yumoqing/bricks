@@ -6,17 +6,53 @@ class JsWidget {
 			options = {}
 		}
 		this.opts = options;
-		if (options.width){
-			this.width = opts.width;
-		}
-		if (options.height){
-			this.height = opts.height;
-		}
-		this.css = options.css;
+		this.create();
+		this.dom_element.bricks_widget = this;
+		this.opts_set_style();
 		this.baseURI = options.baseURI;
+		if (this.opts.tooltip){
+			this.dom_element.tooltip = this.opts.tooltip;
+		}
 		this._container = false;
 		this.parent = null;
 		this.sizable_elements = [];
+	}
+	create(){
+		this.dom_element = document.createElement('div');
+	}
+	opts_set_style(){
+		var keys = [
+			"width",
+			"height",
+			"margin",
+			"padding",
+			"align",
+			"textAlign",
+			"overflow",
+			"color"
+		]
+		var mapping_keys = {
+			"overflow-x":"overflowX",
+			"opveflow-y":"overflowY",
+			"bgcolor":"backgroundColor"
+		};
+		var mkeys = Object.keys(mapping_keys);
+		var style = {};
+		for (var k in Object.keys(this.opts)){
+			if (k in keys){
+				style[k] = this.opts[k];
+				// this.dom_element.style[k] = this.opts[k];
+			}
+			if (k in mkeys){
+				style[mapping_keys[k]] = this.opts[k];
+				// this.dom_element.style[mapping_keys[k]] = this.opts[k];
+			}
+		}
+		this.dom_element.style.update(style);
+		if (this.opts.css){
+			this.set_css(this.opts.css);
+		}
+		
 	}
 	sizable(){
 		bricks_app.text_ref(this);
@@ -86,10 +122,6 @@ class JsWidget {
 	is_container(){
 		return this._container;
 	}
-	create(tagname){
-		this.dom_element = document.createElement(tagname);
-		this.dom_element.bricks_widget = this;
-	}
 	_create(tagname){
 		return document.createElement(tagname);
 	}
@@ -133,6 +165,8 @@ class TextBase extends JsWidget {
 		rate:
 		halign:
 		valign:
+		color:
+		bgtcolor:
 		css
 	}
 	*/
@@ -141,7 +175,6 @@ class TextBase extends JsWidget {
 		this.opts = options;
 		this.rate = this.opts.rate || 1;
 		this.specified_fontsize = false;
-		this.create("div");
 		this.set_attrs();
 		this.dom_element.style.fontWeight = 'normal';
 		this.sizable();
@@ -152,7 +185,6 @@ class TextBase extends JsWidget {
 		}
 		if (this.opts.hasOwnProperty('otext')){
 			this.otext = this.opts.otext;
-			console.log('otext=', this.opts.otext, this.otext);
 		}
 		if (this.opts.hasOwnProperty('i18n')){
 			this.i18n = this.opts.i18n;
@@ -160,7 +192,6 @@ class TextBase extends JsWidget {
 		this._i18n = new I18n();
 		if (this.i18n && this.otext) {
 			this.text = this._i18n._(this.otext);
-			console.log('otext=', this.otext, 'text=', this.text);
 		}
 		this.dom_element.innerHTML = this.text;
 	}

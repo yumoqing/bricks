@@ -1,32 +1,44 @@
 class Row {
-	constructor(tree, rec){
-		this.tree = tree;
+	constructor(dg, rec){
+		this.dg = dg;
 		this.data = rec;
 		this.freeze_cols = [];
 		this.normal_cols = [];
 		this.name_widgets = {};
-		this.click_handler = this.tree.click_handler.bind(this.tree, this);
-		this.freeze_row = create_col_widgets(this.tree.freeze_fields, this.freeze_cols);
-		this.normal_row = create_col_widgets(this.tree.normal_fields, this.normal_cols);
+		this.click_handler = this.dg.click_handler.bind(this.dg, this);
+		this.freeze_row = this.create_col_widgets(this.dg.freeze_fields, this.freeze_cols);
+		this.normal_row = this.create_col_widgets(this.dg.normal_fields, this.normal_cols);
 	}
 	create_col_widgets(fields, cols){
 		for (var i=0;i<fields.length;i++){
 			var f = fields[i];
 			var opts = f.uioptions|| {};
+			var w;
 			opts.update({
 				name:f.name,
 				label:f.label,
 				uitype:f.uitype,
-				value:rec[name],
-				readonly
+				width:f.width,
+				required:true,
+				readonly:true
 			});
-			var w = Input.factory(opts);
+			if (opts.uitype=='button'){
+				opts.icon = f.icon;
+				opts.action = f.action;
+				opts.action.rtdata = this.data.copy();
+				w = new Button(opts);
+				buildEventBind(this.dg, w, 'click', opts.action);
+				console.log('opts=', opts.action.rtdata.url);
+			} else {
+				opts.value = this.data[f.name],
+				w = Input.factory(opts);
+				w.bind('click', this.click_handler);
+			}
 			cols.push(w);
 			this.name_widgets[f.name] = w;
-			w.bind('click', this.click_handler);
 		}
 		if (cols.length>0){
-			var row = HBox({height:'auto'})
+			var row = new HBox({height:'auto', overflow:'hide'})
 			for (var i=0;i<cols.length;i++){
 				row.add_widget(cols[i]);
 			}
@@ -34,7 +46,6 @@ class Row {
 		}
 		return null;
 	}
-	
 }
 
 class DataGrid extends VBox {
@@ -152,15 +163,18 @@ class DataGrid extends VBox {
 			this.add_row(records[i], index);
 		}
 	}
-	add_row(row, index){
-		var row = new Row();
-		this.freeze_body.add_widget(row.freeze_row, index);
-		this.normal_body.add_widget(row.normal_row, index);
+	add_row(data, index){
+		var row = new Row(this, data);
+		if (this.freeze_body)
+			this.freeze_body.add_widget(row.freeze_row, index);
+		if (this.normal_body)
+			this.normal_body.add_widget(row.normal_row, index);
 	}
 	check_desc(){
 		return {
 			uitype:'check',
-			name:'_check'
+			name:'_check',
+			width:'20px'
 		}
 	}
 	lineno_desc(){
@@ -195,9 +209,10 @@ class DataGrid extends VBox {
 		this.freeze_part = null;
 		this.normal_part = null;
 		if (this.freeze_fields.length>0){
-			this.freeze_part = new VBox({height:'100%'});
+			this.freeze_part = new VBox({height:'100%', width:'auto'});
 			this.freeze_header = new HBox({height:'auto'});
-			this.freeze_body = new VScrollPanel({});
+			this.freeze_body = new VScrollPanel({})
+			this.freeze_body.dom_element.style.paddingRight = '7px';
 			this.freeze_body.bind('scroll', this.coscroll.bind(this));
 			this.freeze_part.add_widget(this.freeze_header);
 			this.freeze_part.add_widget(this.freeze_body);
@@ -210,12 +225,22 @@ class DataGrid extends VBox {
 			this.normal_part.add_widget(this.normal_header);
 			this.normal_part.add_widget(this.normal_body);
 			this.normal_body.bind('scroll', this.coscroll.bind(this));
+			this.normal_body.bind('min_threshold', this.load_previous_data.bind(this));
+			this.normal_body.bind('max_threshold', this.load_next_data.bind(this));
 			hbox.add_widget(this.normal_part);
 		}
 		this.create_header();
 	}
+	load_previous_data(){
+		console.log('event min_threshold fired ........');
+		this.loader.previousPage();
+	}
+	load_next_data(){
+		console.log('event max_threshold fired ........');
+		this.loader.nextPage();
+	}
 	coscroll(event){
-		var w = event.target;
+		var w = event.target.bricks_widget;
 		if (w==this.freeze_body){
 			this.normal_body.dom_element.scrollTop = w.dom_element.scrollTop;
 		} else if (w == this.normal_body && this.freeze_body){
@@ -227,18 +252,17 @@ class DataGrid extends VBox {
 		for (var i=0; i<this.freeze_fields.length; i++){
 			var f = this.freeze_fields[i];
 			var t = new Text({
+					width:f.width,
 					otext:f.label||f.name,
 					i18n:true,
 			});
-			if (f.width){
-				t.dom_element.style.width = f.width
-			}
 			this.freeze_header.add_widget(t);
 			t.dom_element.column_no = 'f' + i;
 		}
 		for (var i=0; i<this.normal_fields.length; i++){
 			var f = this.normal_fields[i];
 			var t = new Text({
+					width:f.width,
 					otext:f.label||f.name,
 					i18n:true,
 			});
@@ -248,6 +272,9 @@ class DataGrid extends VBox {
 			this.normal_header.add_widget(t);
 			t.dom_element.column_no = 'n' + i;
 		}
+	}
+	click_handler(row, event){
+		console.log('DataGrid():click_handler, row=', row, 'event=', event);
 	}
 }
 

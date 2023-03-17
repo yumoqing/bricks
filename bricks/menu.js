@@ -1,35 +1,4 @@
 /*
-// Create the context menu element
-const contextMenu = document.createElement("div");
-contextMenu.style.display = "none";
-contextMenu.style.position = "absolute";
-contextMenu.style.backgroundColor = "white";
-contextMenu.style.zIndex = "1000";
-
-// Add some menu items to the context menu
-const menuItem1 = document.createElement("div");
-menuItem1.textContent = "Item 1";
-contextMenu.appendChild(menuItem1);
-
-const menuItem2 = document.createElement("div");
-menuItem2.textContent = "Item 2";
-contextMenu.appendChild(menuItem2);
-
-// Add the context menu to the document
-document.body.appendChild(contextMenu);
-
-// Show the context menu on right-click
-document.addEventListener("contextmenu", event => {
-  event.preventDefault();
-  contextMenu.style.left = `${event.clientX}px`;
-  contextMenu.style.top = `${event.clientY}px`;
-  contextMenu.style.display = "block";
-});
-
-// Hide the context menu on click outside of it
-document.addEventListener("click", event => {
-  contextMenu.style.display = "none";
-});
 */
 class Menu extends VBox {
 	/*
@@ -39,7 +8,6 @@ class Menu extends VBox {
 	*/
 	constructor(options){
 		super(options);
-		this.create('div');
 		this.dom_element.style.display = "";
 		this.dom_element.style.position = "absolute";
 		this.dom_element.style.backgroundColor = options.bgcolor || "white";
