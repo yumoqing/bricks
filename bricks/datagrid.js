@@ -1,7 +1,7 @@
 class Row {
 	constructor(dg, rec){
 		this.dg = dg;
-		this.data = rec;
+		this.data = rec.copy();
 		this.freeze_cols = [];
 		this.normal_cols = [];
 		this.name_widgets = {};
@@ -25,10 +25,9 @@ class Row {
 			if (opts.uitype=='button'){
 				opts.icon = f.icon;
 				opts.action = f.action;
-				opts.action.rtdata = this.data.copy();
+				opts.action.params = this.data.copy();
 				w = new Button(opts);
 				buildEventBind(this.dg, w, 'click', opts.action);
-				console.log('opts=', opts.action.rtdata.url);
 			} else {
 				opts.value = this.data[f.name],
 				w = Input.factory(opts);
@@ -45,6 +44,26 @@ class Row {
 			return row;
 		}
 		return null;
+	}
+	selected(){
+		if (this.freeze_row){
+			this.toogle_select(this.freeze_row.dom_element, true);
+		}
+		if (this.normal_row){
+			this.toogle_select(this.normal_row.dom_element, true);
+		}
+	}
+	unselected(){
+		if (this.freeze_row){
+			this.toogle_select(this.freeze_row.dom_element, false);
+		}
+		if (this.normal_row){
+			this.toogle_select(this.normal_row.dom_element, false);
+		}
+	}
+	toogle_select(e, f){
+		if (f) e.classList.add('selected');
+		else e.classList.remove('selected');
 	}
 }
 
@@ -80,6 +99,7 @@ class DataGrid extends VBox {
 		super(opts);
 		this.set_height('100%');
 		this.set_width('100%');
+		this.select_row = null;
 		this.set_css('vbox');
 		this.dataurl = opts.dataurl;
 		this.method = opts.method;
@@ -274,6 +294,11 @@ class DataGrid extends VBox {
 		}
 	}
 	click_handler(row, event){
+		if (this.selected_row){
+			this.selected_row.unselected();
+		}
+		this.selected_row = row;
+		this.selected_row.selected();
 		console.log('DataGrid():click_handler, row=', row, 'event=', event);
 	}
 }

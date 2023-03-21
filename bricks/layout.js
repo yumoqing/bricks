@@ -113,6 +113,7 @@ class VBox extends BoxLayout {
 		BoxLayout.prototype.add_widget.call(this, w, index);
 		if (w.opts.height)
 			e.style.flex = obj_fmtstr({'height':w.opts.height}, '0 1 ${height}');
+			//e.style.flex = '0'
 		else
 			e.style.flex = '1';
 	}
@@ -128,7 +129,7 @@ class HBox extends BoxLayout {
 	add_widget(w, index){
 		var e = w.dom_element;
 		BoxLayout.prototype.add_widget.call(this, w, index);
-		if (w.opts.width)
+		if (w.opts.width || w.width)
 			e.style.flex = obj_fmtstr({'width':w.opts.width}, '0 1 ${width}');
 		else
 			e.style.flex = '1';

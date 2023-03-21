@@ -262,6 +262,7 @@ var buildScriptHandler = function(w, target, rtdata, desc){
 	var params = {};
 	params.updates(desc.params, rtdata);
 	var f = new Function('target', 'params', 'event', desc.script);
+	console.log('params=', params, 'buildScriptHandler() ..........');
 	return f.bind(target, target, params);
 }
 var buildDispatchEventHandler = function(w, target, rtdata, desc){
@@ -328,6 +329,7 @@ class BricksApp {
 	constructor(opts){
 		/*
 		opts = {
+			login_url:
 			"charsize:
 			"language":
 			"i18n":{
@@ -343,6 +345,7 @@ class BricksApp {
 		*/
 		this.opts = opts;
 		bricks_app = this;
+		this.login_url = opts.login_url;
 		this.charsize = this.opts.charsize || 20;
 		if (this.opts.language){
 			this.lang = this.opts.language;
@@ -352,7 +355,14 @@ class BricksApp {
 		}
 		this.textList = [];
 		this.i18n = new I18n(opts.get('i18n', {}));
+		this.session_id = null;
 		createTooltip();
+	}
+	save_session(session){
+		this.session_id = session;
+	}
+	get_session(){
+		return this.session_id;
 	}
 	get_textsize(ctype){
 		var tsize = this.charsize;

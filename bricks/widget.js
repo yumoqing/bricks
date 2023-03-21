@@ -23,6 +23,9 @@ class JsWidget {
 	opts_set_style(){
 		var keys = [
 			"width",
+			"z-index",
+			"x",
+			"y",
 			"height",
 			"margin",
 			"padding",
@@ -38,14 +41,14 @@ class JsWidget {
 		};
 		var mkeys = Object.keys(mapping_keys);
 		var style = {};
-		for (var k in Object.keys(this.opts)){
-			if (k in keys){
-				style[k] = this.opts[k];
-				// this.dom_element.style[k] = this.opts[k];
+		var okeys = Object.keys(this.opts);
+		for (var k=0; k<okeys.length; k++){
+			if (keys.find( i => i ==okeys[k])){
+				style[okeys[k]] = this.opts[okeys[k]];
 			}
-			if (k in mkeys){
-				style[mapping_keys[k]] = this.opts[k];
-				// this.dom_element.style[mapping_keys[k]] = this.opts[k];
+			if (mkeys.find( i => i ==okeys[k])){
+				var mk = mapping_keys[okeys[k]];
+				style[mk] = this.opts[okeys[k]];
 			}
 		}
 		this.dom_element.style.update(style);

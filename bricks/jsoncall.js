@@ -48,6 +48,10 @@ class HttpText {
 		else {
 			params = Object.assign(this.params, params);
 		}
+		var session =  bricks_app.get_session();
+		if (session){
+			params.update({session:session});
+		}
 		return params;
 	}
 	add_own_headers(headers){
@@ -79,7 +83,15 @@ class HttpText {
 		var result=null;
 		result = await this.get_result_data(fetchResult);
 		if (fetchResult.ok){
+			var ck =  fetchResult.headers.get('Set-Cookie');
+			if (ck){
+				var session = ck.split(';')[0];
+				bricks_app.save_session(session);
+			}
 			return result;
+		}
+		if (fetchResult.status == 401 && bricks_app.login_url){
+			return await this.withLoginInfo(url, _params);
 		}
 		console.log('method=', method, 'url=', url, 'params=', params);
 		console.log('jsoncall error:');
@@ -93,6 +105,42 @@ class HttpText {
 		error.info = resp_error;
 		return error;
 	}
+	async withLoginInfo(url, params){
+		var get_login_info = function(e){
+			console.log('login info:', e.target.getValue());
+			return e.target.getValue();
+		}
+		var w = await widgetBuild({
+			"widgettype":"urlwidget",
+			"options":{
+				"url":bricks_app.login_url
+			}
+		});
+		var login_info = await new Promise((w,  get_login_info) => {
+			w.once('submit', get_login_info);
+		});
+		if (login_info){
+			this.set_authorization_header(params, lgin_info);
+			const fetchResult = await fetch(url, params);
+			var result=null;
+			result = await this.get_result_data(fetchResult);
+			if (fetchResult.ok){
+				return result;
+			}
+			if (fetchResult.status == 401){
+				return await this.withLoginInfo(url, params);
+			}
+		}
+		const resp_error = {
+			"type":"Error",
+			"message":result.message || 'Something went wrong',
+			"data":result.data || '',
+			"code":result.code || ''
+		};
+		const error = new Error();
+		error.info = resp_error;
+		return error;
+	}	
 	async get(url, {headers=null, params=null}={}){
 		return await this.httpcall(url, {
 					method:'GET',

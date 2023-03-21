@@ -4,6 +4,7 @@ class Button extends Layout {
 		height:100%,
 		width:100%,
 		item_rate:
+		tooltip:
 		color:
 		name:
 		icon:

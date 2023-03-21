@@ -57,7 +57,7 @@ html, body {
 }
 
 .selected {
-	background-color:#e4e4e4;
+	background-color:#d4d4d4;
 }
 
 .htoolbar {
@@ -95,6 +95,13 @@ html, body {
 	colomn-gap:10px'
 }
 
+.popup {
+	z-index:1000;
+	position:absolution;
+	background-color:#f1f1f1;
+	border:1px solid #c1c1c1;
+}
+
 .inputbox {
 	background-color: #cccccc;
 	border: 1px solid #bbbbbb;
@@ -102,7 +109,14 @@ html, body {
 	margin: 0 0 1em 0;
 }
 
-input[tooltip]:hover::after, div[tooltip]:hover::after {
+button[tooltip]:hover::after {
+    content: attr(tooltip);
+    display: block;
+    position: absolute;
+    transform: translateX(-50%);
+}
+
+div[tooltip]:hover::after {
     content: attr(tooltip);
     display: block;
     position: absolute;

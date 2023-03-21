@@ -1,6 +1,11 @@
 class TreeNode extends VBox {
 	constructor(tree, parent, data){
-		super(data);
+		var opts = {
+			width:'100%',
+			height:'auto',
+			overflow:'hide'
+		}
+		super(opts);
 		this.tree = tree;
 		this.parent = parent;
 		this.children_loaded = false;
@@ -12,6 +17,7 @@ class TreeNode extends VBox {
 		}
 		var n = new HBox({
 				height:'auto',
+				overflow:'hide',
 				width:'100%'
 		})
 		n.dom_element.style.margin = bricks_app.charsize * 0.2;
@@ -20,7 +26,7 @@ class TreeNode extends VBox {
 		this.node_widget = n;
 		this.create_node_content(n);
 		if (! this.data.is_leaf) {
-			this.container = new VBox({});
+			this.container = new VBox({height:'auto', overflow:'hide'});
 			this.add_widget(this.container);
 			this.container.dom_element.style.marginLeft = bricks_app.charsize + 'px';
 			if (this.data.children){

@@ -1,0 +1,25 @@
+{
+	"widgettype":"MiniForm",
+	"options":{
+		"label_width":"100px",
+		"fields":[
+			{
+				"name":"test1",
+				"label":"姓名",
+				"uitype":"str"
+			},
+			{
+				"name":"test2",
+				"label":"性别",
+				"uitype":"str"
+			},
+			{
+				"name":"test3",
+				"label":"地址",
+				"uitype":"str"
+			}
+		]
+	}
+}
+
+		
