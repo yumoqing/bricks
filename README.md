@@ -2,7 +2,7 @@
 A new web application development framework to make web application development more easier like play bricks
 
 ## Documentation
-Documents in English, please read from [docs](docs/index.md), 中文资料看[这里](docs/cn/bricks.md)
+Documents in English, please read from [docs](docs/index.md), 中文资料看[这里](docs/cn/index.md)
 
 ## Development base on components
 
