@@ -21,4 +21,30 @@ bricks的开发理念是：应用开发可分为底层控件的开发以及操�
 
 关于控件更多的信息，请看[控件](widgettypes.md)
 
+## 依赖
+如果要使用Markdown，需要引用marked模块，
+
+如果用到图表， 需要引用echarts
+
+* [Marked](https://github.com/markedjs/marked)
+
+* [echarts](https://echarts.apache.org/zh/index.html)
+
+## build
+bricks 使用uglifyjs 压缩
+在bricks目录下执行
+```
+./build.sh
+```
+命令执行完后在项目的dist目录下会生成bricks.js 和bricks.min.js，并将examples和docs目录复制到本机到wwwroot目录
+
+按照开发者本地web服务器的配置，请修改build.sh的目标路径。
+## 引用
+```
+<link rel="stylesheet" href="/bricks/css/bricks.css" />
+<script src="/bricks/bricks.js"></script>
+
+```
+## 例子
+配置好本地服务器后，可以使用build.sh将bricks项目内容复制到本地网站后台，之后在网站的examples目录中查看bricks提供的例子程序
 
