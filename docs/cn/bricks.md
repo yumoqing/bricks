@@ -12,7 +12,7 @@ desc是一个对象类型数据，创建控件参数，必须有"widgettype", "o
 ## 返回值， null 或新创建的控件实体
 
 ## 例子
-···
+```
 	{
 		"widgettype":"Tree",
 		"options":{
@@ -95,7 +95,7 @@ desc是一个对象类型数据，创建控件参数，必须有"widgettype", "o
 			]
 		}
 	}
-···
+```
 这是一个树形控件， 运行[这里](https://github.com/bricks/examples/tree.html)
 更多的例子请看
 [bricks控件例子](https://github.com/yumoqing/bricks/examples)
