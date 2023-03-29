@@ -289,3 +289,24 @@ function eraseCookie(name) {
     document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
+var set_max_height = function(w1, w2){
+	/* w1.hide();
+	w2.hide();
+	Body.add_widget(w1);
+	Body.add_widget(w2);
+	*/
+	var v1 = w1.dom_element.offsetHeight;
+	var v2 = w2.dom_element.offsetHeight;
+	var v = v1 - v2;
+	if (v < 0){
+		w1.set_height(w2.dom_element.offsetHeight);
+	} else if (v > 0) {
+		w2.set_height(w1.dom_element.offsetHeight);
+	}
+	/*
+	Body.remove_widget(w1);
+	Body.remove_widget(w2);
+	w1.show();
+	w2.show();
+	*/
+}

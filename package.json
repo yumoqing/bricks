@@ -1,0 +1,25 @@
+{
+	"name":"bricks",
+	"version":"0.1.1",
+	"repository":{
+		"type":"git",
+		"url":"https://github.com/yumoqing/bricks",
+		"directory":"bricks"
+	},
+	"description":"bricks is a framework for front-end app",
+	"keywords":[
+		"framework",
+		"front-end",
+		"javascript",
+		"ui",
+		"web"
+	],
+	"homepage":"https://github.com/yumoqing/bricks",
+	"bugs":"https://github.com/yumoqing/bricks/issues",
+	"author":"yu moqing",
+	"license":"MIT",
+	"files":[
+		"dist/"
+	]
+}
+

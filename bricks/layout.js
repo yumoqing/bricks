@@ -5,19 +5,6 @@ class Layout extends JsWidget {
 		this.children = [];
 	}
 
-	opts_handle(){
-		var e = this.dom_element;
-		if (this.opts.width)
-			e.style.width = this.opts.width;
-		
-		if (this.opts.height) 
-			e.style.height = this.opts.height;
-
-		if (this.opts.css){
-			this.dom_element.classList.add(this.opts.css);
-		}
-		this.dom_element.style.overflow = this.opts.overflow || 'auto';
-	}
 	add_widget(w, index){
 		if (! index || index>=this.children.length){
 			w.parent = this;
@@ -37,19 +24,20 @@ class Layout extends JsWidget {
 	}
 	_remove_widgets(cnt, from_end){
 		var children = this.children.copy();
-		for (var i=0; i<children.length; i++){
+		var len = this.children.length;
+		for (var i=0; i<len; i++){
 			if (i >= cnt) break;
 			var k = i;
-			if (from_end) k = children.length - 1 - i;
+			if (from_end) k = len - 1 - i;
 			var w = children[k]
 			this.children.remove(w);
 			this.remove_widget(w);
 		}
 	}
 	remove_widget(w){
-		w.parent = null;
+		delete w.parent;
 		this.children = this.children.filter(function(item){
-			return item !== w;
+			return item != w;
 		});
 
 		this.dom_element.removeChild(w.dom_element);
@@ -73,68 +61,36 @@ class _Body extends Layout {
 
 Body = new _Body();
 
-class BoxLayout extends Layout {
+class VBox extends Layout {
 	constructor(options){
-		/* options:
-		{
-			"orientation":"vertical" or "horizontal",
-			"size_hint_x",
-			"size_hint_y",
-			"height":
-			"width",
-			"css",
-			"x",
-			"y",
-		}
-		*/
 		super(options);
-		this.opts_handle();
-		this.container_jss = {
-			'display':'flex',
-		}
-		this.child_jss = {
-		}
-		this.orientation = options.get('orientation', 'vertical');
-		if (this.orientation in ['vertical', 'horizontal']){
-			this.orientation = 'vertical';
-		}
+		this.set_css('vbox');
 	}
 }
 
-class VBox extends BoxLayout {
+class VFiller extends Layout {
 	constructor(options){
 		super(options);
-		this.orientation = 'vertical';
-		this.container_jss.flexFlow = 'column';
-		this.dom_element.style.update(this.container_jss);
-	}
-	add_widget(w, index){
-		var e = w.dom_element;
-		BoxLayout.prototype.add_widget.call(this, w, index);
-		if (w.opts.height)
-			e.style.flex = obj_fmtstr({'height':w.opts.height}, '0 1 ${height}');
-			//e.style.flex = '0'
-		else
-			e.style.flex = '1';
+		this.set_css('vfiller');
 	}
 }
 
-class HBox extends BoxLayout {
+class HBox extends Layout {
 	constructor(options){
 		super(options);
-		this.orientation = 'horizontal';
-		this.container_jss.flexFlow = 'row';
-		this.dom_element.style.update(this.container_jss);
-	}
-	add_widget(w, index){
-		var e = w.dom_element;
-		BoxLayout.prototype.add_widget.call(this, w, index);
-		if (w.opts.width || w.width)
-			e.style.flex = obj_fmtstr({'width':w.opts.width}, '0 1 ${width}');
-		else
-			e.style.flex = '1';
+		this.set_css('hbox');
 	}
 }
+
+class HFiller extends Layout {
+	constructor(options){
+		super(options);
+		this.set_css('hfiller');
+	}
+}
+
 Factory.register('HBox', HBox);
 Factory.register('VBox', VBox);
+Factory.register('HFiller', HFiller);
+Factory.register('VFiller', VFiller);
 

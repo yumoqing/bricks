@@ -4,6 +4,7 @@ class MiniForm extends HBox {
 		defaultname:
 		label_width:
 		input_width:
+		params:
 		"fields":[
 			{
 				name:
@@ -31,18 +32,12 @@ class MiniForm extends HBox {
 		this.build_widgets(name);
 	}
 	build_widgets(name){
+		if (this.input){
+			this.input.unbind('input', this.input_handle.bind(this));
+		}
 		this.clear_widgets();
 		this.add_widget(this.choose);
-		var f = this.opts.fields.find(i => i.name == name);
-		if (f.icon){
-			this.add_widget(new Icon({url:f.icon}));
-		}
-		this.add_widget(new Text({otext:f.label||f.name,
-								width:this.opts.label_width || 'auto',
-								i18n:true}));
-		var gtflg = new Icon({url:bricks_resource('imgs/down_dir.png')});
-		gtflg.bind('click', this.show_options.bind(this));
-		this.add_widget(gtflg);
+		var f = this.opts.fields.find( i => i.name==name);
 		var desc = f.copy();
 		desc.width = 'auto';
 		var i = Input.factory(desc);
@@ -51,14 +46,16 @@ class MiniForm extends HBox {
 		this.input = i;
 	}
 	build_options(){
-		var w = new VBox({css:'popup', width:'auto', height:'auto'});
-		var fields = this.opts.fields;
-		for (var i=0;i<fields.length; i++){
-			var b = new Button(fields[i]);
-			b.bind('click', this.change_input.bind(this));
-			w.add_widget(b);
-		}
-		w.hide();
+		var desc = {
+			width:"90px",
+			name:"name",
+			uitype:"code",
+			valueField:'name',
+			textField:'label',
+			data:this.opts.fields
+		};
+		var w = Input.factory(desc);
+		w.bind('changed', this.change_input.bind(this));
 		this.choose = w;
 		this.add_widget(w);
 	}
@@ -67,14 +64,19 @@ class MiniForm extends HBox {
 		this.choose.show();
 	}
 	change_input(e){
-		var name = e.params.name;
+		var name = this.choose.value;
 		this.build_widgets(name);
-		this.choose.hide();
 	}
 	input_handle(e){
+		var d = this.getValue();
+		console.log('input_handle() ..', d);
+		this.dispatch('input', d);
+	}
+	getValue(){
+		var d = this.opts.params || {};
 		var v = this.input.getValue();
-		console.log('input_handle() ..', v);
-		this.dispatch('input', v);
+		d.update(v);
+		return d;
 	}
 }
 

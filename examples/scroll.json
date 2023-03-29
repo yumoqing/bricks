@@ -1,0 +1,31 @@
+{
+	"widgettype":"ScrollPanel",
+	"options":{
+		"scrollY":"hidden"
+	},
+	"subwidgets":[
+		{
+			"widgettype":"HBox",
+			"options":{
+				"height":"auto",
+				"width":"auto"
+			},
+			"subwidgets":[
+				{
+					"widgettype":"Text",
+					"options":{
+						"width":"3000px",
+						"text":"this is long text"
+					}
+				}
+			]
+		},
+		{
+			"widgettype":"VScrollPanel",
+			"options":{
+			},
+			"subwidgets":[
+			]
+		}
+	]
+}

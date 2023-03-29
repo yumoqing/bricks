@@ -471,7 +471,7 @@ class UiText extends UiType {
 		this.set_fontsize();
 	}
 	create(){
-		var el = this._create('textarea');
+		this.dom_element = this._create('textarea');
 	}
 	build(){
 		var e = this.dom_element;
@@ -524,7 +524,7 @@ class UiCode extends UiType {
 		this.build();
 	}
 	create(){
-		var el = this._create('select');
+		this.dom_element = this._create('select');
 	}
 	build(){
 		this.dom_element.id = this.opts.name;
@@ -570,11 +570,8 @@ class UiCode extends UiType {
 		this.set_fontsize();
 	}
 	set_value_from_input(event){
-		for (var i=0; i<this.option_widgets.length; i++){
-			if (this.option_widgets[i].checked){
-				this.value = this.option_widgets[i].value;
-			}
-		}
+		this.value = this.dom_element.value;
+		this.dispatch('changed', this.getValue());
 	}
 	resultValue(){
 		return this.value;

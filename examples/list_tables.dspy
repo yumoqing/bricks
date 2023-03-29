@@ -1,0 +1,15 @@
+db = DBPools();
+if params_kw.get('page', '1') != '1':
+	print(params_kw)
+	return {
+		"total":"0",
+		"rows":[]
+	}
+async with db.sqlorContext('kboss') as sor:
+	d = await sor.tables();
+	print(len(d))
+	return {
+		"total":len(d),
+		"rows":d
+	}
+

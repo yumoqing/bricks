@@ -40,14 +40,34 @@ html, body {
 .error >.title {
 	background-color:#f03030;
 }
+
 .vbox {
 	display: flex;
 	flex-direction:column;
+	overflow-y:overlay;
 }
 
 .hbox {
 	display:flex;
 	flex-direction:row;
+	flex-wrap: nowrap;
+}
+
+.vfiller {
+	flex:1;
+	height:100%;
+}
+
+.hfiller {
+	flex:1;
+	width:100%;
+}
+
+.flc{
+	width:203px;
+	overflow-y:scroll;
+	overflow-x:visible;
+	
 }
 
 .vtoolbar {
@@ -68,13 +88,13 @@ html, body {
 }
 
 .toolbar-button {
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
+	background-color: inherit;
+	float: left;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 14px 16px;
+	transition: 0.3s;
 	border:1px solid #888;
 }
 

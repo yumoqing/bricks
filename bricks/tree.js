@@ -3,7 +3,7 @@ class TreeNode extends VBox {
 		var opts = {
 			width:'100%',
 			height:'auto',
-			overflow:'hide'
+			overflow:'hidden'
 		}
 		super(opts);
 		this.tree = tree;
@@ -17,7 +17,7 @@ class TreeNode extends VBox {
 		}
 		var n = new HBox({
 				height:'auto',
-				overflow:'hide',
+				overflow:'hidden',
 				width:'100%'
 		})
 		n.dom_element.style.margin = bricks_app.charsize * 0.2;
@@ -26,7 +26,7 @@ class TreeNode extends VBox {
 		this.node_widget = n;
 		this.create_node_content(n);
 		if (! this.data.is_leaf) {
-			this.container = new VBox({height:'auto', overflow:'hide'});
+			this.container = new VBox({height:'auto', overflow:'hidden'});
 			this.add_widget(this.container);
 			this.container.dom_element.style.marginLeft = bricks_app.charsize + 'px';
 			if (this.data.children){
@@ -37,9 +37,9 @@ class TreeNode extends VBox {
 	}
 	selected(flg){
 		if (flg){
-			this.str_w.dom_element.classList.add('selected');
+			this.str_w.set_css('selected');
 		} else {
-			this.str_w.dom_element.classList.remove('selected');
+			this.str_w.set_css('selected',true);
 		}
 	}
 	async toggleExpandCollapse(event){
@@ -98,7 +98,26 @@ class TreeNode extends VBox {
 		var txt = this.data[this.tree.opts.textField];
 		widget.add_widget(
 		this.str_w = new Text({text:txt}));
+		this.input = new UiStr({name:'text', value:txt});
+		this.input.bind('blur', this.edit_handle.bind(this));
 		widget.add_widget(this.str_w);
+	}
+	edit(){
+		this.node_widget.remove_widget(this.str_w);
+		this.input.setValue(this.str_w.text);
+		this.node_widget.add_widget(this.input);
+	}
+	async edit_handle(){
+		if (this.input.value==this.str_w.text)
+			return;
+		var v = this.input.value;
+		r = await this.syncdata('edit');
+		this.data[this.tree.opts.textField] = v;
+		this.str_w = new Text({text:v});
+		this.node_widget.remove_widget(this.input);
+		this.node_widget.add_widget(this.str_w);
+	}
+	async syncdata(mode){
 	}
 }
 
@@ -135,15 +154,16 @@ class Tree extends VBox {
 		this.row_height = this.opts.row_height || '35px';
 		this.multitype_tree = this.opts.multitype_tree||false;
 		this.selected_node = null;
-		this.container = this;
+		this.create_toolbar();
+		this.container = new VScrollPanel({});
+		this.add_widget(this.container);
 		this.data_id = null;
-		if (this.opts.admin){
-			this.create_admin_toolbar();
-		}
 		if (this.opts.dataurl){
 			schedule_once(0.01, this.get_children_data.bind(this, this));
 		}
 		this.create_node_children(this, this.opts.data);
+	}
+	create_toolbar(){
 	}
 	async get_children_data(node){
 		var d = await jcall(this.opts.dataurl,{
@@ -172,7 +192,145 @@ class Tree extends VBox {
 	}
 }
 
-class PolymorphyTree extends Tree {
+class EditableTree extends Tree {
+	/*
+	{
+		...
+		admin:{
+			url:
+			add:{
+				icon:
+			}
+			delete_node:{
+				icon:
+			}
+			move_up:
+			move_down:
+			move_top:
+			move_bottom:
+		}
+	}
+	*/
+	constructor(opts){
+		super(opts);
+	}
+	create_toolbar(){
+		if (!this.opts.admin){
+			return
+		}
+		var desc = {
+			height:'auto',
+			tools:[
+				{
+					name:'add',
+					icon:bricks_resource('imgs/add.png')
+				},
+				{
+					name:'edit',
+					icon:bricks_resource('imgs/edit.png')
+				},
+				{
+					name:'move_top',
+					icon:bricks_resource('imgs/move_top.png')
+				},
+				{
+					name:'move_up',
+					icon:bricks_resource('imgs/move_up.png')
+				},
+				{
+					name:'move_down',
+					icon:bricks_resource('imgs/move_down.png')
+				},
+				{
+					name:'move_button',
+					icon:bricks_resource('imgs/move_bottom.png')
+				},
+				{
+					name:'delete',
+					icon:bricks_resource('imgs/delete_node.png')
+				}
+			]
+		}
+		this.toolbar = new Toolbar(desc);
+		this.toolbar.bind('command', this.command_handle.bind(this));
+		this.add_widget(this.toolbar, 0);
+	}
+	command_handle(e){
+		console.log('command event fire ...', e);
+		var name = e.params.name;
+		switch (name) {
+			case 'add':
+				this.add_node();
+				break;
+			case 'delete':
+				this.delete_node();
+				break;
+			case 'edit':
+				this.edit_node();
+				break;
+			case 'move_top':
+				this.move_top();
+				break;
+			case 'move_up':
+				this.move_up();
+				break;
+			case 'move_down':
+				this.move_down();
+				break;
+			case 'move_bottom':
+				this.move_bottom();
+				break;
+		}
+	}
+	add_node(){
+		var node = this;
+		if (this.selected_node) node = this.selected_node;
+		var data = { };
+		data[this.opts.idField] = 'undefined';
+		data[this.opts.textField] = 'new node';
+		var n = new TreeNode(this, node, data);
+		node.container.add_widget(n);
+		n.edit();
+		console.log('add_node() finished ...');
+	}
+	edit_node(){
+		if (! this.selected_node){
+			return;
+		}
+		this.selected_node.edit();
+	}
+	delete_node(){
+		if (! this.selected_node){
+			return;
+		}
+		this.selected_node.delete();
+	}
+	move_top(){
+		if (! this.selected_node){
+			return;
+		}
+		this.selected_node.move_top();
+	}
+	move_up(){
+		if (! this.selected_node){
+			return;
+		}
+		this.selected_node.move_up();
+	}
+	move_down(){
+		if (! this.selected_node){
+			return;
+		}
+		this.selected_node.move_down();
+	}
+	move_botton(){
+		if (! this.selected_node){
+			return;
+		}
+		this.selected_node.move_botton();
+	}
+}
+class  PolymorphyTree extends Tree {
 	/*
 	{
 		root:[t1],
@@ -195,3 +353,4 @@ class PolymorphyTree extends Tree {
 	}
 }
 Factory.register('Tree', Tree);
+Factory.register('EditableTree', EditableTree);

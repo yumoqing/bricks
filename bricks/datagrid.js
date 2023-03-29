@@ -8,6 +8,9 @@ class Row {
 		this.click_handler = this.dg.click_handler.bind(this.dg, this);
 		this.freeze_row = this.create_col_widgets(this.dg.freeze_fields, this.freeze_cols);
 		this.normal_row = this.create_col_widgets(this.dg.normal_fields, this.normal_cols);
+		if (this.freeze_row && this.normal_row){
+			set_max_height(this.freeze_row, this.normal_row);
+		}
 	}
 	create_col_widgets(fields, cols){
 		for (var i=0;i<fields.length;i++){
@@ -37,7 +40,7 @@ class Row {
 			this.name_widgets[f.name] = w;
 		}
 		if (cols.length>0){
-			var row = new HBox({height:'auto', overflow:'hide'})
+			var row = new HBox({height:'auto', overflow:'hidden'})
 			for (var i=0;i<cols.length;i++){
 				row.add_widget(cols[i]);
 			}
@@ -47,18 +50,18 @@ class Row {
 	}
 	selected(){
 		if (this.freeze_row){
-			this.toogle_select(this.freeze_row.dom_element, true);
+			this.freeze_cols.forEach(w => { w.set_css('selected', false)})
 		}
 		if (this.normal_row){
-			this.toogle_select(this.normal_row.dom_element, true);
+			this.normal_cols.forEach(w => { w.set_css('selected', false)})
 		}
 	}
 	unselected(){
 		if (this.freeze_row){
-			this.toogle_select(this.freeze_row.dom_element, false);
+			this.freeze_cols.forEach(w => { w.set_css('selected', true)})
 		}
 		if (this.normal_row){
-			this.toogle_select(this.normal_row.dom_element, false);
+			this.normal_cols.forEach(w => { w.set_css('selected', true)})
 		}
 	}
 	toogle_select(e, f){
@@ -98,6 +101,7 @@ class DataGrid extends VBox {
 	constructor(opts){
 		super(opts);
 		this.set_height('100%');
+		this.loading = false;
 		this.set_width('100%');
 		this.select_row = null;
 		this.set_css('vbox');
@@ -149,11 +153,11 @@ class DataGrid extends VBox {
 			})
 			schedule_once(this.loader.loadData.bind(this.loader), 0.01);
 			if (this.freeze_body){
-				this.freeze_body.bind('min_threshold', this.loader.nextPage.bind(this.loader));
-				this.freeze_body.bind('max_threshold', this.loader.previousPage.bind(this.loader));
+				this.freeze_body.bind('x_min_threshold', this.loader.previousPage.bind(this.loader));
+				this.freeze_body.bind('x_max_threshold', this.loader.nextPage.bind(this.loader));
 			}
-			this.normal_body.bind('min_threshold', this.loader.nextPage.bind(this.loader));
-			this.normal_body.bind('max_threshold', this.loader.previousPage.bind(this.loader));
+			this.normal_body.bind('x_min_threshold', this.loader.previousPage.bind(this.loader));
+			this.normal_body.bind('x_max_threshold', this.loader.nextPage.bind(this.loader));
 		} else {
 			if (this.data){
 				this.add_rows(data);
@@ -201,8 +205,8 @@ class DataGrid extends VBox {
 		return {
 			uitype:'int',
 			name:'_lineno',
-			label:'lineno',
-			width:'25px'
+			label:'#',
+			width:'100px'
 		}
 	}
 	create_parts(){
@@ -230,18 +234,22 @@ class DataGrid extends VBox {
 		this.normal_part = null;
 		if (this.freeze_fields.length>0){
 			this.freeze_part = new VBox({height:'100%', width:'auto'});
-			this.freeze_header = new HBox({height:'auto'});
+			this.freeze_header = new HBox({height:'auto', width:'auto'});
 			this.freeze_body = new VScrollPanel({})
-			this.freeze_body.dom_element.style.paddingRight = '7px';
 			this.freeze_body.bind('scroll', this.coscroll.bind(this));
+		}
+		if (this.normal_fields.length>0){
+			this.normal_part = new HScrollPanel({});
+			this.normal_header = new HBox({height:'auto', width:'auto'});
+			this.normal_body = new ScrollPanel({});
+		}
+		this.create_header();
+		if (this.freeze_fields.length>0){
 			this.freeze_part.add_widget(this.freeze_header);
 			this.freeze_part.add_widget(this.freeze_body);
 			hbox.add_widget(this.freeze_part);
 		}
 		if (this.normal_fields.length>0){
-			this.normal_part = new HScrollPanel({});
-			this.normal_header = new HBox({height:'auto'});
-			this.normal_body = new VScrollPanel({});
 			this.normal_part.add_widget(this.normal_header);
 			this.normal_part.add_widget(this.normal_body);
 			this.normal_body.bind('scroll', this.coscroll.bind(this));
@@ -249,7 +257,6 @@ class DataGrid extends VBox {
 			this.normal_body.bind('max_threshold', this.load_next_data.bind(this));
 			hbox.add_widget(this.normal_part);
 		}
-		this.create_header();
 	}
 	load_previous_data(){
 		console.log('event min_threshold fired ........');
@@ -292,6 +299,10 @@ class DataGrid extends VBox {
 			this.normal_header.add_widget(t);
 			t.dom_element.column_no = 'n' + i;
 		}
+		if (this.normal_header && this.freeze_header){
+			set_max_height(this.normal_header, 
+									this.freeze_header);
+		}
 	}
 	click_handler(row, event){
 		if (this.selected_row){
@@ -299,6 +310,7 @@ class DataGrid extends VBox {
 		}
 		this.selected_row = row;
 		this.selected_row.selected();
+		this.dispatch('row_click', row);
 		console.log('DataGrid():click_handler, row=', row, 'event=', event);
 	}
 }

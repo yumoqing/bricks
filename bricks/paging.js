@@ -17,6 +17,7 @@ class BufferedDataLoader {
 	constructor(w, opts){
 		this.widget = w;
 		this.url = opts.url;
+		this.loading = false
 		this.method = opts.method || 'GET';
 		this.params = opts.params || {};
 		this.buffer_pages = opts.buffer_pages || 5;
@@ -39,6 +40,8 @@ class BufferedDataLoader {
 	}
 
 	async loadPage(page){
+		if (this.loading) return;
+		this.loading = true;
 		if (this.buffered_pages >= this.buffer_pages){
 			this.widget.del_old_rows(this.pagerows, this.direction);
 			this.buffered_pages -= 1;
@@ -58,10 +61,12 @@ class BufferedDataLoader {
 		this.total_page = d.total_page;
 		this.widget.add_rows(d.rows);
 		this.buffered_pages += 1;
+		this.loading = false;
 		return d;
 	}
 	
 	async nextPage(){
+		if (this.loading) return;
 		if (this.cur_page >= this.total_page){
 			return;
 		}
@@ -70,11 +75,12 @@ class BufferedDataLoader {
 		return await this.loadPage();
 	}
 	async previousPage(){
-		if (this.cur_page == 1){
+		if (this.loading) return;
+		if (this.cur_page <= 1){
 			return
 		}
 		this.direction = 'up';
-		this.cur_page += 1;
+		this.cur_page -= 1;
 		return await this.loadPage();
 	}
 }

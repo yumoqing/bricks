@@ -23,7 +23,6 @@ class JsWidget {
 	opts_set_style(){
 		var keys = [
 			"width",
-			"z-index",
 			"x",
 			"y",
 			"height",
@@ -35,6 +34,7 @@ class JsWidget {
 			"color"
 		]
 		var mapping_keys = {
+			"z-index":"zIndex",
 			"overflow-x":"overflowX",
 			"opveflow-y":"overflowY",
 			"bgcolor":"backgroundColor"
@@ -50,6 +50,7 @@ class JsWidget {
 				var mk = mapping_keys[okeys[k]];
 				style[mk] = this.opts[okeys[k]];
 			}
+			this[okeys[k]] = this.opts[okeys[k]];
 		}
 		this.dom_element.style.update(style);
 		if (this.opts.css){
@@ -111,13 +112,25 @@ class JsWidget {
 		this.dom_element.style.textAlign = 'right';
 	}
 	set_width(width){
+		if (typeof(width) == 'number'){
+			width = width + 'px';
+		}
+		this.width = width;
 		this.dom_element.style.width = width;
 	}
 	set_height(height){
+		if (typeof(height) == 'number'){
+			height = height + 'px';
+		}
+		this.height = height;
 		this.dom_element.style.height = height;
 	}
-	set_css(css){
-		this.dom_element.classList.add(css);
+	set_css(css, remove_flg){
+		if (!remove_flg){
+			this.dom_element.classList.add(css);
+		} else {
+			this.dom_element.classList.remove(css);
+		}
 	}
 	set_cssObject(cssobj){
 		this.dom_element.style.update(cssobj);

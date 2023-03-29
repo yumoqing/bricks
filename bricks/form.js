@@ -27,7 +27,7 @@ class Form extends VBox {
 					i18n:true});
 			this.add_widget(d);
 		}
-		this.form_body = new BoxLayout({width:'100%',
+		this.form_body = new Layout({width:'100%',
 							overflow:'auto' 
 							});
 		this.add_widget(this.form_body);

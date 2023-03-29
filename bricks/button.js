@@ -34,8 +34,6 @@ class Button extends Layout {
 			height:"auto",
 			padding:"0.5rem"
 		};
-		if (opts.bgcolor) style.backgroundColor = opts.bgcolor;
-		if (opts.color) style.color = opts.color;
 		if (this.opts.orientation == 'horizontal'){
 			style.flexDirection = 'rows';
 			this.orient = 'h';
@@ -80,6 +78,11 @@ class Button extends Layout {
 		console.log('target_clicked() .... called ');
 		event.stopPropagation();
 		this.dispatch('click', this.opts);
+		if (this.opts.action){
+			if (this.opts.debug){
+				console.log('debug:opts=', this.opts);
+			}
+		}
 	}
 }
 

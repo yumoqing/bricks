@@ -29,33 +29,28 @@ class TabPanel extends Layout {
 		super(options);
 		this.content_buffer = {};
 		this.cur_tab_name = '';
-		this.content_container = new VBox({});
-		this.dom_element.style.width = '100%';
-		this.dom_element.style.height = '100%';
+		this.content_container = new VFiller({});
 		if (this.opts.tab_pos == 'top' ||  this.opts.tab_pos == 'bottom'){
-			this.panel = new VBox({});
+			this.set_css('vbox');
 			var height = this.opts.tab_wide || 'auto';
 			this.tab_container = new VBox({height:height});
 			this.tab_container.dom_element.style.width = this.opts.tab_long || '100%';
 		} else {
-			this.panel = new HBox({});
+			this.set_css('hbox');
 			var width= this.opts.tab_wide || 'auto';
 			this.tab_container = new VBox({width:width});
 			this.tab_container.dom_element.style.height = this.opts.tab_long || '100%';
 		}
 		if (this.opts.tab_pos == 'top' || this.opts.tab_pos == 'left'){
-			this.panel.add_widget(this.tab_container);
-			this.panel.add_widget(this.content_container);
+			this.add_widget(this.tab_container);
+			this.add_widget(this.content_container);
 		} else {
-			this.panel.add_widget(this.content_container);
-			this.panel.add_widget(this.tab_container);
+			this.add_widget(this.content_container);
+			this.add_widget(this.tab_container);
 		}
-		this.panel.dom_element.style.width = '100%';
-		this.panel.dom_element.style.height = '100%';
-		this.add_widget(this.panel);
 		this.createToolbar();
-		this.panel.dom_element.classList.add('tabpanel');
-		this.content_container.dom_element.classList.add('tabpanel-content');
+		this.set_css('tabpanel');
+		this.content_container.set_css('tabpanel-content');
 	}
 	show_first_tab(){
 		this.show_content_by_tab_name(this.opts.items[0].name);

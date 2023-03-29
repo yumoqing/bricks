@@ -1,4 +1,4 @@
-class Toolbar extends BoxLayout {
+class Toolbar extends Layout {
 	/* toolbar options
 	{
 		orientation:
@@ -31,6 +31,7 @@ class Toolbar extends BoxLayout {
 			this.dom_element.classList.add('htoolbar')
 		}
 		this.add_widget(this.bar);
+		this.clicked_btn = null;
 		this.preffix_css = this.opts.css || 'toolbar';
 		schedule_once(this.createTools.bind(this), 0.01);
 	}
@@ -83,10 +84,11 @@ class Toolbar extends BoxLayout {
 		}
 		this.dispatch('command', d);
 
-		for (var i=0;i<this.toolList.length;i++){
-			this.toolList[i].dom_element.classList.remove(this.preffix_css + '-button-active');
+		if (this.clicked_btn){
+			this.clicked_btn.set_css(this.preffix_css + '-button-active', true);
 		}
-		tool.dom_element.classList.add(this.preffix_css + '-button-active');
+		tool.set_css(this.preffix_css + '-button-active');
+		this.clicked_btn = tool;
 	}
 	add_removable(item){
 		if (! item.tool_opts.removable) return;

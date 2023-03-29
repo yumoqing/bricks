@@ -1,94 +1,109 @@
-class HScrollPanel extends Layout {
+class ScrollPanel extends VBox {
 	/*
 	{
+		overflowX:hidden,
+		overflowY:hidden,
 		min_threshold:
 		max_htreshold:
-		width:
-		height:
-		css
 	}
 	*/
 	constructor(opts){
+		if (!opts.overflowX) opts.overflowX = 'scroll';
+		if (!opts.overflowY) opts.overflowY = 'scroll';
+		opts.width = '100%',
+		opts.height = '100%'
 		super(opts);
-		var style = {
-			width:opts.width || "100%",
-			overflowY:'hide',
-			overflowX:"scroll"
-		}
-		this.set_cssObject(style);
-		this.min_threshold = this.opts.min_threshold|| 0.05;
-		this.max_threshold = this.opts.max_threshold|| 0.95;
-		this.bind('scroll', this.scroll_handle.bind(this))
-		this.last_scrollLeft = this.dom_element.scrollLeft;
+		this.overflowX = opts.overflowX;
+		this.overflowY = opts.overflowY;
+		this.scrollpanel = new Layout(opts);
+		VBox.prototype.add_widget.bind(this)(this.scrollpanel);
+		this.min_threshold = this.opts.min_threshold|| 0.01;
+		this.max_threshold = this.opts.max_threshold|| 0.99;
+		this.scrollpanel.bind('scroll', this.scroll_handle.bind(this))
+		this.last_scrollLeft = this.scrollpanel.dom_element.scrollLeft;
+		this.last_scrollTop = this.scrollpanel.dom_element.scrollTop;
 		this.threshold = false;
 	}
+	add_widget(w, idx){
+		this.scrollpanel.add_widget(w, idx);
+	}
+	remove_widgets_at_begin(cnt){
+		this.scrollpanel.remove_widgets_at_begin(cnt);
+	}
+	remove_widgets_at_end(cnt){
+		this.scrollpanel.remove_widgets_at_end(cnt);
+	}
+	remove_widget(w){
+		this.scrollpanel.remove_widget(w);
+	}
+	clear_widgets(){
+		this.scrollpanel.clear_widgets();
+	}
+	remove_widgets(cnt, x){
+		this.scrollpanel.remove_widgets(cnt, x);
+	}
 	scroll_handle(event){
-		// event.stopPropagation();
-		// console.log('scroll happend...');
+		console.log(event.target, 'scrolled ..., this=', this);
 		var e = this.dom_element;
-		var maxv = e.scrollWidth - e.clientWidth;
-		var rate = e.scrollLeft / maxv;
-		var dir = e.scrollLeft - this.last_scrollLeft;
-		this.last_scrollLeft = e.scrollLeft;
-		if (!this.threshold && dir < 0 && rate <= this.min_threshold){
+		this.x_scroll_handle(event);
+		this.y_scroll_handle(event);
+	}
+	x_scroll_handle(event){
+		if (this.overflowX!='scroll'){
+			return;
+		}
+		e = this.scrollpanel;
+		this.low_handle('x', this.last_scrollLeft, 
+						e.dom_element.scrollLeft,
+						e.dom_element.scrollWidth,
+						e.dom_element.clientWidth);
+		this.last_scrollLeft = e.dom_element.scrollLeft;
+	}
+	y_scroll_handle(event){
+		if (this.overflowY!='scroll'){
+			return;
+		}
+		e = this.scrollpanel;
+		this.low_handle('y', this.last_scrollTop, 
+						e.dom_element.scrollTop,
+						e.dom_element.scrollHeight,
+						e.dom_element.clientHeight);
+		this.last_scrollTop = e.dom_element.scrollTop;
+	}
+	low_handle(dim, last_pos, cur_pos, maxlen, winsize){
+		var dir = cur_pos - last_pos;
+		var max_rate = cur_pos / (maxlen - winsize);
+		var min_rate = cur_pos / maxlen;
+		if (!this.threshold && dir > 0 && max_rate >= this.max_threshold){
 			this.thresgold = true;
-			this.dispatch('min_threshold');
-			console.log('event min_threshold happend...');
+			this.dispatch(dim + '_max_threshold');
 			return
 		}
-		if (!this.threshold && dir > 1 && rate >= this.max_threshold){
+		if (!this.threshold && dir < 0 && min_rate <= this.min_threshold){
 			this.thresgold = true;
-			this.dispatch('max_threshold');
-			console.log('event max_threshold happend...');
+			this.dispatch(dim + '_min_threshold');
 			return
 		}
-		this.threshold = false;
 	}
 }
 
-class VScrollPanel extends Layout {
-	/*
-	{
-		min_threshold:
-		max_htreshold:
-		width:
-		height:
-		css
-	}
-	*/
+class HScrollPanel extends ScrollPanel {
 	constructor(opts){
+		opts.overflowX='scroll';
+		opts.overflowY='hidden';
 		super(opts);
-		var style = {
-			height:opts.height || "100%",
-			overflowX:'hide',
-			overflowY:"scroll"
-		}
-		this.set_cssObject(style);
-		this.min_threshold = this.opts.min_threshold|| 0.05;
-		this.max_threshold = this.opts.max_threshold|| 0.95;
-		this.bind('scroll', this.scroll_handle.bind(this))
-		this.last_scrollTop = this.dom_element.scrollTop;
-		this.threshold = false;
-	}
-	scroll_handle(event){
-		event.stopPropagation()
-		var e = this.dom_element;
-		var maxv = e.scrollHeight - e.clientHeight;
-		var rate = e.scrollTop / maxv;
-		var dir = e.scrollTop - this.last_scrollTop;
-		this.last_scrollTop = e.scrollTop;
-		if (!this.threshold && dir < 0 && rate <= this.min_threshold){
-			this.thresgold = true;
-			this.dispatch('min_threshold');
-			console.log('event min_threshold happend...');
-			return
-		}
-		if (!this.threshold && dir > 1 && rate >= this.max_threshold){
-			this.thresgold = true;
-			this.dispatch('max_threshold');
-			console.log('event max_threshold happend...');
-			return
-		}
-		this.threshold = false;
 	}
 }
+
+class VScrollPanel extends ScrollPanel {
+	constructor(opts){
+		opts.overflowX='hidden';
+		opts.overflowY='scroll';
+		super(opts);
+	}
+}
+
+Factory.register('ScrollPanel', ScrollPanel);
+Factory.register('VScrollPanel', VScrollPanel);
+Factory.register('HScrollPanel', HScrollPanel);
+
