@@ -29,17 +29,17 @@ Bricks内置许多的显示控件，所有显示控件都继承自JsWidget，容
 * [ScrollPanel](scrollpanel.md)：滚动面板
 * [VScrollPanel](vscrollpanel.md)：纵向滚动面板
 * [HScrollPanel](hscrollpanel.md)：横向滚动面板
-* TabPanel：标签面板控件
-* Toolbar：工具条控件
-* Tree：树状显示控件
-* EditableTree：可编辑树状显示控件
-* VideoPlayer：视频播放器控件
-* Text：正文控件
-* Title1：标题1控件
-* Title2：标题2控件
-* Title3：标题3控件
-* Title4：标题4控件
-* Title5：标题5控件
-* Title6：标题6控件
+* [TabPanel][tabpanel.md)：标签面板控件
+* [Toolbar](toolbar.md)：工具条控件
+* [Tree](tree.md)：树状显示控件
+* [EditableTree](editabletree.md)：可编辑树状显示控件
+* [VideoPlayer](videoplayer.md)：视频播放器控件
+* [Text](text.md)：正文控件
+* [Title1](title1.md)：标题1控件
+* [Title2](title2.md)：标题2控件
+* [Title3](title3.md)：标题3控件
+* [Title4](title4.md)：标题4控件
+* [Title5](title5.md)：标题5控件
+* [Title6](title6.md)：标题6控件
 
 # 
