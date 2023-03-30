@@ -8,6 +8,9 @@
 ## Bricks控件描述文件
 Bricks使用json格式描述控件，具体格式要求请看[控件描述文件](descjson.md)
 
+## BricksApp
+Bricks应用类，参见[BricksApp](bricksapp.md)
+
 ## bricks主要函数
 ### widgetBuild
 创建控件函数，详细说明请看[这里](bricks.md)
