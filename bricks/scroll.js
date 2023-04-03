@@ -1,109 +1,73 @@
-class ScrollPanel extends VBox {
+
+var low_handle = function(widget, dim, last_pos, cur_pos, maxlen, winsize){
+	var dir = cur_pos - last_pos;
+	var max_rate = cur_pos / (maxlen - winsize);
+	var min_rate = cur_pos / maxlen;
+	if (!widget.threshold && dir > 0 && max_rate >= widget.max_threshold){
+		console.log('max_threshold reached ...');
+		widget.thresgold = true;
+		widget.dispatch('max_threshold');
+		return
+	}
+	if (!widget.threshold && dir < 0 && min_rate <= widget.min_threshold){
+		console.log('min_threshold reached ...');
+		widget.thresgold = true;
+		widget.dispatch('min_threshold');
+		return
+	}
+	console.log('scroll_handle() called ...', max_rate, cur_pos, maxlen, winsize);
+}
+
+class HScrollPanel extends HFiller {
 	/*
 	{
-		overflowX:hidden,
-		overflowY:hidden,
 		min_threshold:
-		max_htreshold:
+		max_threshold:
 	}
 	*/
 	constructor(opts){
-		if (!opts.overflowX) opts.overflowX = 'scroll';
-		if (!opts.overflowY) opts.overflowY = 'scroll';
-		opts.width = '100%',
-		opts.height = '100%'
 		super(opts);
-		this.overflowX = opts.overflowX;
-		this.overflowY = opts.overflowY;
-		this.scrollpanel = new Layout(opts);
-		VBox.prototype.add_widget.bind(this)(this.scrollpanel);
-		this.min_threshold = this.opts.min_threshold|| 0.01;
-		this.max_threshold = this.opts.max_threshold|| 0.99;
-		this.scrollpanel.bind('scroll', this.scroll_handle.bind(this))
-		this.last_scrollLeft = this.scrollpanel.dom_element.scrollLeft;
-		this.last_scrollTop = this.scrollpanel.dom_element.scrollTop;
+		this.min_threshold = opts.min_threshold || 0.02;
+		this.max_threshold = opts.max_threshold || 0.95;
+		this.bind('scroll', this.scroll_handle.bind(this))
+		this.last_scrollLeft = this.dom_element.scrollLeft;
 		this.threshold = false;
 	}
-	add_widget(w, idx){
-		this.scrollpanel.add_widget(w, idx);
-	}
-	remove_widgets_at_begin(cnt){
-		this.scrollpanel.remove_widgets_at_begin(cnt);
-	}
-	remove_widgets_at_end(cnt){
-		this.scrollpanel.remove_widgets_at_end(cnt);
-	}
-	remove_widget(w){
-		this.scrollpanel.remove_widget(w);
-	}
-	clear_widgets(){
-		this.scrollpanel.clear_widgets();
-	}
-	remove_widgets(cnt, x){
-		this.scrollpanel.remove_widgets(cnt, x);
-	}
 	scroll_handle(event){
-		console.log(event.target, 'scrolled ..., this=', this);
-		var e = this.dom_element;
-		this.x_scroll_handle(event);
-		this.y_scroll_handle(event);
-	}
-	x_scroll_handle(event){
-		if (this.overflowX!='scroll'){
-			return;
-		}
-		e = this.scrollpanel;
-		this.low_handle('x', this.last_scrollLeft, 
+		var e = this;
+		low_handle(this, 'x', e.last_scrollLeft, 
 						e.dom_element.scrollLeft,
 						e.dom_element.scrollWidth,
 						e.dom_element.clientWidth);
+
 		this.last_scrollLeft = e.dom_element.scrollLeft;
 	}
-	y_scroll_handle(event){
-		if (this.overflowY!='scroll'){
-			return;
-		}
-		e = this.scrollpanel;
-		this.low_handle('y', this.last_scrollTop, 
+}
+
+class VScrollPanel extends VFiller {
+	/*
+	{
+		min_threshold:
+		max_threshold:
+	}
+	*/
+	constructor(opts){
+		super(opts);
+		this.min_threshold = opts.min_threshold || 0.02;
+		this.max_threshold = opts.max_threshold || 0.95;
+		this.bind('scroll', this.scroll_handle.bind(this))
+		this.last_scrollTop = this.dom_element.scrollTop;
+	}
+	scroll_handle(event){
+		var e = this;
+		low_handle(this, 'y', e.last_scrollTop, 
 						e.dom_element.scrollTop,
 						e.dom_element.scrollHeight,
 						e.dom_element.clientHeight);
 		this.last_scrollTop = e.dom_element.scrollTop;
 	}
-	low_handle(dim, last_pos, cur_pos, maxlen, winsize){
-		var dir = cur_pos - last_pos;
-		var max_rate = cur_pos / (maxlen - winsize);
-		var min_rate = cur_pos / maxlen;
-		if (!this.threshold && dir > 0 && max_rate >= this.max_threshold){
-			this.thresgold = true;
-			this.dispatch(dim + '_max_threshold');
-			return
-		}
-		if (!this.threshold && dir < 0 && min_rate <= this.min_threshold){
-			this.thresgold = true;
-			this.dispatch(dim + '_min_threshold');
-			return
-		}
-	}
 }
 
-class HScrollPanel extends ScrollPanel {
-	constructor(opts){
-		opts.overflowX='scroll';
-		opts.overflowY='hidden';
-		super(opts);
-	}
-}
-
-class VScrollPanel extends ScrollPanel {
-	constructor(opts){
-		opts.overflowX='hidden';
-		opts.overflowY='scroll';
-		super(opts);
-	}
-}
-
-Factory.register('ScrollPanel', ScrollPanel);
 Factory.register('VScrollPanel', VScrollPanel);
 Factory.register('HScrollPanel', HScrollPanel);
 

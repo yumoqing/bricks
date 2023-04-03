@@ -40,7 +40,7 @@ class Row {
 			this.name_widgets[f.name] = w;
 		}
 		if (cols.length>0){
-			var row = new HBox({height:'auto', overflow:'hidden'})
+			var row = new HBox({height:'auto'})
 			for (var i=0;i<cols.length;i++){
 				row.add_widget(cols[i]);
 			}
@@ -101,8 +101,8 @@ class DataGrid extends VBox {
 	constructor(opts){
 		super(opts);
 		this.set_height('100%');
-		this.loading = false;
 		this.set_width('100%');
+		this.loading = false;
 		this.select_row = null;
 		this.set_css('vbox');
 		this.dataurl = opts.dataurl;
@@ -211,6 +211,7 @@ class DataGrid extends VBox {
 	}
 	create_parts(){
 		var hbox = new HBox({});
+		hbox.set_css('vfiller');
 		this.add_widget(hbox);
 		this.freeze_fields = [];
 		this.normal_fields = [];
@@ -228,20 +229,18 @@ class DataGrid extends VBox {
 				this.normal_fields.push(f);
 			}
 		}
-		console.log('freeze_fields=', this.freeze_fields);
-		console.log('normal_fields=', this.normal_fields);
 		this.freeze_part = null;
 		this.normal_part = null;
 		if (this.freeze_fields.length>0){
-			this.freeze_part = new VBox({height:'100%', width:'auto'});
+			this.freeze_part = new VBox({});
 			this.freeze_header = new HBox({height:'auto', width:'auto'});
-			this.freeze_body = new VScrollPanel({})
+			this.freeze_body = new VScrollPanel({width:'auto'})
 			this.freeze_body.bind('scroll', this.coscroll.bind(this));
 		}
 		if (this.normal_fields.length>0){
-			this.normal_part = new HScrollPanel({});
-			this.normal_header = new HBox({height:'auto', width:'auto'});
-			this.normal_body = new ScrollPanel({});
+			this.normal_part = new VBox({});
+			this.normal_header = new HBox({});
+			this.normal_body = new HScrollPanel({});
 		}
 		this.create_header();
 		if (this.freeze_fields.length>0){

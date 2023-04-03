@@ -3,6 +3,7 @@ class Toolbar extends Layout {
 	{
 		orientation:
 		target:
+		tool_margin:
 		tools:
 	}
 	tool options
@@ -45,6 +46,8 @@ class Toolbar extends Layout {
 		var options = {
 			"widgettype":"Button",
 			"options":{
+				width:"auto",
+				leftMargin:this.opts.tool_margin || '10px',
 				orientation:"horizontal",
 				icon:desc.icon,
 				label:desc.label,
@@ -52,7 +55,6 @@ class Toolbar extends Layout {
 				css:desc.css
 			}
 		};
-		console.log('options=', options, '---------', desc);
 		var w = await widgetBuild(options);
 		if (! w){
 			console.log('Toolbar(): build widget failed', options);

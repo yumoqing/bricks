@@ -5,11 +5,11 @@ class JsWidget {
 		if (!options){
 			options = {}
 		}
+		this.baseURI = options.baseURI;
 		this.opts = options;
 		this.create();
 		this.dom_element.bricks_widget = this;
 		this.opts_set_style();
-		this.baseURI = options.baseURI;
 		if (this.opts.tooltip){
 			this.dom_element.tooltip = this.opts.tooltip;
 		}
@@ -30,6 +30,8 @@ class JsWidget {
 			"padding",
 			"align",
 			"textAlign",
+			"overflowY",
+			"overflowX",
 			"overflow",
 			"color"
 		]

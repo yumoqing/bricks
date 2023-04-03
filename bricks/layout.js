@@ -54,6 +54,8 @@ class Layout extends JsWidget {
 class _Body extends Layout {
 	constructor(options){
 		super(options);
+	}
+	create(){
 		this.dom_element = document.getElementsByTagName('body')[0];
 		this.set_baseURI(this.dom_element.baseURI);
 	}

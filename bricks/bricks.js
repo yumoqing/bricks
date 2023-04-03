@@ -278,7 +278,7 @@ var getWidgetById = function(id, from_widget){
 	if (! id){
 		return from_widget;
 	}
-	if (typeiof(id) != 'string') return id;
+	if (typeof(id) != 'string') return id;
 	var ids = id.split('/');
 	var el = from_widget.dom_element;
 	var j = 0;
