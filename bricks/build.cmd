@@ -13,4 +13,3 @@ copy ..\docs\*.* e:\gadget\wwwroot\docs
 echo copy ..\docs\*.* e:\gadget\wwwroot\docs
 copy ..\examples\*.* e:\gadget\wwwroot\examples
 echo copy ..\examples\*.* e:\gadget\wwwroot\examples
-echo dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd

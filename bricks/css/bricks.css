@@ -52,7 +52,7 @@ html, body {
 .vbox {
 	display: flex;
 	flex-direction:column;
-	overflow-y:overlay;
+	/* overflow-y:overlay; */
 }
 
 .hbox {
@@ -63,21 +63,21 @@ html, body {
 
 .vfiller {
 	flex:1 1 auto;
-	overflow-y:scroll;
-	overflow-x:visible;
+	overflow-y:hidden;
+	overflow-x:hidden;
 }
-
+.vfiller .vbox:last-child{
+	overflow-x: scroll;
+}
 .hfiller {
 	flex:1 auto;
-	overflow-x:scroll;
-	overflow-y:visible;
+	overflow-x:hidden;
+	overflow-y:auto;
 }
-
 .flc{
 	width:203px;
 	overflow-y:scroll;
-	overflow-x:visible;
-	
+	overflow-x:visible;	
 }
 
 .vtoolbar {
