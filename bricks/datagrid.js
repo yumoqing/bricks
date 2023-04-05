@@ -1,5 +1,5 @@
 class Row {
-	constructor(dg, rec){
+	constructor(dg, rec) {
 		this.dg = dg;
 		this.data = rec.copy();
 		this.freeze_cols = [];
@@ -8,24 +8,24 @@ class Row {
 		this.click_handler = this.dg.click_handler.bind(this.dg, this);
 		this.freeze_row = this.create_col_widgets(this.dg.freeze_fields, this.freeze_cols);
 		this.normal_row = this.create_col_widgets(this.dg.normal_fields, this.normal_cols);
-		if (this.freeze_row && this.normal_row){
+		if (this.freeze_row && this.normal_row) {
 			set_max_height(this.freeze_row, this.normal_row);
 		}
 	}
-	create_col_widgets(fields, cols){
-		for (var i=0;i<fields.length;i++){
+	create_col_widgets(fields, cols) {
+		for (var i = 0; i < fields.length; i++) {
 			var f = fields[i];
-			var opts = f.uioptions|| {};
+			var opts = f.uioptions || {};
 			var w;
 			opts.update({
-				name:f.name,
-				label:f.label,
-				uitype:f.uitype,
-				width:f.width,
-				required:true,
-				readonly:true
+				name: f.name,
+				label: f.label,
+				uitype: f.uitype,
+				width: f.width,
+				required: true,
+				readonly: true
 			});
-			if (opts.uitype=='button'){
+			if (opts.uitype == 'button') {
 				opts.icon = f.icon;
 				opts.action = f.action;
 				opts.action.params = this.data.copy();
@@ -33,38 +33,39 @@ class Row {
 				buildEventBind(this.dg, w, 'click', opts.action);
 			} else {
 				opts.value = this.data[f.name],
-				w = Input.factory(opts);
+					w = Input.factory(opts);
 				w.bind('click', this.click_handler);
 			}
+			w.dom_element.style['min-width'] = w.width + 'px';
 			cols.push(w);
 			this.name_widgets[f.name] = w;
 		}
-		if (cols.length>0){
-			var row = new HBox({height:'auto'})
-			for (var i=0;i<cols.length;i++){
+		if (cols.length > 0) {
+			var row = new HBox({ height: 'auto' })
+			for (var i = 0; i < cols.length; i++) {
 				row.add_widget(cols[i]);
 			}
 			return row;
 		}
 		return null;
 	}
-	selected(){
-		if (this.freeze_row){
-			this.freeze_cols.forEach(w => { w.set_css('selected', false)})
+	selected() {
+		if (this.freeze_row) {
+			this.freeze_cols.forEach(w => { w.set_css('selected', false) })
 		}
-		if (this.normal_row){
-			this.normal_cols.forEach(w => { w.set_css('selected', false)})
-		}
-	}
-	unselected(){
-		if (this.freeze_row){
-			this.freeze_cols.forEach(w => { w.set_css('selected', true)})
-		}
-		if (this.normal_row){
-			this.normal_cols.forEach(w => { w.set_css('selected', true)})
+		if (this.normal_row) {
+			this.normal_cols.forEach(w => { w.set_css('selected', false) })
 		}
 	}
-	toogle_select(e, f){
+	unselected() {
+		if (this.freeze_row) {
+			this.freeze_cols.forEach(w => { w.set_css('selected', true) })
+		}
+		if (this.normal_row) {
+			this.normal_cols.forEach(w => { w.set_css('selected', true) })
+		}
+	}
+	toogle_select(e, f) {
 		if (f) e.classList.add('selected');
 		else e.classList.remove('selected');
 	}
@@ -98,7 +99,7 @@ class DataGrid extends VBox {
 		]
 	}
 	*/
-	constructor(opts){
+	constructor(opts) {
 		super(opts);
 		this.set_height('100%');
 		this.set_width('100%');
@@ -118,137 +119,141 @@ class DataGrid extends VBox {
 		this.fields = opts.fields;
 		this.header_css = opts.header_css || 'grid_header';
 		this.body_css = opts.body_css || 'grid_body';
-		if (this.title){
-			this.title_bar = new HBox({height:'auto'});
+		if (this.title) {
+			this.title_bar = new HBox({ height: 'auto' });
 			this.add_widget(this.title_bar);
-			var tw = new Title1({otext:this.title, i18n:true});
+			var tw = new Title1({ otext: this.title, i18n: true });
 			this.title_bar.add_widget(tw);
 		}
-		if (this.description){
-			this.descbar = new HBox({height:'auto'});
+		if (this.description) {
+			this.descbar = new HBox({ height: 'auto' });
 			this.add_widget(this.descbar);
-			var dw = new Text({otext:this.description, i18n:true});
+			var dw = new Text({ otext: this.description, i18n: true });
 			this.descbar.add_widget(dw);
 		}
-		if (this.admin){
+		if (this.admin) {
 			var desc = {
-				height:'auto',
-				tools:[]
+				height: 'auto',
+				tools: []
 			};
 			var tbw = new Toolbar(desc);
 			this.add_widget(tbw);
 		}
 		this.create_parts();
-		if (this.show_info){
-			this.infow = new HBox({height:'40px'});
+		if (this.show_info) {
+			this.infow = new HBox({ height: '40px' });
 			this.add_widget(this.infow);
 		}
-		if (this.dataurl){
+		if (this.dataurl) {
 			this.loader = new BufferedDataLoader(this, {
-				pagerows:80,
-				buffer_pages:5,
-				url:absurl(this.dataurl,this),
-				methiod:this.method,
-				params:this.params
+				pagerows: 80,
+				buffer_pages: 5,
+				url: absurl(this.dataurl, this),
+				methiod: this.method,
+				params: this.params
 			})
 			schedule_once(this.loader.loadData.bind(this.loader), 0.01);
-			if (this.freeze_body){
+			if (this.freeze_body) {
 				this.freeze_body.bind('x_min_threshold', this.loader.previousPage.bind(this.loader));
 				this.freeze_body.bind('x_max_threshold', this.loader.nextPage.bind(this.loader));
 			}
 			this.normal_body.bind('x_min_threshold', this.loader.previousPage.bind(this.loader));
 			this.normal_body.bind('x_max_threshold', this.loader.nextPage.bind(this.loader));
 		} else {
-			if (this.data){
-				this.add_rows(data);
+			if (this.data) {
+				this.add_rows(this.data);
 			}
 		}
 	}
-	del_old_rows(cnt, direction){
-		if (this.freeze_body){
-			if (direction == 'down'){
+	del_old_rows(cnt, direction) {
+		if (this.freeze_body) {
+			if (direction == 'down') {
 				this.freeze_body.remove_widgets_at_begin(cnt);
 			} else {
 				this.freeze_body.remove_widgets_at_end(cnt);
 			}
 		}
-		if (direction == 'down'){
+		if (direction == 'down') {
 			this.normal_body.remove_widgets_at_begin(cnt);
 		} else {
 			this.normal_body.remove_widgets_at_end(cnt);
 		}
 	}
-	add_rows(records, direction){
+	add_rows(records, direction) {
 		var index = null;
-		if (direction=='down'){
+		if (direction == 'down') {
 			index = 0
 		}
-		for (var i=0;i<records.length;i++){
+		for (var i = 0; i < records.length; i++) {
 			this.add_row(records[i], index);
 		}
 	}
-	add_row(data, index){
+	add_row(data, index) {
 		var row = new Row(this, data);
 		if (this.freeze_body)
 			this.freeze_body.add_widget(row.freeze_row, index);
 		if (this.normal_body)
 			this.normal_body.add_widget(row.normal_row, index);
 	}
-	check_desc(){
+	check_desc() {
 		return {
-			uitype:'check',
-			name:'_check',
-			width:'20px'
+			uitype: 'check',
+			name: '_check',
+			width: '20px'
 		}
 	}
-	lineno_desc(){
+	lineno_desc() {
 		return {
-			uitype:'int',
-			name:'_lineno',
-			label:'#',
-			width:'100px'
+			uitype: 'int',
+			name: '_lineno',
+			label: '#',
+			width: '100px'
 		}
 	}
-	create_parts(){
+	create_parts() {
+		let freezeWidthAll = 0, normalWidthAll = 0;
 		var hbox = new HBox({});
 		hbox.set_css('vfiller');
 		this.add_widget(hbox);
 		this.freeze_fields = [];
 		this.normal_fields = [];
-		if (this.check){
+		if (this.check) {
 			this.freeze_fields.push(this.check_desc());
 		}
-		if (this.lineno){
+		if (this.lineno) {
 			this.freeze_fields.push(this.lineno_desc());
 		}
-		for (var i=0; i<this.fields.length; i++){
+		for (var i = 0; i < this.fields.length; i++) {
 			var f = this.fields[i];
 			if (f.freeze) {
 				this.freeze_fields.push(f);
+				freezeWidthAll += f.width
 			} else {
 				this.normal_fields.push(f);
+				normalWidthAll += f.width
+
 			}
 		}
 		this.freeze_part = null;
 		this.normal_part = null;
-		if (this.freeze_fields.length>0){
-			this.freeze_part = new VBox({});
-			this.freeze_header = new HBox({height:'auto', width:'auto'});
-			this.freeze_body = new VScrollPanel({width:'auto'})
+		if (this.freeze_fields.length > 0) {
+			this.freeze_part = new VBox({ width: freezeWidthAll + 'px' });
+			this.freeze_header = new HBox({ height: 'auto', width: 'auto' });
+			this.freeze_body = new VScrollPanel({ width: 'auto' })
 			this.freeze_body.bind('scroll', this.coscroll.bind(this));
 		}
-		if (this.normal_fields.length>0){
-			this.normal_part = new VBox({});
+		if (this.normal_fields.length > 0) {
+			this.normal_part = new VBox({ width: normalWidthAll + 'px' });
 			this.normal_header = new HBox({});
-			this.normal_body = new HScrollPanel({});
+			this.normal_body = new HScrollPanel({width: normalWidthAll + 'px'});
 		}
 		this.create_header();
-		if (this.freeze_fields.length>0){
+		if (this.freeze_fields.length > 0) {
 			this.freeze_part.add_widget(this.freeze_header);
 			this.freeze_part.add_widget(this.freeze_body);
 			hbox.add_widget(this.freeze_part);
 		}
-		if (this.normal_fields.length>0){
+		if (this.normal_fields.length > 0) {
 			this.normal_part.add_widget(this.normal_header);
 			this.normal_part.add_widget(this.normal_body);
 			this.normal_body.bind('scroll', this.coscroll.bind(this));
@@ -257,54 +262,57 @@ class DataGrid extends VBox {
 			hbox.add_widget(this.normal_part);
 		}
 	}
-	load_previous_data(){
+	load_previous_data() {
 		console.log('event min_threshold fired ........');
 		this.loader.previousPage();
 	}
-	load_next_data(){
+	load_next_data() {
 		console.log('event max_threshold fired ........');
 		this.loader.nextPage();
 	}
-	coscroll(event){
+	coscroll(event) {
 		var w = event.target.bricks_widget;
-		if (w==this.freeze_body){
+		if (w == this.freeze_body) {
 			this.normal_body.dom_element.scrollTop = w.dom_element.scrollTop;
-		} else if (w == this.normal_body && this.freeze_body){
+		} else if (w == this.normal_body && this.freeze_body) {
 			this.freeze_body.dom_element.scrollTop = w.dom_element.scrollTop;
 		}
 	}
-			
-	create_header(){
-		for (var i=0; i<this.freeze_fields.length; i++){
+
+	create_header() {
+		for (var i = 0; i < this.freeze_fields.length; i++) {
 			var f = this.freeze_fields[i];
 			var t = new Text({
-					width:f.width,
-					otext:f.label||f.name,
-					i18n:true,
+				width: f.width,
+				otext: f.label || f.name,
+				i18n: true,
 			});
+			if (f.width) {
+				t.dom_element.style['min-width'] = f.width
+			}
 			this.freeze_header.add_widget(t);
 			t.dom_element.column_no = 'f' + i;
 		}
-		for (var i=0; i<this.normal_fields.length; i++){
+		for (var i = 0; i < this.normal_fields.length; i++) {
 			var f = this.normal_fields[i];
 			var t = new Text({
-					width:f.width,
-					otext:f.label||f.name,
-					i18n:true,
+				width: f.width,
+				otext: f.label || f.name,
+				i18n: true,
 			});
-			if (f.width){
-				t.dom_element.style.width = f.width
+			if (f.width) {
+				t.dom_element.style['min-width'] = f.width
 			}
 			this.normal_header.add_widget(t);
 			t.dom_element.column_no = 'n' + i;
 		}
-		if (this.normal_header && this.freeze_header){
-			set_max_height(this.normal_header, 
-									this.freeze_header);
+		if (this.normal_header && this.freeze_header) {
+			set_max_height(this.normal_header,
+				this.freeze_header);
 		}
 	}
-	click_handler(row, event){
-		if (this.selected_row){
+	click_handler(row, event) {
+		if (this.selected_row) {
 			this.selected_row.unselected();
 		}
 		this.selected_row = row;
