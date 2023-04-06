@@ -1,13 +1,19 @@
 
-class Form extends VBox {
+class FormBody extends VBox {
 	/*
 	{
 		title:
 		description:
-		cols:
-		dataurl:
-		submit_url:
-		fields
+		fields: [
+			{
+				"name":,
+				"label":,
+				"removable":
+				"icon":
+				"content":
+			},
+			...
+		]
 	}
 	*/
 	constructor(opts){
@@ -32,28 +38,7 @@ class Form extends VBox {
 							});
 		this.add_widget(this.form_body);
 		this.form_body.set_css('multicolumns');
-		this.build_fields(this.opts.fields);
-		this.build_buttons(this);
-	}
-	build_buttons(widget){
-		var reset = new Button({
-				orientation:'horizontal',
-				icon:bricks_resource('imgs/reset.png'),
-				name:'reset',
-				text:'Reset'
-			});
-		reset.bind('click', this.reset_data.bind(this));
-		var submit = new Button({
-				orientation:'horizontal',
-				icon:bricks_resource('imgs/submit.png'),
-				name:'submit',
-				text:'Submit'
-			});
-		submit.bind('click', this.validation.bind(this));
-		var hbox = new HBox({width:'100%', height:'none'});
-		hbox.add_widget(reset);
-		hbox.add_widget(submit);
-		widget.add_widget(hbox);
+		this.build_fields();
 	}
 	reset_data(){
 		for (var name in this.name_inputs){
@@ -90,7 +75,8 @@ class Form extends VBox {
 		this.dispatch('submit', data);
 	}
 
-	build_fields(fields){
+	build_fields(){
+		var fields = this.opts.fields;
 		for (var i=0; i<fields.length; i++){
 			var box = new VBox({height:'auto',overflow:'none'});
 			box.set_css('inputbox');
@@ -111,5 +97,107 @@ class Form extends VBox {
 		}
 	}
 }
+class Form extends VBox {
+	/*
+	{
+		title:
+		description:
+		cols:
+		dataurl:
+		toolbar:
+		submit_url:
+		fields
+	}
+	*/
+	constructor(opts){
+		super(opts);
+		this.body = new FormBody(opts);
+		this.add_widget(this.body);
+		this.build_toolbar(this);
+	}
+	build_toolbar(widget){
+		var box = new HBox({height:'auto', width:'100%'});
+		widget.add_widget(box);
+		var tb_desc = this.opts.toolbar || {
+			width:"auto",
+			tools:[
+				{
+					icon:bricks_resource('imgs/submit.png'),
+					name:'submit',
+					label:'Submit'
+				},
+				{
+					icon:bricks_resource('imgs/cancel.png'),
+					name:'cancel',
+					label:'Cancel'
+				}
+			]
+		};
+		var tbw = new Toolbar(tb_desc);
+		tbw.bind('command', this.command_handle.bind(this));
+		box.add_widget(new HFiller());
+		box.add_widget(tbw);
+		box.add_widget(new HFiller());
+	}
+	command_handle(event){
+		var params = event.params;
+		console.log('Form(): click_handle() params=', params);
+		if (!params){
+			error('click_handle() get a null params');
+			return
+		}
+		if (params.name == 'submit'){
+			this.validation();
+		} else if (params.name == 'cancel'){
+			this.cancel();
+		} else if (params.name == 'reset'){
+			this.reset_data();
+		} else {
+			if (params.action){
+				f = buildEventHandler(this, params);
+				f(event);
+			}
+		}
+	}
+	cancel(){
+		this.dispatch('cancel');
+	}
+
+}
+
+class TabForm extends Form {
+	/*
+	options
+	{
+		css:
+		tab_long: 100%
+		tab_pos:"top"
+		items:[
+			{
+				name:
+				label:"tab1",
+				icon:
+				removable:
+				refresh:false,
+				content:{
+					"widgettype":...
+				}
+			}
+		]
+	}
+	{
+		...
+		fields:[
+			{
+			}
+		]
+	*/
+	constructor(opts){
+		super(opts);
+	}
+	build_fields(fields){
+	}
+}
 
 Factory.register('Form', Form);
+// Factory.register('TabForm', TabForm);

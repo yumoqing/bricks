@@ -1,6 +1,6 @@
 {
-	"database":"iptvdb",
-	"table":"iptvchannels",
+	"database":"kboss",
+	"table":"user",
 	"browser":{
 		"lineno":true,
 		"include":[
@@ -10,12 +10,7 @@
 				"label":"Play",
 				"uitype":"button",
 				"color":"#2222d4",
-				"width":"40px",
-				"action":{
-					"actiontype":"script",
-					"target":"self",
-					"script":"console.log(params.url); window.open(params.url);"
-				}
+				"width":"40px"
 			},
 			{
 				"freeze":true,
@@ -24,12 +19,7 @@
 				"uitype":"button",
 				"bgcolor":"#d4d4d4",
 				"color":"#2222d4",
-				"width":"40px",
-				"action":{
-					"actiontype":"script",
-					"target":"self",
-					"script":"console.log(params); window.open(params.url);"
-				}
+				"width":"40px"
 			}
 		],
 		"exclude":["id", "media_type"],

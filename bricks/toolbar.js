@@ -3,7 +3,7 @@ class Toolbar extends Layout {
 	{
 		orientation:
 		target:
-		tool_margin:
+		interval::
 		tools:
 	}
 	tool options
@@ -36,9 +36,24 @@ class Toolbar extends Layout {
 		this.preffix_css = this.opts.css || 'toolbar';
 		schedule_once(this.createTools.bind(this), 0.01);
 	}
+	add_interval_box(){
+		if (this.opts.orientation == 'vertical'){
+			this.bar.add_widget(new JsWidget({
+						height:this.opts.interval || '10px'
+			}));
+		} else {
+			this.bar.add_widget(new JsWidget({
+						width:this.opts.interval || '10px'
+			}));
+		}
+	}
 	createTools = async function(){
-		for (var i=0;i<this.opts.tools.length; i++){
+		var l = this.opts.tools.length;
+		for (var i=0;i<l; i++){
 			await this.createTool(this.opts.tools[i]);
+			if (i < l -1 ){
+				this.add_interval_box();
+			}
 		}
 		this.dispatch('ready');
 	}
@@ -47,7 +62,6 @@ class Toolbar extends Layout {
 			"widgettype":"Button",
 			"options":{
 				width:"auto",
-				leftMargin:this.opts.tool_margin || '10px',
 				orientation:"horizontal",
 				icon:desc.icon,
 				label:desc.label,

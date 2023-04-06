@@ -111,13 +111,21 @@ class HttpText {
 			return e.target.getValue();
 		}
 		var w = await widgetBuild({
+			"id":"login_form",
 			"widgettype":"urlwidget",
 			"options":{
 				"url":bricks_app.login_url
 			}
 		});
-		var login_info = await new Promise((w,  get_login_info) => {
-			w.once('submit', get_login_info);
+		var login_info = await new Promise((resolve, reject, w) => {
+			w.bind('submit', (event) => {
+				resolve(event.target.getValue());
+				event.target.dismiss();
+			});
+			w.bind('discard', (event) => {
+				resolve(null);
+				event.target.dismiss()
+			});
 		});
 		if (login_info){
 			this.set_authorization_header(params, lgin_info);
@@ -141,6 +149,12 @@ class HttpText {
 		error.info = resp_error;
 		return error;
 	}	
+	set_authorization_header(params, lgin_info){
+		var auth = 'password' + '::' + login_info.user + '::' + login_info.password;
+		var rsa = bricks_app.rsa;
+		var code = rsa.encrypt(auth);
+		self.header.authorization = btoa(code)
+	}
 	async get(url, {headers=null, params=null}={}){
 		return await this.httpcall(url, {
 					method:'GET',
