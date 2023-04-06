@@ -1,100 +1,117 @@
-html, body {
-	height:100%;
-	margin:0;
+html,
+body {
+	height: 100%;
+	margin: 0;
+	overflow: hidden;
 }
+
 .griddata {
-	display:grid;
-	grid-gap:1px;
+	display: grid;
+	grid-gap: 1px;
 }
+
 .modal {
-	padding:10px;
-	color:#e8e8e8;
-	background-color:rgba(0.3,0.3,0.3,1);
+	padding: 10px;
+	color: #e8e8e8;
+	background-color: rgba(0.3, 0.3, 0.3, 1);
 	border: 1px solid #ccc;
 	border-radius: 5px;
 	margin-bottom: 10px;
 }
-.modal >.title {
-	background-color:#a0a0a0;
+
+.modal>.title {
+	background-color: #a0a0a0;
 }
+
 .message {
-	padding:10px;
-	width:30%;
-	height:30%;
-	background-color:#f0f0f0;
+	padding: 10px;
+	width: 30%;
+	height: 30%;
+	background-color: #f0f0f0;
 	border: 1px solid #ccc;
 	border-radius: 5px;
 	margin-bottom: 10px;
 }
+
 .error {
-	padding:10px;
-	width:30%;
-	height:30%;
-	background-color:#f0f0f0;
+	padding: 10px;
+	width: 30%;
+	height: 30%;
+	background-color: #f0f0f0;
 	border: 1px solid #ccc;
 	border-radius: 5px;
 	margin-bottom: 10px;
 }
-.message >.title {
-	background-color:#3030f0;
+
+.message>.title {
+	background-color: #3030f0;
 }
 
 .vscroll {
-	overflow-x:scroll;
+	overflow-x: scroll;
 }
+
 .hscroll {
-	overflow-y:scroll;
+	overflow-y: scroll;
 }
-.error >.title {
-	background-color:#f03030;
+
+.error>.title {
+	background-color: #f03030;
 }
 
 .vbox {
 	display: flex;
-	flex-direction:column;
+	flex-direction: column;
 	/* overflow-y:overlay; */
 }
 
 .hbox {
-	display:flex;
-	flex-direction:row;
+	display: flex;
+	flex-direction: row;
 	flex-wrap: nowrap;
 }
 
 .vfiller {
-	flex:1 1 auto;
-	overflow-y:hidden;
-	overflow-x:hidden;
+	flex: 1 1 auto;
+	overflow-y: hidden;
+	overflow-x: hidden;
 }
-.vfiller .vbox:last-child{
-	overflow-x: scroll;
+
+.vfiller .vbox:last-child {
+	overflow-x: overlay;
 }
+
 .hfiller {
-	flex:1 auto;
-	overflow-x:hidden;
-	overflow-y:auto;
+	flex: 1 auto;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
-.flc{
-	width:203px;
-	overflow-y:scroll;
-	overflow-x:visible;	
+
+.hfiller::-webkit-scrollbar {
+	display: none;
+}
+
+.flc {
+	width: 203px;
+	overflow-y: scroll;
+	overflow-x: visible;
 }
 
 .vtoolbar {
-	heigth:100%;
-	background-color:#f1f1f1;
-	border:1px solid #ccc;
+	heigth: 100%;
+	background-color: #f1f1f1;
+	border: 1px solid #ccc;
 }
 
 .selected {
-	background-color:#d4d4d4;
+	background-color: #d4d4d4;
 }
 
 .htoolbar {
-	width:100%;
-	height:40px;
-	background-color:#f1f1f1;
-	border:1px solid #ccc;
+	width: 100%;
+	height: 40px;
+	background-color: #f1f1f1;
+	border: 1px solid #ccc;
 }
 
 .toolbar-button {
@@ -105,31 +122,34 @@ html, body {
 	cursor: pointer;
 	padding: 14px 16px;
 	transition: 0.3s;
-	border:1px solid #888;
+	border: 1px solid #888;
 }
 
 .toolbar-button-active {
-	background-color:#ddd;
+	background-color: #ddd;
 }
+
 .tabpanel {
-	background-color:#ededed;
-	border:3px solid #888;
+	background-color: #ededed;
+	border: 3px solid #888;
 }
+
 .tabpanel-content {
-	background-color:#f8f8f8;
-	border:2px solid #888;
+	background-color: #f8f8f8;
+	border: 2px solid #888;
 }
 
 .multicolumns {
-	column-width:340px;
-	colomn-gap:10px'
+	column-width: 340px;
+	colomn-gap: 10px'
+
 }
 
 .popup {
-	z-index:1000;
-	position:absolution;
-	background-color:#f1f1f1;
-	border:1px solid #c1c1c1;
+	z-index: 1000;
+	position: absolution;
+	background-color: #f1f1f1;
+	border: 1px solid #c1c1c1;
 }
 
 .inputbox {
@@ -140,17 +160,21 @@ html, body {
 }
 
 button[tooltip]:hover::after {
-    content: attr(tooltip);
-    display: block;
-    position: absolute;
-    transform: translateX(-50%);
+	content: attr(tooltip);
+	display: block;
+	position: absolute;
+	transform: translateX(-50%);
 }
 
 div[tooltip]:hover::after {
-    content: attr(tooltip);
-    display: block;
-    position: absolute;
-    transform: translateX(-50%);
+	content: attr(tooltip);
+	display: block;
+	position: absolute;
+	transform: translateX(-50%);
 }
 
-input[tooltip], div[tooltip] { width: max-content; margin: auto; }
+input[tooltip],
+div[tooltip] {
+	width: max-content;
+	margin: auto;
+}

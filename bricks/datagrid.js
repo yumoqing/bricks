@@ -241,11 +241,13 @@ class DataGrid extends VBox {
 			this.freeze_header = new HBox({ height: 'auto', width: 'auto' });
 			this.freeze_body = new VScrollPanel({ width: 'auto' })
 			this.freeze_body.bind('scroll', this.coscroll.bind(this));
+			this.freeze_body.dom_element.style.marginBottom = 18 + 'px';
 		}
 		if (this.normal_fields.length > 0) {
 			this.normal_part = new VBox({ width: normalWidthAll + 'px' });
 			this.normal_header = new HBox({});
-			this.normal_body = new HScrollPanel({width: normalWidthAll + 'px'});
+			this.normal_body = new HScrollPanel({ width: normalWidthAll + 'px' });
+			this.normal_body.dom_element.style.marginBottom = 18 + 'px';
 		}
 		this.create_header();
 		if (this.freeze_fields.length > 0) {
