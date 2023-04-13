@@ -6,6 +6,7 @@ class Button extends Layout {
 		item_rate:
 		tooltip:
 		color:
+		nonepack:
 		name:
 		icon:
 		label:
@@ -32,8 +33,13 @@ class Button extends Layout {
 			alignItem:"center",
 			width:"auto",
 			height:"auto",
-			padding:"0.5rem"
 		};
+		if (opts.nonepack){
+			style.padding = '0px';
+			style.border = '0';
+		} else {
+			style.padding = '0.5rem';
+		}
 		if (this.opts.orientation == 'horizontal'){
 			style.flexDirection = 'rows';
 			this.orient = 'h';
@@ -42,7 +48,7 @@ class Button extends Layout {
 			this.orient = 'v';
 		}
 		this.item_rate = opts.item_rate || 1;
-		this.set_id(this.opts.nmae);
+		this.set_id(this.opts.name);
 		this.opts_setup();
 		this.dom_element.style.update(style);
 	}
@@ -50,9 +56,6 @@ class Button extends Layout {
 		this.dom_element = document.createElement('button');
 	}
 	opts_setup(){
-		if (this.opts.css){
-			this.set_css(this.opts.css);
-		}
 		var item_size = this.opts.item_size || bricks_app.charsize;
 		if (this.opts.icon){
 			var icon = new Icon({

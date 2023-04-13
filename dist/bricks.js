@@ -2890,6 +2890,7 @@ class Button extends Layout {
 		item_rate:
 		tooltip:
 		color:
+		nonepack:
 		name:
 		icon:
 		label:
@@ -2916,8 +2917,13 @@ class Button extends Layout {
 			alignItem:"center",
 			width:"auto",
 			height:"auto",
-			padding:"0.5rem"
 		};
+		if (opts.nonepack){
+			style.padding = '0px';
+			style.border = '0';
+		} else {
+			style.padding = '0.5rem';
+		}
 		if (this.opts.orientation == 'horizontal'){
 			style.flexDirection = 'rows';
 			this.orient = 'h';
@@ -2926,7 +2932,7 @@ class Button extends Layout {
 			this.orient = 'v';
 		}
 		this.item_rate = opts.item_rate || 1;
-		this.set_id(this.opts.nmae);
+		this.set_id(this.opts.name);
 		this.opts_setup();
 		this.dom_element.style.update(style);
 	}
@@ -2934,9 +2940,6 @@ class Button extends Layout {
 		this.dom_element = document.createElement('button');
 	}
 	opts_setup(){
-		if (this.opts.css){
-			this.set_css(this.opts.css);
-		}
 		var item_size = this.opts.item_size || bricks_app.charsize;
 		if (this.opts.icon){
 			var icon = new Icon({
@@ -4028,7 +4031,8 @@ class DataGrid extends VBox {
 		title:
 		description:
 		show_info:
-		admin:
+		miniform:
+		toolbar:
 		tailer:
 		row_height:
 		header_css:
@@ -4078,13 +4082,20 @@ class DataGrid extends VBox {
 			var dw = new Text({ otext: this.description, i18n: true });
 			this.descbar.add_widget(dw);
 		}
-		if (this.admin) {
-			var desc = {
-				height: 'auto',
-				tools: []
-			};
-			var tbw = new Toolbar(desc);
-			this.add_widget(tbw);
+		
+		if (this.opts.miniform || this.opts.toolbar){
+			this.admin_bar = new HBox({height:'auto'});
+		}
+		if (this.opts.miniform){
+			this.miniform = new MiniForm(this.opts.miniform);
+			this.miniform.bind('input', this.miniform_input.bind(this));
+			this.admin_bar.add_widget(this.miniform);
+		}
+		if (this.opts.toolbar) {
+			this.admin_bar.add_widget(new HFiller({}));
+			self.toolbar = new Toolbar(this.opts.toolbar);
+			self.toolbar.bind('command', this.command_handle.bind(this));
+			this.admin_bar.add_widget(this.toolbar);
 		}
 		this.create_parts();
 		if (this.show_info) {
@@ -4111,6 +4122,12 @@ class DataGrid extends VBox {
 				this.add_rows(this.data);
 			}
 		}
+	}
+	miniform_input(event){
+		var params = this.miniform.getValue();
+		this.loader.loadData(params);
+	}
+	command_handle(event){
 	}
 	del_old_rows(cnt, direction) {
 		if (this.freeze_body) {
