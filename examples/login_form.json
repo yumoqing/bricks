@@ -1,0 +1,19 @@
+{
+	"widgettype":"Form",
+	"options":{
+		"submit_url":"/checkuserpw.dspy",
+		"fileds":[
+			{
+				"name":"name",
+				"uitype":"str",
+				"label":"user name"
+			},
+			{
+				"name":"passwd",
+				"uitype":"password",
+				"label":"password"
+			}
+		]
+	}
+}
+

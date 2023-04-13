@@ -1,0 +1,25 @@
+  <html>
+  <head>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@4.19.0/css/xterm.css" />
+<link rel="stylesheet" href="/bricks/css/bricks.css" />
+  </head>
+  <body>
+  <script src="https://cdn.jsdelivr.net/npm/xterm@4.19.0/lib/xterm.js"></script>
+  <script src="/bricks/bricks.js"></script>
+	<script>
+		const opts = 
+{
+	"widget": {
+		"widgettype":"urlwidget",
+		"options":{
+			"url":"xterminal.json"
+		}
+	}
+}
+
+		;
+		const app = new BricksApp(opts);
+		app.run();
+	</script>
+</body>
+</html>

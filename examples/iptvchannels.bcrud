@@ -1,0 +1,53 @@
+{
+	"database":"iptvdb",
+	"table":"iptvchannels",
+	"browser":{
+		"lineno":true,
+		"include":[
+			{
+				"freeze":true,
+				"name":"play_btn",
+				"label":"Play",
+				"uitype":"button",
+				"color":"#2222d4",
+				"width":"40px",
+				"uioptions":{
+					"bgcolor":"#2222ff",
+					"nonepack":true	
+				},
+				"action":{
+					"actiontype":"script",
+					"target":"self",
+					"script":"console.log(params.url); window.open(params.url);"
+				}
+			},
+			{
+				"freeze":true,
+				"name":"del_btn",
+				"label":"del",
+				"uitype":"button",
+				"bgcolor":"#d4d4d4",
+				"color":"#2222d4",
+				"width":"40px",
+				"uioptions":{
+					"bgcolor":"#2222ff",
+					"nonepack":true	
+				},
+				"action":{
+					"actiontype":"script",
+					"target":"self",
+					"script":"console.log(params); window.open(params.url);"
+				}
+			}
+		],
+		"exclude":["id", "media_type"],
+		"alter":{
+			"url":{
+				"width":"410px"
+			},
+			"tv_group":{
+				"width":"100px"
+			}
+		}
+	}
+}
