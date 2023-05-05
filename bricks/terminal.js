@@ -15,10 +15,19 @@ class XTerminal extends JsWidget {
 	*/
 	constructor(opts){
 		super(opts);
-		this.term = new Terminal({
-			cursorBlink: "block"
-		});
-		// const ws = new WebSocket("ws://localhost:3000", "echo-protocol");
+		schedule_once(this.open.bind(this), 0.1);
+	}
+	async open(){
+		try {
+			this.term = new Terminal({
+				cursorBlink: "block"
+			});
+		}
+		catch(e){
+			console.log(e);
+			return;
+		}
+		
 		this.ws = new WebSocket(this.opts.ws_url, "echo-protocol");
 		var curr_line = "";
 		var entries = [];
@@ -26,10 +35,10 @@ class XTerminal extends JsWidget {
 		this.term.write("web shell $ ");
 
 		this.term.prompt = () => {
-		if (curr_line) {
-		  let data = { method: "command", command: curr_line };
-		  this.ws.send(JSON.stringify(data));
-		}
+			if (curr_line) {
+				let data = { method: "command", command: curr_line };
+				this.ws.send(JSON.stringify(data));
+			}
 		};
 		this.term.prompt();
 

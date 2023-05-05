@@ -1,3 +1,13 @@
+var set_max_height = function(r1, r2){
+	var h = r1.dom_element.offsetHeight;
+	if (h < r2.dom_element.offsetHeight){
+		h = r2.dom_element.offsetHeight;
+	}
+	var flex = '0 0 ' + h + 'px';
+	r1.set_style('flex', flex);
+	r2.set_style('flex', flex);
+}
+
 class Row {
 	constructor(dg, rec) {
 		this.dg = dg;
@@ -7,7 +17,9 @@ class Row {
 		this.name_widgets = {};
 		this.click_handler = this.dg.click_handler.bind(this.dg, this);
 		this.freeze_row = this.create_col_widgets(this.dg.freeze_fields, this.freeze_cols);
+		this.freeze_row.set_style('width', this.freeze_width + 'px');
 		this.normal_row = this.create_col_widgets(this.dg.normal_fields, this.normal_cols);
+		this.normal_row.set_style('width', this.normal_width + 'px');
 		if (this.freeze_row && this.normal_row) {
 			set_max_height(this.freeze_row, this.normal_row);
 		}
@@ -17,6 +29,9 @@ class Row {
 			var f = fields[i];
 			var opts = f.uioptions || {};
 			var w;
+			if (! f.width){
+				f.width = 100;
+			}
 			opts.update({
 				name: f.name,
 				label: f.label,
@@ -37,6 +52,7 @@ class Row {
 				w.bind('click', this.click_handler);
 			}
 			w.dom_element.style['min-width'] = w.width + 'px';
+			w.set_style('flex', '0 0 ' + f.width + 'px');
 			cols.push(w);
 			this.name_widgets[f.name] = w;
 		}
@@ -102,11 +118,9 @@ class DataGrid extends VBox {
 	*/
 	constructor(opts) {
 		super(opts);
-		this.set_height('100%');
-		this.set_width('100%');
 		this.loading = false;
 		this.select_row = null;
-		this.set_css('vbox');
+		this.set_css('datagrid');
 		this.dataurl = opts.dataurl;
 		this.method = opts.method;
 		this.params = opts.params;
@@ -225,9 +239,10 @@ class DataGrid extends VBox {
 		}
 	}
 	create_parts() {
-		let freezeWidthAll = 0, normalWidthAll = 0;
+		this.freeze_width = 0;
+		this.normal_width = 0;
 		var hbox = new HBox({});
-		hbox.set_css('vfiller');
+		hbox.set_css('datagrid-grid');
 		this.add_widget(hbox);
 		this.freeze_fields = [];
 		this.normal_fields = [];
@@ -239,29 +254,45 @@ class DataGrid extends VBox {
 		}
 		for (var i = 0; i < this.fields.length; i++) {
 			var f = this.fields[i];
+			if (!f.width) f.width = 100;
 			if (f.freeze) {
 				this.freeze_fields.push(f);
-				freezeWidthAll += f.width
+				this.freeze_width += f.width
 			} else {
 				this.normal_fields.push(f);
-				normalWidthAll += f.width
+				this.normal_width += f.width
 
 			}
 		}
 		this.freeze_part = null;
 		this.normal_part = null;
 		if (this.freeze_fields.length > 0) {
-			this.freeze_part = new VBox({ width: freezeWidthAll + 'px' });
+			this.freeze_part = new VBox({});
+			this.freeze_part.set_css('datagrid-left');
+			this.freeze_part.set_style('flex',
+								'0 0 ' + this,freeze_width + 'px');
 			this.freeze_header = new HBox({ height: 'auto', width: 'auto' });
 			this.freeze_body = new VScrollPanel({ width: 'auto' })
+			this.freeze_body.set_css('datagrid-body');
 			this.freeze_body.bind('scroll', this.coscroll.bind(this));
-			this.freeze_body.dom_element.style.marginBottom = 18 + 'px';
+			// this.freeze_body.dom_element.style.marginBottom = 18 + 'px';
 		}
 		if (this.normal_fields.length > 0) {
-			this.normal_part = new VBox({ width: normalWidthAll + 'px' });
-			this.normal_header = new HBox({});
-			this.normal_body = new HScrollPanel({ width: normalWidthAll + 'px' });
-			this.normal_body.dom_element.style.marginBottom = 18 + 'px';
+			this.normal_part = new VBox({ 
+				width: this.normal_width + 'px',
+				height:'100%',
+				csses:"hscroll"
+			});
+			this.normal_part.set_css('datagrid-right');
+			this.normal_header = new HBox({
+			});
+			this.normal_body = new VScrollPanel({ 
+				csses:"vbox vscroll",
+				height:"100%",
+				width: this.normal_width + 'px' 
+			});
+			this.normal_body.set_css('datagrid-body')
+			// this.normal_body.dom_element.style.marginBottom = 18 + 'px';
 		}
 		this.create_header();
 		if (this.freeze_fields.length > 0) {
@@ -304,7 +335,9 @@ class DataGrid extends VBox {
 				i18n: true,
 			});
 			if (f.width) {
-				t.dom_element.style['min-width'] = f.width
+				t.set_style('flex','0 0 ' + f.width + 'px');
+			} else {
+				t.set_style('flex','0 0 100px');
 			}
 			this.freeze_header.add_widget(t);
 			t.dom_element.column_no = 'f' + i;
@@ -317,7 +350,9 @@ class DataGrid extends VBox {
 				i18n: true,
 			});
 			if (f.width) {
-				t.dom_element.style['min-width'] = f.width
+				t.set_style('flex','0 0 ' + f.width + 'px');
+			} else {
+				t.set_style('flex','0 0 100px');
 			}
 			this.normal_header.add_widget(t);
 			t.dom_element.column_no = 'n' + i;

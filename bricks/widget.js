@@ -16,6 +16,12 @@ class JsWidget {
 		this._container = false;
 		this.parent = null;
 		this.sizable_elements = [];
+		if (options.css){
+			this.set_css(options.css);
+		}
+		if (options.csses){
+			this.set_csses(options.csses);
+		}
 	}
 	create(){
 		this.dom_element = document.createElement('div');
@@ -117,15 +123,22 @@ class JsWidget {
 		if (typeof(width) == 'number'){
 			width = width + 'px';
 		}
-		this.width = width;
 		this.dom_element.style.width = width;
 	}
 	set_height(height){
 		if (typeof(height) == 'number'){
 			height = height + 'px';
 		}
-		this.height = height;
 		this.dom_element.style.height = height;
+	}
+	set_style(k, v){
+		this.dom_element.style[k] = v;
+	}
+	set_csses(csses, remove_flg){
+		var arr = csses.split(' ');
+		arr.forEach(c =>{
+			this.set_css(c, remove_flg);
+		})
 	}
 	set_css(css, remove_flg){
 		if (!remove_flg){
@@ -150,7 +163,7 @@ class JsWidget {
 		this.baseURI = url;
 	}
 	absurl(url){
-		console.log('self.baseURI=', this.baseURI);
+		console.log('this.baseURI=', this.baseURI);
 		if (this.baseURI){
 			return absurl(url, this);
 		}

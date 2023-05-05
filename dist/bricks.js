@@ -290,11 +290,6 @@ function eraseCookie(name) {
 }
 
 var set_max_height = function(w1, w2){
-	/* w1.hide();
-	w2.hide();
-	Body.add_widget(w1);
-	Body.add_widget(w2);
-	*/
 	var v1 = w1.dom_element.offsetHeight;
 	var v2 = w2.dom_element.offsetHeight;
 	var v = v1 - v2;
@@ -303,12 +298,6 @@ var set_max_height = function(w1, w2){
 	} else if (v > 0) {
 		w2.set_height(w1.dom_element.offsetHeight);
 	}
-	/*
-	Body.remove_widget(w1);
-	Body.remove_widget(w2);
-	w1.show();
-	w2.show();
-	*/
 }
 class I18n {
 	constructor(url, default_lang){
@@ -395,6 +384,12 @@ class JsWidget {
 		this._container = false;
 		this.parent = null;
 		this.sizable_elements = [];
+		if (options.css){
+			this.set_css(options.css);
+		}
+		if (options.csses){
+			this.set_csses(options.csses);
+		}
 	}
 	create(){
 		this.dom_element = document.createElement('div');
@@ -496,15 +491,22 @@ class JsWidget {
 		if (typeof(width) == 'number'){
 			width = width + 'px';
 		}
-		this.width = width;
 		this.dom_element.style.width = width;
 	}
 	set_height(height){
 		if (typeof(height) == 'number'){
 			height = height + 'px';
 		}
-		this.height = height;
 		this.dom_element.style.height = height;
+	}
+	set_style(k, v){
+		this.dom_element.style[k] = v;
+	}
+	set_csses(csses, remove_flg){
+		var arr = csses.split(' ');
+		arr.forEach(c =>{
+			this.set_css(c, remove_flg);
+		})
 	}
 	set_css(css, remove_flg){
 		if (!remove_flg){
@@ -529,7 +531,7 @@ class JsWidget {
 		this.baseURI = url;
 	}
 	absurl(url){
-		console.log('self.baseURI=', this.baseURI);
+		console.log('this.baseURI=', this.baseURI);
 		if (this.baseURI){
 			return absurl(url, this);
 		}
@@ -3911,13 +3913,21 @@ class HScrollPanel extends HFiller {
 		this.threshold = false;
 	}
 	scroll_handle(event){
-		var e = this;
-		low_handle(this, 'x', e.last_scrollLeft, 
-						e.dom_element.scrollLeft,
-						e.dom_element.scrollWidth,
-						e.dom_element.clientWidth);
+		if (event.target != this.dom_element){
+			// console.log('HScroll():scroll on other', event.target);
+			return;
+		}
+		var e = this.dom_element;
+		if ( e.scrollWidth - e.clientWidth < 1) {
+			// console.log('HScroll():same size');
+			return;
+		}
+		low_handle(this, 'x', this.last_scrollLeft, 
+						e.scrollLeft,
+						e.scrollWidth,
+						e.clientWidth);
 
-		this.last_scrollLeft = e.dom_element.scrollLeft;
+		this.last_scrollLeft = e.scrollLeft;
 	}
 }
 
@@ -3936,17 +3946,35 @@ class VScrollPanel extends VFiller {
 		this.last_scrollTop = this.dom_element.scrollTop;
 	}
 	scroll_handle(event){
-		var e = this;
-		low_handle(this, 'y', e.last_scrollTop, 
-						e.dom_element.scrollTop,
-						e.dom_element.scrollHeight,
-						e.dom_element.clientHeight);
-		this.last_scrollTop = e.dom_element.scrollTop;
+		if (event.target != this.dom_element){
+			// console.log('scroll on other', event.target);
+			return;
+		}
+		var e = this.dom_element;
+		if ( e.scrollHeight - e.clientHeight < 2) {
+			// console.log('same size');
+			return;
+		}
+		low_handle(this, 'y', this.last_scrollTop, 
+						e.scrollTop,
+						e.scrollHeight,
+						e.clientHeight);
+		this.last_scrollTop = e.scrollTop;
 	}
 }
 
 Factory.register('VScrollPanel', VScrollPanel);
 Factory.register('HScrollPanel', HScrollPanel);
+
+var set_max_height = function(r1, r2){
+	var h = r1.dom_element.offsetHeight;
+	if (h < r2.dom_element.offsetHeight){
+		h = r2.dom_element.offsetHeight;
+	}
+	var flex = '0 0 ' + h + 'px';
+	r1.set_style('flex', flex);
+	r2.set_style('flex', flex);
+}
 
 class Row {
 	constructor(dg, rec) {
@@ -3957,7 +3985,9 @@ class Row {
 		this.name_widgets = {};
 		this.click_handler = this.dg.click_handler.bind(this.dg, this);
 		this.freeze_row = this.create_col_widgets(this.dg.freeze_fields, this.freeze_cols);
+		this.freeze_row.set_style('width', this.freeze_width + 'px');
 		this.normal_row = this.create_col_widgets(this.dg.normal_fields, this.normal_cols);
+		this.normal_row.set_style('width', this.normal_width + 'px');
 		if (this.freeze_row && this.normal_row) {
 			set_max_height(this.freeze_row, this.normal_row);
 		}
@@ -3967,6 +3997,9 @@ class Row {
 			var f = fields[i];
 			var opts = f.uioptions || {};
 			var w;
+			if (! f.width){
+				f.width = 100;
+			}
 			opts.update({
 				name: f.name,
 				label: f.label,
@@ -3987,6 +4020,7 @@ class Row {
 				w.bind('click', this.click_handler);
 			}
 			w.dom_element.style['min-width'] = w.width + 'px';
+			w.set_style('flex', '0 0 ' + f.width + 'px');
 			cols.push(w);
 			this.name_widgets[f.name] = w;
 		}
@@ -4052,11 +4086,9 @@ class DataGrid extends VBox {
 	*/
 	constructor(opts) {
 		super(opts);
-		this.set_height('100%');
-		this.set_width('100%');
 		this.loading = false;
 		this.select_row = null;
-		this.set_css('vbox');
+		this.set_css('datagrid');
 		this.dataurl = opts.dataurl;
 		this.method = opts.method;
 		this.params = opts.params;
@@ -4175,9 +4207,10 @@ class DataGrid extends VBox {
 		}
 	}
 	create_parts() {
-		let freezeWidthAll = 0, normalWidthAll = 0;
+		this.freeze_width = 0;
+		this.normal_width = 0;
 		var hbox = new HBox({});
-		hbox.set_css('vfiller');
+		hbox.set_css('datagrid-grid');
 		this.add_widget(hbox);
 		this.freeze_fields = [];
 		this.normal_fields = [];
@@ -4189,29 +4222,45 @@ class DataGrid extends VBox {
 		}
 		for (var i = 0; i < this.fields.length; i++) {
 			var f = this.fields[i];
+			if (!f.width) f.width = 100;
 			if (f.freeze) {
 				this.freeze_fields.push(f);
-				freezeWidthAll += f.width
+				this.freeze_width += f.width
 			} else {
 				this.normal_fields.push(f);
-				normalWidthAll += f.width
+				this.normal_width += f.width
 
 			}
 		}
 		this.freeze_part = null;
 		this.normal_part = null;
 		if (this.freeze_fields.length > 0) {
-			this.freeze_part = new VBox({ width: freezeWidthAll + 'px' });
+			this.freeze_part = new VBox({});
+			this.freeze_part.set_css('datagrid-left');
+			this.freeze_part.set_style('flex',
+								'0 0 ' + this,freeze_width + 'px');
 			this.freeze_header = new HBox({ height: 'auto', width: 'auto' });
 			this.freeze_body = new VScrollPanel({ width: 'auto' })
+			this.freeze_body.set_css('datagrid-body');
 			this.freeze_body.bind('scroll', this.coscroll.bind(this));
-			this.freeze_body.dom_element.style.marginBottom = 18 + 'px';
+			// this.freeze_body.dom_element.style.marginBottom = 18 + 'px';
 		}
 		if (this.normal_fields.length > 0) {
-			this.normal_part = new VBox({ width: normalWidthAll + 'px' });
-			this.normal_header = new HBox({});
-			this.normal_body = new HScrollPanel({ width: normalWidthAll + 'px' });
-			this.normal_body.dom_element.style.marginBottom = 18 + 'px';
+			this.normal_part = new VBox({ 
+				width: this.normal_width + 'px',
+				height:'100%',
+				csses:"hscroll"
+			});
+			this.normal_part.set_css('datagrid-right');
+			this.normal_header = new HBox({
+			});
+			this.normal_body = new VScrollPanel({ 
+				csses:"vbox vscroll",
+				height:"100%",
+				width: this.normal_width + 'px' 
+			});
+			this.normal_body.set_css('datagrid-body')
+			// this.normal_body.dom_element.style.marginBottom = 18 + 'px';
 		}
 		this.create_header();
 		if (this.freeze_fields.length > 0) {
@@ -4254,7 +4303,9 @@ class DataGrid extends VBox {
 				i18n: true,
 			});
 			if (f.width) {
-				t.dom_element.style['min-width'] = f.width
+				t.set_style('flex','0 0 ' + f.width + 'px');
+			} else {
+				t.set_style('flex','0 0 100px');
 			}
 			this.freeze_header.add_widget(t);
 			t.dom_element.column_no = 'f' + i;
@@ -4267,7 +4318,9 @@ class DataGrid extends VBox {
 				i18n: true,
 			});
 			if (f.width) {
-				t.dom_element.style['min-width'] = f.width
+				t.set_style('flex','0 0 ' + f.width + 'px');
+			} else {
+				t.set_style('flex','0 0 100px');
 			}
 			this.normal_header.add_widget(t);
 			t.dom_element.column_no = 'n' + i;
@@ -4389,10 +4442,19 @@ class XTerminal extends JsWidget {
 	*/
 	constructor(opts){
 		super(opts);
-		this.term = new Terminal({
-			cursorBlink: "block"
-		});
-		// const ws = new WebSocket("ws://localhost:3000", "echo-protocol");
+		schedule_once(this.open.bind(this), 0.1);
+	}
+	async open(){
+		try {
+			this.term = new Terminal({
+				cursorBlink: "block"
+			});
+		}
+		catch(e){
+			console.log(e);
+			return;
+		}
+		
 		this.ws = new WebSocket(this.opts.ws_url, "echo-protocol");
 		var curr_line = "";
 		var entries = [];
@@ -4400,10 +4462,10 @@ class XTerminal extends JsWidget {
 		this.term.write("web shell $ ");
 
 		this.term.prompt = () => {
-		if (curr_line) {
-		  let data = { method: "command", command: curr_line };
-		  this.ws.send(JSON.stringify(data));
-		}
+			if (curr_line) {
+				let data = { method: "command", command: curr_line };
+				this.ws.send(JSON.stringify(data));
+			}
 		};
 		this.term.prompt();
 

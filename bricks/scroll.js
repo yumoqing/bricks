@@ -34,13 +34,21 @@ class HScrollPanel extends HFiller {
 		this.threshold = false;
 	}
 	scroll_handle(event){
-		var e = this;
-		low_handle(this, 'x', e.last_scrollLeft, 
-						e.dom_element.scrollLeft,
-						e.dom_element.scrollWidth,
-						e.dom_element.clientWidth);
+		if (event.target != this.dom_element){
+			// console.log('HScroll():scroll on other', event.target);
+			return;
+		}
+		var e = this.dom_element;
+		if ( e.scrollWidth - e.clientWidth < 1) {
+			// console.log('HScroll():same size');
+			return;
+		}
+		low_handle(this, 'x', this.last_scrollLeft, 
+						e.scrollLeft,
+						e.scrollWidth,
+						e.clientWidth);
 
-		this.last_scrollLeft = e.dom_element.scrollLeft;
+		this.last_scrollLeft = e.scrollLeft;
 	}
 }
 
@@ -59,12 +67,20 @@ class VScrollPanel extends VFiller {
 		this.last_scrollTop = this.dom_element.scrollTop;
 	}
 	scroll_handle(event){
-		var e = this;
-		low_handle(this, 'y', e.last_scrollTop, 
-						e.dom_element.scrollTop,
-						e.dom_element.scrollHeight,
-						e.dom_element.clientHeight);
-		this.last_scrollTop = e.dom_element.scrollTop;
+		if (event.target != this.dom_element){
+			// console.log('scroll on other', event.target);
+			return;
+		}
+		var e = this.dom_element;
+		if ( e.scrollHeight - e.clientHeight < 2) {
+			// console.log('same size');
+			return;
+		}
+		low_handle(this, 'y', this.last_scrollTop, 
+						e.scrollTop,
+						e.scrollHeight,
+						e.clientHeight);
+		this.last_scrollTop = e.scrollTop;
 	}
 }
 
