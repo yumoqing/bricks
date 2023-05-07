@@ -10,7 +10,7 @@
 				"label":"Play",
 				"uitype":"button",
 				"color":"#2222d4",
-				"width":"40px",
+				"width":"60px",
 				"uioptions":{
 					"bgcolor":"#2222ff",
 					"nonepack":true	
@@ -28,7 +28,7 @@
 				"uitype":"button",
 				"bgcolor":"#d4d4d4",
 				"color":"#2222d4",
-				"width":"40px",
+				"width":"60px",
 				"uioptions":{
 					"bgcolor":"#2222ff",
 					"nonepack":true	
