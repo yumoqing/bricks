@@ -9,6 +9,4 @@ uglifyjs --compress --mangle -- ../dist/bricks.js > ../dist/bricks.min.js
 cp -a css/* ../dist/css
 cp -a imgs/* ../dist/imgs
 cp -a ../dist/* ~/www/wwwroot/bricks
-cp -a ../docs ~/www/wwwroot/docs
-cp -a ../examples/* ~/www/wwwroot/examples
 

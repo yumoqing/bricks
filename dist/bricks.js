@@ -801,7 +801,7 @@ var buildBind = function(w, desc){
 }
 
 var buildEventBind = function(from_widget, widget, event, desc){
-	var handler = universal_handler.bind(from_widget, widget, desc);
+	var handler = universal_handler.bind(null,from_widget, widget, desc);
 	if (desc.conform){
 		var conform_widget = widgetBuild(desc.conform, widget);
 		conform_widget.bind('on_conform', handler);
@@ -811,12 +811,21 @@ var buildEventBind = function(from_widget, widget, event, desc){
 	
 }
 
-var universal_handler = function(widget, desc, event){
-	var f = buildEventHandler(widget, desc);
+var universal_handler = function(from_widget, widget, desc, event){
+	debug('universal_handler() info', 'from_widget=', 
+						from_widget,
+						'widget=', widget, 
+						'desc=', desc,
+						event);
+	var f = buildEventHandler(from_widget, desc);
 	if (f){
 		return f(event);
 	}
-	debug('universal_handler() error, desc=', desc);
+	debug('universal_handler() error', 'from_widget=', 
+						from_widget,
+						'widget=', widget, 
+						'desc=', desc,
+						evnet);
 }
 var buildEventHandler = function(w, desc){
 	var target = getWidgetById(desc.target, w);
@@ -862,6 +871,7 @@ var buildEventHandler = function(w, desc){
 }
 var getRealtimeData = function(w, desc){
 	var target = getWidgetById(desc.widget, w);
+	var f;
 	if (! target){
 		console.log('target miss', desc);
 		return null
@@ -933,6 +943,10 @@ var buildRegisterFunctionHandler = function(w, target, rtdata, desc){
 }
 var buildMethodHandler = function(w, target, rtdata, desc){
 	var f = target[desc.method];
+	if (! f){
+		console.log('method:', desc.method, 'not exists in', target, 'w=', w);
+		return null;
+	}
 	var params = {};
 	params.updates(desc.params, rtdata);
 	return f.bind(target, params);
@@ -960,10 +974,10 @@ var getWidgetById = function(id, from_widget){
 	if (typeof(id) != 'string') return id;
 	var ids = id.split('/');
 	var el = from_widget.dom_element;
+	var new_el = null;
 	var j = 0;
 	for (var i=0; i< ids.length; i++){
-		if (j == 0){
-			j = 1;
+		if (i == 0){
 			if (ids[i] == 'self'){
 				el = from_widget.dom_element;
 				continue;
@@ -984,22 +998,23 @@ var getWidgetById = function(id, from_widget){
 		try {
 			if (ids[i][0] == '-'){
 				var wid = substr(1, ids[i].length - 1)
-				el = el.closest('#' + wid);
+				new_el = el.closest('#' + wid);
 			} else {
-				el = el.querySelector('#' + ids[i]);
+				new_el = el.querySelector('#' + ids[i]);
 			}
 		}
 		catch(err){
 			console.log('getWidgetById():i=', ids[i], id, 'not found', err);
 			return null;
 		}
-		if ( el == null ){
-			console.log('getWidgetById():', id, el);
+		if ( new_el == null ){
+			console.log('getWidgetById():', id, from_widget, 'el=', el, 'id=', ids[i]);
 			return null;
 		}
+		el = new_el;
 	}
 	if (typeof(el.bricks_widget) !== 'undefined'){
-		console.log('getWidgetById():', id, el, 'widget');
+		console.log('getWidgetById():', id, from_widget, el, 'widget');
 		return el.bricks_widget;
 	}
 	return el;
@@ -4164,6 +4179,10 @@ class DataGrid extends VBox {
 	miniform_input(event){
 		var params = this.miniform.getValue();
 		this.loader.loadData(params);
+	}
+	loadData(params){
+		console.log('params=', params)
+		this.loader.loadData(params)
 	}
 	command_handle(event){
 	}

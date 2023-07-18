@@ -197,6 +197,10 @@ class DataGrid extends VBox {
 		var params = this.miniform.getValue();
 		this.loader.loadData(params);
 	}
+	loadData(params){
+		console.log('params=', params)
+		this.loader.loadData(params)
+	}
 	command_handle(event){
 	}
 	del_old_rows(cnt, direction) {
