@@ -22,6 +22,9 @@ class BufferedDataLoader {
 		this.params = opts.params || {};
 		this.buffer_pages = opts.buffer_pages || 5;
 		this.pagerows = opts.pagerows || 60;
+		this.initial();
+	}
+	initial(){
 		this.cur_page = -1;
 		this.buffer = {};
 		this.buffered_pages = 0;
@@ -29,6 +32,8 @@ class BufferedDataLoader {
 		this.cur_params = {};
 	}
 	async loadData(params){
+		this.initial();
+		this.widget.clear_data();
 		this.buffer = {};
 		if (!params) params = {};
 		var p = this.params.copy();

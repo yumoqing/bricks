@@ -193,9 +193,16 @@ class DataGrid extends VBox {
 			}
 		}
 	}
+	clear_data(){
+		if (this.normal_body)
+			this.normal_body.clear_widgets();
+		if (this.freeze_body)
+			this.freeze_body.clear_widgets()
+		this.selected_row = null;
+	}
 	miniform_input(event){
 		var params = this.miniform.getValue();
-		this.loader.loadData(params);
+		this.loadData(params);
 	}
 	loadData(params){
 		this.loader.loadData(params)

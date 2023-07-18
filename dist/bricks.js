@@ -830,7 +830,7 @@ var universal_handler = function(from_widget, widget, desc, event){
 var buildEventHandler = function(w, desc){
 	var target = getWidgetById(desc.target, w);
 	if (! target){
-		console.log('target miss', desc);
+		console.log('target miss desc=', desc, 'w=', w);
 		return null
 	}
 	var rtdata = null;
@@ -955,7 +955,7 @@ var buildScriptHandler = function(w, target, rtdata, desc){
 	var params = {};
 	params.updates(desc.params, rtdata);
 	var f = new Function('target', 'params', 'event', desc.script);
-	console.log('params=', params, 'buildScriptHandler() ..........');
+	// console.log('params=', params, 'buildScriptHandler() ..........');
 	return f.bind(target, target, params);
 }
 var buildDispatchEventHandler = function(w, target, rtdata, desc){
@@ -3830,6 +3830,9 @@ class BufferedDataLoader {
 		this.params = opts.params || {};
 		this.buffer_pages = opts.buffer_pages || 5;
 		this.pagerows = opts.pagerows || 60;
+		this.initial();
+	}
+	initial(){
 		this.cur_page = -1;
 		this.buffer = {};
 		this.buffered_pages = 0;
@@ -3837,6 +3840,8 @@ class BufferedDataLoader {
 		this.cur_params = {};
 	}
 	async loadData(params){
+		this.initial();
+		this.widget.clear_data();
 		this.buffer = {};
 		if (!params) params = {};
 		var p = this.params.copy();
@@ -4176,12 +4181,18 @@ class DataGrid extends VBox {
 			}
 		}
 	}
+	clear_data(){
+		if (this.normal_body)
+			this.normal_body.clear_widgets();
+		if (this.freeze_body)
+			this.freeze_body.clear_widgets()
+		this.selected_row = null;
+	}
 	miniform_input(event){
 		var params = this.miniform.getValue();
-		this.loader.loadData(params);
+		this.loadData(params);
 	}
 	loadData(params){
-		console.log('params=', params)
 		this.loader.loadData(params)
 	}
 	command_handle(event){
