@@ -198,7 +198,6 @@ class DataGrid extends VBox {
 		this.loader.loadData(params);
 	}
 	loadData(params){
-		console.log('params=', params)
 		this.loader.loadData(params)
 	}
 	command_handle(event){

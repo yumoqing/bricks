@@ -151,7 +151,7 @@ var universal_handler = function(from_widget, widget, desc, event){
 var buildEventHandler = function(w, desc){
 	var target = getWidgetById(desc.target, w);
 	if (! target){
-		console.log('target miss', desc);
+		console.log('target miss desc=', desc, 'w=', w);
 		return null
 	}
 	var rtdata = null;
@@ -276,7 +276,7 @@ var buildScriptHandler = function(w, target, rtdata, desc){
 	var params = {};
 	params.updates(desc.params, rtdata);
 	var f = new Function('target', 'params', 'event', desc.script);
-	console.log('params=', params, 'buildScriptHandler() ..........');
+	// console.log('params=', params, 'buildScriptHandler() ..........');
 	return f.bind(target, target, params);
 }
 var buildDispatchEventHandler = function(w, target, rtdata, desc){
