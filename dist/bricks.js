@@ -3513,6 +3513,8 @@ class FormBody extends VBox {
 	}
 	*/
 	constructor(opts){
+		opts.width = '100%';
+		otps.scrollY = 'scroll';
 		super(opts);
 		this.name_inputs = {};
 		if (this.opts.title){
@@ -3545,8 +3547,7 @@ class FormBody extends VBox {
 			w.reset();
 		}
 	}
-
-	async validation(){
+	getValue(){
 		var data = {};
 		for (var name in this.name_inputs){
 			if (! this.name_inputs.hasOwnProperty(name)){
@@ -3562,6 +3563,10 @@ class FormBody extends VBox {
 			}
 			data.update(d);
 		}
+		return data;
+	}
+	async validation(){
+		var data = this.getValue();
 		if (this.submit_url){
 			var rzt = await jcall(this.submit_url,
 						{
@@ -3598,6 +3603,7 @@ class Form extends VBox {
 	{
 		title:
 		description:
+		notoolbar:False,
 		cols:
 		dataurl:
 		toolbar:
@@ -3609,7 +3615,8 @@ class Form extends VBox {
 		super(opts);
 		this.body = new FormBody(opts);
 		this.add_widget(this.body);
-		this.build_toolbar(this);
+		if (! opts.notoolbar)
+			this.build_toolbar(this);
 	}
 	build_toolbar(widget){
 		var box = new HBox({height:'auto', width:'100%'});
@@ -3643,17 +3650,20 @@ class Form extends VBox {
 			return
 		}
 		if (params.name == 'submit'){
-			this.validation();
+			this.body.validation();
 		} else if (params.name == 'cancel'){
 			this.cancel();
 		} else if (params.name == 'reset'){
-			this.reset_data();
+			this.body.reset_data();
 		} else {
 			if (params.action){
 				f = buildEventHandler(this, params);
-				f(event);
+				if (f) f(event);
 			}
 		}
+	}
+	getValue(){
+		return this.body.getValue();
 	}
 	cancel(){
 		this.dispatch('cancel');
