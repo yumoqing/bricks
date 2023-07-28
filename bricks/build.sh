@@ -8,5 +8,7 @@ cat ${SOURCES} > ../dist/bricks.js
 uglifyjs --compress --mangle -- ../dist/bricks.js > ../dist/bricks.min.js
 cp -a css/* ../dist/css
 cp -a imgs/* ../dist/imgs
+cp -a ../examples ../dist
+cp -a ../docs ../dist
 cp -a ../dist/* ~/www/wwwroot/bricks
 

@@ -2,7 +2,7 @@ html,
 body {
 	height: 100%;
 	margin: 0;
-	overflow: hidden;
+	overflow: auto;
 }
 
 .griddata {
@@ -67,6 +67,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	height:100%;
+	scroll:auto;
 }
 
 .vbox {
@@ -78,6 +79,7 @@ body {
 	display: flex;
 	flex-direction: row;
 	width:100%;
+	scroll:auto;
 }
 
 .hbox {

@@ -1502,7 +1502,7 @@ Body = new _Body();
 class VBox extends Layout {
 	constructor(options){
 		super(options);
-		this.set_css('vbox');
+		this.set_css('vcontainer');
 	}
 }
 
@@ -1516,7 +1516,7 @@ class VFiller extends Layout {
 class HBox extends Layout {
 	constructor(options){
 		super(options);
-		this.set_css('hbox');
+		this.set_css('hcontainer');
 	}
 }
 
