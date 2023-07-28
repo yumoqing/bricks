@@ -63,9 +63,21 @@ body {
 	background-color: #f03030;
 }
 
+.vcontainer {
+	display: flex;
+	flex-direction: column;
+	height:100%;
+}
+
 .vbox {
 	display: flex;
 	flex-direction: column;
+}
+
+.hcontainer {
+	display: flex;
+	flex-direction: row;
+	width:100%;
 }
 
 .hbox {
@@ -76,6 +88,7 @@ body {
 .fixitem {
 	flex:none;
 }
+
 .filler, .hfiller, .vfiller {
 	flex: auto;
 	scroll:auto;
@@ -86,12 +99,14 @@ body {
 }
 
 .vline {
-	height:1px;
+	width:1px;
+	height:100%;
 	background-colir:#999;
 }
 
 .hline {
 	height:1px;
+	width:100%;
 	background-colir:#999;
 }
 .hfiller::-webkit-scrollbar {
