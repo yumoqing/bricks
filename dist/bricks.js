@@ -4019,12 +4019,12 @@ class Row {
 		this.click_handler = this.dg.click_handler.bind(this.dg, this);
 		this.freeze_row = this.create_col_widgets(this.dg.freeze_fields, this.freeze_cols);
 		if (this.freeze_row){
-			this.freeze_row.set_css('datagrid-row');
+			// this.freeze_row.set_css('datagrid-row');
 			this.freeze_row.set_style('width', this.freeze_width + 'px');
 		}
 		this.normal_row = this.create_col_widgets(this.dg.normal_fields, this.normal_cols);
 		if (this.normal_row){
-			this.normal_row.set_css('datagrid-row');
+			// this.normal_row.set_css('datagrid-row');
 			this.normal_row.set_style('width', this.normal_width + 'px');
 		}
 		if (this.freeze_row && this.normal_row) {
@@ -4287,10 +4287,10 @@ class DataGrid extends VBox {
 			this.freeze_part = new VBox({});
 			this.freeze_part.set_css('datagrid-left');
 			this.freeze_part.set_style('width', this.freeze_width + 'px');
-			this.freeze_header = new HBox({ height: 'auto', width: 'auto' });
-			this.freeze_header.set_css('datagrid-row');
-			this.freeze_header.set_style('width', this.freeze_width + 'px');
-			this.freeze_body = new VScrollPanel({ width: 'auto' })
+			this.freeze_header = new HBox({ height: this.row_height + 'px', width: this.freeze_width + 'px'});
+			// this.freeze_header.set_css('datagrid-row');
+			this.freeze_body = new VBox({ height: "100%", 
+									width: this.freeze_width + 'px' })
 			this.freeze_body.set_css('datagrid-body');
 			this.freeze_body.bind('scroll', this.coscroll.bind(this));
 			// this.freeze_body.dom_element.style.marginBottom = 18 + 'px';
@@ -4302,13 +4302,9 @@ class DataGrid extends VBox {
 				csses:"hscroll"
 			});
 			this.normal_part.set_css('datagrid-right');
-			this.normal_header = new HBox({
-			});
-			this.normal_header.set_css('datagrid-row');
-			this.normal_header.set_style('flex',
-								'0 0 ' + this.normal_width + 'px');
-			this.normal_body = new VScrollPanel({ 
-				csses:"vbox vscroll",
+			this.normal_header = new HBox({ height: this.row_height + 'px', width: this.normal_width + 'px'});
+			// this.normal_header.set_css('datagrid-row');
+			this.normal_body = new VBox({ 
 				height:"100%",
 				width: this.normal_width + 'px' 
 			});
@@ -4375,10 +4371,6 @@ class DataGrid extends VBox {
 			}
 			this.normal_header.add_widget(t);
 			t.dom_element.column_no = 'n' + i;
-		}
-		if (this.normal_header && this.freeze_header) {
-			set_max_height(this.normal_header,
-				this.freeze_header);
 		}
 	}
 	click_handler(row, event) {

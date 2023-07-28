@@ -18,7 +18,7 @@ class FormBody extends VBox {
 	*/
 	constructor(opts){
 		opts.width = '100%';
-		otps.scrollY = 'scroll';
+		opts.scrollY = 'scroll';
 		super(opts);
 		this.name_inputs = {};
 		if (this.opts.title){

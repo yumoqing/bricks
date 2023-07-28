@@ -11,4 +11,7 @@ cp -a imgs/* ../dist/imgs
 cp -a ../examples ../dist
 cp -a ../docs ../dist
 cp -a ../dist/* ~/www/wwwroot/bricks
+cd ../dist
+tar cf - . |gzip > /tmp/bricks.tgz
+scp /tmp/bricks.tgz center@kymoz.com:/tmp
 
