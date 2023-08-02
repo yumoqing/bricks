@@ -1,16 +1,3 @@
-var set_max_height = function(r1, r2){
-	var h = r1.dom_element.offsetHeight;
-	if (h < r2.dom_element.offsetHeight){
-		h = r2.dom_element.offsetHeight;
-	}
-	if (h == 0){
-		h = 30;
-	}
-	var flex = '0 0 ' + h + 'px';
-	r1.set_style('flex', flex);
-	r2.set_style('flex', flex);
-}
-
 class Row {
 	constructor(dg, rec) {
 		this.dg = dg;
@@ -28,9 +15,6 @@ class Row {
 		if (this.normal_row){
 			// this.normal_row.set_css('datagrid-row');
 			this.normal_row.set_style('width', this.normal_width + 'px');
-		}
-		if (this.freeze_row && this.normal_row) {
-			set_max_height(this.freeze_row, this.normal_row);
 		}
 	}
 	create_col_widgets(fields, cols) {
@@ -50,6 +34,7 @@ class Row {
 				opts.icon = f.icon;
 				opts.action = f.action;
 				opts.action.params = this.data.copy();
+				opts.action.params.row = this;
 				w = new Button(opts);
 				buildEventBind(this.dg, w, 'click', opts.action);
 			} else {
@@ -182,11 +167,11 @@ class DataGrid extends VBox {
 			})
 			schedule_once(this.loader.loadData.bind(this.loader), 0.01);
 			if (this.freeze_body) {
-				this.freeze_body.bind('x_min_threshold', this.loader.previousPage.bind(this.loader));
-				this.freeze_body.bind('x_max_threshold', this.loader.nextPage.bind(this.loader));
+				this.freeze_body.bind('min_threshold', this.loader.previousPage.bind(this.loader));
+				this.freeze_body.bind('max_threshold', this.loader.nextPage.bind(this.loader));
 			}
-			this.normal_body.bind('x_min_threshold', this.loader.previousPage.bind(this.loader));
-			this.normal_body.bind('x_max_threshold', this.loader.nextPage.bind(this.loader));
+			this.normal_body.bind('min_threshold', this.loader.previousPage.bind(this.loader));
+			this.normal_body.bind('max_threshold', this.loader.nextPage.bind(this.loader));
 		} else {
 			if (this.data) {
 				this.add_rows(this.data);
@@ -290,12 +275,10 @@ class DataGrid extends VBox {
 			this.freeze_part.set_css('datagrid-left');
 			this.freeze_part.set_style('width', this.freeze_width + 'px');
 			this.freeze_header = new HBox({ height: this.row_height + 'px', width: this.freeze_width + 'px'});
-			// this.freeze_header.set_css('datagrid-row');
-			this.freeze_body = new VBox({ height: "100%", 
+			this.freeze_body = new VScrollPanel({ height: "100%", 
 									width: this.freeze_width + 'px' })
 			this.freeze_body.set_css('datagrid-body');
 			this.freeze_body.bind('scroll', this.coscroll.bind(this));
-			// this.freeze_body.dom_element.style.marginBottom = 18 + 'px';
 		}
 		if (this.normal_fields.length > 0) {
 			this.normal_part = new VBox({ 
@@ -306,12 +289,11 @@ class DataGrid extends VBox {
 			this.normal_part.set_css('datagrid-right');
 			this.normal_header = new HBox({ height: this.row_height + 'px', width: this.normal_width + 'px'});
 			// this.normal_header.set_css('datagrid-row');
-			this.normal_body = new VBox({ 
+			this.normal_body = new VScrollPanel({ 
 				height:"100%",
 				width: this.normal_width + 'px' 
 			});
 			this.normal_body.set_css('datagrid-body')
-			// this.normal_body.dom_element.style.marginBottom = 18 + 'px';
 		}
 		this.create_header();
 		if (this.freeze_fields.length > 0) {

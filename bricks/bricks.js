@@ -276,7 +276,7 @@ var buildScriptHandler = function(w, target, rtdata, desc){
 	var params = {};
 	params.updates(desc.params, rtdata);
 	var f = new Function('target', 'params', 'event', desc.script);
-	// console.log('params=', params, 'buildScriptHandler() ..........');
+	console.log('params=', params, 'buildScriptHandler() ..........');
 	return f.bind(target, target, params);
 }
 var buildDispatchEventHandler = function(w, target, rtdata, desc){

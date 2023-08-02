@@ -12,6 +12,7 @@ cp -a ../examples ../dist
 cp -a ../docs ../dist
 cp -a ../dist/* ~/www/wwwroot/bricks
 cd ../dist
-tar cf - . |gzip > /tmp/bricks.tgz
-scp /tmp/bricks.tgz center@kymoz.com:/tmp
+cp -a * ~/www/wwwroot/bricks
+# tar cf - . |gzip > /tmp/bricks.tgz
+# scp /tmp/bricks.tgz center@kymoz.com:/tmp
 
