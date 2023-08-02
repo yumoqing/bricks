@@ -28,6 +28,7 @@ class Row {
 				uitype: f.uitype,
 				width: f.width,
 				required: true,
+				row_data: this.data.copy(),
 				readonly: true
 			});
 			if (opts.uitype == 'button') {
@@ -36,6 +37,8 @@ class Row {
 				opts.action.params = this.data.copy();
 				opts.action.params.row = this;
 				w = new Button(opts);
+				w.data = this.opts.copy();
+				w.bind('click', this.button_click
 				buildEventBind(this.dg, w, 'click', opts.action);
 			} else {
 				opts.value = this.data[f.name],
