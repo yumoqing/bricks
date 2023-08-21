@@ -1,4 +1,4 @@
-class UiTypeDef {
+class UiTypesDef {
 	constructor(opts){
 		this.opts = opts;
 		this.uitypes = {
@@ -33,3 +33,5 @@ class UiTypeDef {
 		this.uitypes[uitype].inputKlass = klass;
 	}
 }
+
+var uitypesdef = UiTypesDef();
