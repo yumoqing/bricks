@@ -1,3 +1,40 @@
+class UiTypesDef {
+	constructor(opts){
+		this.opts = opts;
+		this.uitypes = {
+		}
+	}
+	set(uitype, viewKlass, inputKlass){
+		if (! this.uitypes[uitype]){
+			this.uitypes[uitype] = {};
+		}
+		this.uitypes[uitype].viewKlass = viewKlass;
+		this.uitypes[uitype].inputKlass = inputKlass;
+	}
+	get(uitype){
+		return [this.uitypes[uitype].viewKlass, this.uitypes[uitype].inputClass];
+	}
+	getInputKlass(uitype){
+		return this.uitypes[uitype].inputKlass;
+	}
+	getViewKlass(uitype){
+		return this.uitypes[uitype].viewKlass;
+	}
+	setViewKlass(uitype, klass){
+		if (! this.uitypes[uitype]){
+			this.uitypes[uitype] = {};
+		}
+		this.uitypes[uitype].viewKlass = klass;
+	}
+	setInputKlass(uitype, klass){
+		if (! this.uitypes[uitype]){
+			this.uitypes[uitype] = {};
+		}
+		this.uitypes[uitype].inputKlass = klass;
+	}
+}
+
+var uitypesdef = new UiTypesDef();
 class _TypeIcons {
 	constructor(){
 		this.kv = {}
@@ -825,7 +862,7 @@ var universal_handler = function(from_widget, widget, desc, event){
 						from_widget,
 						'widget=', widget, 
 						'desc=', desc,
-						evnet);
+						event);
 }
 var buildEventHandler = function(w, desc){
 	var target = getWidgetById(desc.target, w);
@@ -4052,19 +4089,6 @@ class VScrollPanel extends VFiller {
 Factory.register('VScrollPanel', VScrollPanel);
 Factory.register('HScrollPanel', HScrollPanel);
 
-var set_max_height = function(r1, r2){
-	var h = r1.dom_element.offsetHeight;
-	if (h < r2.dom_element.offsetHeight){
-		h = r2.dom_element.offsetHeight;
-	}
-	if (h == 0){
-		h = 30;
-	}
-	var flex = '0 0 ' + h + 'px';
-	r1.set_style('flex', flex);
-	r2.set_style('flex', flex);
-}
-
 class Row {
 	constructor(dg, rec) {
 		this.dg = dg;
@@ -4083,9 +4107,6 @@ class Row {
 			// this.normal_row.set_css('datagrid-row');
 			this.normal_row.set_style('width', this.normal_width + 'px');
 		}
-		if (this.freeze_row && this.normal_row) {
-			set_max_height(this.freeze_row, this.normal_row);
-		}
 	}
 	create_col_widgets(fields, cols) {
 		for (var i = 0; i < fields.length; i++) {
@@ -4098,6 +4119,7 @@ class Row {
 				uitype: f.uitype,
 				width: f.width,
 				required: true,
+				row_data: this.data.copy(),
 				readonly: true
 			});
 			if (opts.uitype == 'button') {
@@ -4106,12 +4128,15 @@ class Row {
 				opts.action.params = this.data.copy();
 				opts.action.params.row = this;
 				w = new Button(opts);
-				buildEventBind(this.dg, w, 'click', opts.action);
+				w.bind('click', this.button_click.bind(w))
+				//# buildEventBind(this.dg, w, 'click', opts.action);
 			} else {
 				opts.value = this.data[f.name],
 					w = Input.factory(opts);
 				w.bind('click', this.click_handler);
 			}
+			w.desc_dic = opts;
+			w.rowObj = this;
 			w.dom_element.style['min-width'] = w.width + 'px';
 			w.set_style('flex', '0 0 ' + convert2int(f.width) + 'px');
 			cols.push(w);
@@ -4125,6 +4150,18 @@ class Row {
 			return row;
 		}
 		return null;
+	}
+	button_click(event){
+		console.log('button_click():,', this.desc_dic, this.rowObj);
+		this.getValue=function(){
+			console.log('this.desc_dic.row_data=', this.desc_dic.row_data);
+			return this.desc_dic.row_data;
+		}
+		var desc = this.desc_dic.action;
+		desc.datawidget = this;
+		desc.datamethod = 'getValue';
+		var f = universal_handler(this, this.rowObj, desc);
+		console.log('f=', f);
 	}
 	selected() {
 		if (this.freeze_row) {

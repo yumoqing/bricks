@@ -146,7 +146,7 @@ var universal_handler = function(from_widget, widget, desc, event){
 						from_widget,
 						'widget=', widget, 
 						'desc=', desc,
-						evnet);
+						event);
 }
 var buildEventHandler = function(w, desc){
 	var target = getWidgetById(desc.target, w);

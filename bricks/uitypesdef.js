@@ -34,4 +34,4 @@ class UiTypesDef {
 	}
 }
 
-var uitypesdef = UiTypesDef();
+var uitypesdef = new UiTypesDef();

@@ -37,14 +37,15 @@ class Row {
 				opts.action.params = this.data.copy();
 				opts.action.params.row = this;
 				w = new Button(opts);
-				w.data = this.opts.copy();
-				w.bind('click', this.button_click
-				buildEventBind(this.dg, w, 'click', opts.action);
+				w.bind('click', this.button_click.bind(w))
+				//# buildEventBind(this.dg, w, 'click', opts.action);
 			} else {
 				opts.value = this.data[f.name],
 					w = Input.factory(opts);
 				w.bind('click', this.click_handler);
 			}
+			w.desc_dic = opts;
+			w.rowObj = this;
 			w.dom_element.style['min-width'] = w.width + 'px';
 			w.set_style('flex', '0 0 ' + convert2int(f.width) + 'px');
 			cols.push(w);
@@ -58,6 +59,18 @@ class Row {
 			return row;
 		}
 		return null;
+	}
+	button_click(event){
+		console.log('button_click():,', this.desc_dic, this.rowObj);
+		this.getValue=function(){
+			console.log('this.desc_dic.row_data=', this.desc_dic.row_data);
+			return this.desc_dic.row_data;
+		}
+		var desc = this.desc_dic.action;
+		desc.datawidget = this;
+		desc.datamethod = 'getValue';
+		var f = universal_handler(this, this.rowObj, desc);
+		console.log('f=', f);
 	}
 	selected() {
 		if (this.freeze_row) {
