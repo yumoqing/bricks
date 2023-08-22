@@ -61,16 +61,13 @@ class Row {
 		return null;
 	}
 	button_click(event){
-		console.log('button_click():,', this.desc_dic, this.rowObj);
 		this.getValue=function(){
-			console.log('this.desc_dic.row_data=', this.desc_dic.row_data);
 			return this.desc_dic.row_data;
 		}
 		var desc = this.desc_dic.action;
 		desc.datawidget = this;
 		desc.datamethod = 'getValue';
 		var f = universal_handler(this, this.rowObj, desc);
-		console.log('f=', f);
 	}
 	selected() {
 		if (this.freeze_row) {
