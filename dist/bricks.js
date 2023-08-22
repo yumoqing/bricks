@@ -4006,18 +4006,15 @@ var low_handle = function(widget, dim, last_pos, cur_pos, maxlen, winsize){
 	var max_rate = cur_pos / (maxlen - winsize);
 	var min_rate = cur_pos / maxlen;
 	if (!widget.threshold && dir > 0 && max_rate >= widget.max_threshold){
-		console.log('max_threshold reached ...');
 		widget.thresgold = true;
 		widget.dispatch('max_threshold');
 		return
 	}
 	if (!widget.threshold && dir < 0 && min_rate <= widget.min_threshold){
-		console.log('min_threshold reached ...');
 		widget.thresgold = true;
 		widget.dispatch('min_threshold');
 		return
 	}
-	console.log('scroll_handle() called ...', max_rate, cur_pos, maxlen, winsize);
 }
 
 class HScrollPanel extends HFiller {
@@ -4152,16 +4149,13 @@ class Row {
 		return null;
 	}
 	button_click(event){
-		console.log('button_click():,', this.desc_dic, this.rowObj);
 		this.getValue=function(){
-			console.log('this.desc_dic.row_data=', this.desc_dic.row_data);
 			return this.desc_dic.row_data;
 		}
 		var desc = this.desc_dic.action;
 		desc.datawidget = this;
 		desc.datamethod = 'getValue';
 		var f = universal_handler(this, this.rowObj, desc);
-		console.log('f=', f);
 	}
 	selected() {
 		if (this.freeze_row) {
