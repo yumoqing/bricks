@@ -4,6 +4,9 @@ It let developments choose the UI components provide by bricks or provide by thi
 
 ## Installation
 ## Use Case
+## Widget List
+[Widgets](widgets.md)
+
 ## UI Components
 ### Layout
 Layout is the base Layout, please click [Layout](layout.md) for more detail.
