@@ -4,34 +4,121 @@ class UiTypesDef {
 		this.uitypes = {
 		}
 	}
-	set(uitype, viewKlass, inputKlass){
+	set(uitype, viewBuilder, inputBuilder){
 		if (! this.uitypes[uitype]){
 			this.uitypes[uitype] = {};
 		}
-		this.uitypes[uitype].viewKlass = viewKlass;
-		this.uitypes[uitype].inputKlass = inputKlass;
+		this.uitypes[uitype].viewBuilder = viewBuilder;
+		this.uitypes[uitype].inputBuilder = inputBuilder;
 	}
 	get(uitype){
-		return [this.uitypes[uitype].viewKlass, this.uitypes[uitype].inputClass];
+		if (! this.uitypes[uitype]){
+			return (null, null);
+		}
+		return [this.uitypes[uitype].viewBuilder, 
+					this.uitypes[uitype].inputBuilder];
 	}
-	getInputKlass(uitype){
-		return this.uitypes[uitype].inputKlass;
+	getInputBuilder(uitype){
+		if (! this.uitypes[uitype]){
+			return Null;
+		}
+		return this.uitypes[uitype].inputBuilder;
 	}
-	getViewKlass(uitype){
-		return this.uitypes[uitype].viewKlass;
+	getViewBuilder(uitype){
+		return this.uitypes[uitype].viewBuilder;
 	}
-	setViewKlass(uitype, klass){
+	setViewBuilder(uitype, Builder){
 		if (! this.uitypes[uitype]){
 			this.uitypes[uitype] = {};
 		}
-		this.uitypes[uitype].viewKlass = klass;
+		this.uitypes[uitype].viewBuilder = Builder;
 	}
-	setInputKlass(uitype, klass){
+	setInputBuilder(uitype, Builder){
 		if (! this.uitypes[uitype]){
 			this.uitypes[uitype] = {};
 		}
-		this.uitypes[uitype].inputKlass = klass;
+		this.uitypes[uitype].inputBuilder = Builder;
 	}
 }
 
 var uitypesdef = new UiTypesDef();
+
+var viewFactory = function(desc, rec){
+	var uitype = desc.uitype;
+	var builder = uitypesdef.getViewBuilder(uitype) || 
+					uitypesdef.getViewBuilder('str');
+	if (! builder) return Null;
+	var w = builder(desc, rec);
+	return w;
+}
+
+var intputFactory = function(desc, rec){
+	var uitype = desc.uitype;
+	var builder = uitypesdef.getInputBuilder(uitype) || 
+				uitypesdef.getInputBuilder('str');
+	if (! builder) return Null;
+	return builder(desc, rec);
+}
+
+var buildText = function(text, halign){
+	if (['left', 'right'].indexOf(halign)< 0){
+		halign = 'left';
+	}
+	var w = new Text({
+					text:text || '', 
+					overflow:'hidden',
+					wrap:true, 
+					halign:'left'
+				});
+	return w;
+}
+var strViewBuilder = function(desc, rec){
+	var v = rec[desc.name];
+	return buildText(v, 'left');
+}
+uitypesdef.setViewBuilder('str', strViewBuilder);
+
+var strInputBuilder = function(desc, rec) {
+	var v = rec[desc.name];
+	desc[value] = v;
+	return new UiStr(desc);
+}
+uitypesdef.setInputBuilder('str', strInputBuilder);
+
+var passwordViewBuilder = function(desc, rec){
+	return new buildText('******');
+}
+uitypesdef.setViewBuilder('password', passwordViewBuilder);
+
+var intViewBuilder = function(desc, rec){
+	var v = rec[desc.name] + '';
+	return buildText(v, 'right');
+}
+uitypesdef.setViewBuilder('int', intViewBuilder);
+
+var floatViewBuilder = function(desc, rec){
+	var v = rec[desc.name];
+	v = v.toFixed(desc.dec_len||2)
+	v = v + '';
+	return buildText(v, 'right');
+}
+uitypesdef.setViewBuilder('float', floatViewBuilder);
+
+var codeViewBuilder = function(desc, rec){
+	var opts = desc.copy()
+	if (opts.uiparams) opts.update(opts.uiparams);
+	var name = desc.textFeild || 'text';
+	var v = rec[name];
+	if (! v) {
+		name = desc.valueField || 'value';
+		v = rec[name];
+	}
+	return buildText(v, 'left')
+}
+uitypesdef.setViewBuilder('code', codeViewBuilder);
+
+
+var passwordInputBuilder = function(desc, rec){
+	return new UiPassword(desc);
+}
+uitypesdef.setInputBuilder('password', passwordInputBuilder);

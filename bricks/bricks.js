@@ -412,8 +412,10 @@ class BricksApp {
 		this.i18n.setup_dict(d);
 	}
 	async build(){
+		//  console.log('build() begin', this.opts.widget);
 		var opts = structuredClone(this.opts.widget);
 		var w = await widgetBuild(opts, Body);
+		//  console.log('build() end', this.opts.widget);
 		return w
 	}
 	async run(){

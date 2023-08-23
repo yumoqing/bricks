@@ -89,6 +89,7 @@ class JsWidget {
 		} else {
 			fontsize = bricks_app.get_textsize(this.ctype);
 		}
+		console.log('***fontsize=', fontsize, this);
 		fontsize = convert2int(fontsize);
 		var rate = this.rate || 1;
 		fontsize = rate * fontsize;

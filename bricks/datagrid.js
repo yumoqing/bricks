@@ -40,8 +40,11 @@ class Row {
 				w.bind('click', this.button_click.bind(w))
 				//# buildEventBind(this.dg, w, 'click', opts.action);
 			} else {
+				w = viewFactory(opts, this.data);
+				/*
 				opts.value = this.data[f.name],
 					w = Input.factory(opts);
+				*/
 				w.bind('click', this.click_handler);
 			}
 			w.desc_dic = opts;
