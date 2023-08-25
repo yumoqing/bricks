@@ -24,7 +24,7 @@ class Popup extends VBox {
 	build(){
 		var tb = new HBox({height:'40px'});
 		tb.set_css('title');
-		this.add_widget(tb);
+		VBox.prototype.add_widget.bind(this)(tb);
 		var tit = new Text({otext:this.title, i18n:true});
 		this.content = new VBox({});
 		VBox.prototype.add_widget.bind(this)(this.content);
@@ -59,7 +59,7 @@ class Popup extends VBox {
 	}
 }
 
-class Message extends VBox {
+class Message extends Popup {
 	/* 
 	{
 		title:
@@ -73,7 +73,7 @@ class Message extends VBox {
 	*/
 	constructor(opts){
 		super(opts);
-		var t = new Text({otext:this.opts.text,
+		var t = new Text({otext:this.opts.message,
 					i18n:true});
 		this.add_widget(t);
 	}

@@ -165,8 +165,8 @@ body {
 
 .multicolumns {
 	column-width: 340px;
-	colomn-gap: 10px'
-
+	colomn-gap: 10px';
+	overflow-x:none;
 }
 
 .popup {

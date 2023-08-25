@@ -38,13 +38,8 @@ class Row {
 				opts.action.params.row = this;
 				w = new Button(opts);
 				w.bind('click', this.button_click.bind(w))
-				//# buildEventBind(this.dg, w, 'click', opts.action);
 			} else {
 				w = viewFactory(opts, this.data);
-				/*
-				opts.value = this.data[f.name],
-					w = Input.factory(opts);
-				*/
 				w.bind('click', this.click_handler);
 			}
 			w.desc_dic = opts;
@@ -178,7 +173,7 @@ class DataGrid extends VBox {
 				pagerows: 80,
 				buffer_pages: 5,
 				url: absurl(this.dataurl, this),
-				methiod: this.method,
+				method: this.method,
 				params: this.params
 			})
 			schedule_once(this.loader.loadData.bind(this.loader), 0.01);
@@ -225,10 +220,12 @@ class DataGrid extends VBox {
 		}
 	}
 	add_rows(records, direction) {
+		if (! direction) direction = 'down';
 		var index = null;
 		if (direction == 'down') {
 			index = 0
 		}
+
 		for (var i = 0; i < records.length; i++) {
 			this.add_row(records[i], index);
 		}

@@ -64,7 +64,7 @@ class BufferedDataLoader {
 			d.total_page += 1;
 		}
 		this.total_page = d.total_page;
-		this.widget.add_rows(d.rows);
+		this.widget.add_rows(d.rows, this.direction);
 		this.buffered_pages += 1;
 		this.loading = false;
 		return d;
