@@ -10,9 +10,9 @@
 		const opts = 
 {
 	"widget": {
-		"widgettype":"urlwidget",
+		"widgettype":"Wterm",
 		"options":{
-			"url":"{{entire_url('xterminal.json')}}"
+			"ws_url":"{{entire_url('/test/dev.xterm')}}"
 		}
 	}
 }

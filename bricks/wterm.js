@@ -4,7 +4,7 @@ need xterm.js
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@4.19.0/css/xterm.css" />
 <script src="https://cdn.jsdelivr.net/npm/xterm@4.19.0/lib/xterm.js"></script>
 */
-class XTerminal extends JsWidget {
+class Wterm extends JsWidget {
 	/*
 	{
 		ws_url:
@@ -16,12 +16,14 @@ class XTerminal extends JsWidget {
 	constructor(opts){
 		super(opts);
 		schedule_once(this.open.bind(this), 0.1);
+		console.log('constructed ....Wterm');
 	}
 	async open(){
 		try {
 			this.term = new Terminal({
 				cursorBlink: "block"
 			});
+			console.log('Terminal opened');
 		}
 		catch(e){
 			console.log(e);
@@ -76,5 +78,5 @@ class XTerminal extends JsWidget {
 	}
 }
 
-Factory.register('XTerminal', XTerminal);
+Factory.register('Wterm', Wterm);
 

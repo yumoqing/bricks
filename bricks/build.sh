@@ -5,7 +5,7 @@ SOURCES="uitypesdef.js utils.js i18n.js factory.js widget.js bricks.js \
 	input.js registerfunction.js button.js accordion.js \
 	tree.js multiple_state_image.js form.js message.js \
 	paging.js scroll.js datagrid.js dataviewer.js \
-	miniform.js terminal.js \
+	miniform.js wterm.js \
 	"
 cat ${SOURCES} > ../dist/bricks.js
 uglifyjs --compress --mangle -- ../dist/bricks.js > ../dist/bricks.min.js
