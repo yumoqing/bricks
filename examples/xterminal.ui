@@ -12,7 +12,7 @@
 	"widget": {
 		"widgettype":"urlwidget",
 		"options":{
-			"url":"xterminal.json"
+			"url":"{{entire_url('xterminal.json')}}"
 		}
 	}
 }
