@@ -3,7 +3,7 @@ class _TypeIcons {
 		this.kv = {}
 	}
 	get(n, defaultvalue){
-		return this.kv.get(n, defaultvalue);
+		return objget(this.kv, n, defaultvalue);
 	}
 	register(n, icon){
 		this.kv[n] = icon;
@@ -84,7 +84,7 @@ var debug = function(){
 var import_cache = new Map()
 
 var import_css = async function(url){
-	if (import_cache.get(url)===1) return;
+	if (objget(import_cache, url)===1) return;
 	var result = await tget(url);
 	debug('import_css():tget() return', result); 
 	var s = document.createElement('style');
@@ -95,7 +95,7 @@ var import_css = async function(url){
 }
 
 var import_js = async function(url){
-	if (import_cache.get(url)===1) return;
+	if (objget(import_cache, url)===1) return;
 	// var result = await tget(url);
 	// debug('import_js():tget() return', url, result); 
 	var s = document.createElement('script');
@@ -148,35 +148,6 @@ var obj_fmtstr = function(obj, fmt){
 	return s;
 }
 
-Object.prototype.copy = function(){
-	var o = {}
-	for ( k in this){
-		if (this.hasOwnProperty(k)){
-			o[k] = this[k];
-		}
-	}
-	return o;
-}
-Object.prototype.get = function(name, defvalue){
-	return objget(this, name, defvalue);
-}
-
-Object.prototype.fmtstr = function(fmt){
-	return obj_fmtstr(this, fmt);
-}
-
-Object.prototype.update = function(obj){
-	if (obj){
-		extend(this, obj);
-	}
-}
-
-Object.prototype.updates = function(){
-	for (var i=0; i<arguments.length; i++){
-		extend(this, arguments[i]);
-	}
-}
-
 var archorize = function(ele,archor){
 	/* archor maybe one of the:
 	"tl", "tc", "tr",
@@ -223,7 +194,7 @@ var archorize = function(ele,archor){
 		'x':x,
 		'y':y
 	}
-	var tsf = o.fmtstr('translateY(-${y}) translateX(-${x})');
+	var tsf = obj_fmtstr(o, 'translateY(-${y}) translateX(-${x})');
 	console.log('archorize(): tsf=', tsf);
 	ele.style.transform = tsf;
 	ele.style.position = "absolute";
@@ -298,4 +269,13 @@ var set_max_height = function(w1, w2){
 	} else if (v > 0) {
 		w2.set_height(w1.dom_element.offsetHeight);
 	}
+}
+var objcopy = function(obj){
+    var o = {}
+    for ( k in obj){
+        if (obj.hasOwnProperty(k)){
+            o[k] = obj[k];
+        }
+    }
+    return o;
 }

@@ -1,4 +1,4 @@
-class Popup extends VBox {
+class BPopup extends VBox {
 	/* 
 	{
 		holder:
@@ -59,7 +59,7 @@ class Popup extends VBox {
 	}
 }
 
-class Message extends Popup {
+class BMessage extends BPopup {
 	/* 
 	{
 		title:
@@ -79,14 +79,14 @@ class Message extends Popup {
 	}
 }
 
-class Error extends Message {
+class BError extends BMessage {
 	constructor(opts){
 		super(opts);
 		this.set_css('error');
 	}
 }
 
-class PopupForm extends Popup {
+class PopupForm extends BPopup {
 	/* 
 	{
 		form:{
@@ -104,6 +104,6 @@ class PopupForm extends Popup {
 		this.dismiss();
 	}
 }
-Factory.register('Message', Message);
-Factory.register('Error', Error);
+Factory.register('BMessage', BMessage);
+Factory.register('BError', BError);
 Factory.register('PopupForm', PopupForm);

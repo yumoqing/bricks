@@ -1,0 +1,39 @@
+  <html>
+  <head>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@4.19.0/css/xterm.css" />
+  <script src="https://cdn.jsdelivr.net/npm/xterm@4.19.0/lib/xterm.js"></script>
+  </head>
+  <body>
+  	<div id="terminal"></div>
+	<script>
+	var term = new Terminal();
+	term.open(document.getElementById('terminal'));
+	var ws = new WebSocket("ws://localhost/test/dev.xterm");
+	console.log('term=', term);
+	var curr_line = "";
+	var entries = [];
+
+	term.prompt = () => {
+		if (curr_line) {
+			let data = { method: "command", command: curr_line };
+			ws.send(JSON.stringify(data));
+		}
+	};
+	term.prompt();
+
+	// Receive data from socket
+	ws.onmessage = msg => {
+		term.write(JSON.parse(msg.data).data);
+	};
+
+	term.onData(function(key) {
+		//Enter
+		let msg = {
+			data:{data:key},
+			type:1
+		}
+		ws.send(key);
+	});
+	</script>
+</body>
+</html>

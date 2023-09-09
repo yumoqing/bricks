@@ -72,8 +72,8 @@ class TreeNode extends VBox {
 		} else {
 			var srcs = this.tree.opts.node_state_imgs || {};
 			var sources = {};
-			sources['open'] = srcs.get('open', bricks_resource('imgs/down_arrow.png'));
-			sources['close'] = srcs.get('close', bricks_resource('imgs/right_arrow.png'));
+			sources['open'] = objget(srcs, 'open', bricks_resource('imgs/down_arrow.png'));
+			sources['close'] = objget(srcs, 'close', bricks_resource('imgs/right_arrow.png'));
 			this.trigle = new MultipleStateIcon({
 				state:'close',
 				urls:sources,
@@ -84,9 +84,9 @@ class TreeNode extends VBox {
 			widget.add_widget(this.trigle);
 		}
 		var dtype = this.data[this.tree.opts.typeField];
-		var icon = TypeIcons.get(dtype);
+		var icon = objget(TypeIcons, dtype);
 		if (!icon && this.tree.opts.default_type){
-			icon = TypeIcons.get(his.tree.opts.default_type);
+			icon = objget(TypeIcons, his.tree.opts.default_type);
 		}
 		if (!icon){
 			icon = bricks_resource('imgs/folder.png');

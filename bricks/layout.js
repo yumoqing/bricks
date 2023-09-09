@@ -23,7 +23,7 @@ class Layout extends JsWidget {
 		return this._remove_widgets(cnt, true);
 	}
 	_remove_widgets(cnt, from_end){
-		var children = this.children.copy();
+		var children = objcopy(this.children);
 		var len = this.children.length;
 		for (var i=0; i<len; i++){
 			if (i >= cnt) break;

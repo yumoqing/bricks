@@ -84,7 +84,7 @@ class TabPanel extends Layout {
 		}
 		for (var i=0;i<items.length;i++){
 			if (tdesc.name == items[i].name){
-				var w = this.content_buffer.get(tdesc.name);
+				var w = objget(this.content_buffer, tdesc.name);
 				if (w && ! items[i].refresh){
 					this.content_container.clear_widgets();
 					this.content_container.add_widget(w);

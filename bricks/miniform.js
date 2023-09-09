@@ -38,7 +38,7 @@ class MiniForm extends HBox {
 		this.clear_widgets();
 		this.add_widget(this.choose);
 		var f = this.opts.fields.find( i => i.name==name);
-		var desc = f.copy();
+		var desc = objcopy(f);
 		desc.width = 'auto';
 		var i = Input.factory(desc);
 		i.bind('input', this.input_handle.bind(this));
@@ -75,7 +75,7 @@ class MiniForm extends HBox {
 	getValue(){
 		var d = this.opts.params || {};
 		var v = this.input.getValue();
-		d.update(v);
+		extend(d, v);
 		return d;
 	}
 }

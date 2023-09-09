@@ -36,8 +36,8 @@ class BufferedDataLoader {
 		this.widget.clear_data();
 		this.buffer = {};
 		if (!params) params = {};
-		var p = this.params.copy();
-		p.update(params);
+		var p = objcopy(this.params);
+		extend(p, params);
 		p.rows = this.pagerows;
 		this.cur_params = p;
 		this.cur_page = 1;
@@ -51,7 +51,7 @@ class BufferedDataLoader {
 			this.widget.del_old_rows(this.pagerows, this.direction);
 			this.buffered_pages -= 1;
 		}
-		var params = this.cur_params.copy();
+		var params = objcopy(this.cur_params);
 		params.page = this.cur_page;
 		params.rows = this.pagerows;
 		var d = await jcall(this.url, {

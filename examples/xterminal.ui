@@ -2,9 +2,9 @@
   <head>
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@4.19.0/css/xterm.css" />
 <link rel="stylesheet" href="/bricks/css/bricks.css" />
+  <script src="https://cdn.jsdelivr.net/npm/xterm@4.19.0/lib/xterm.js"></script>
   </head>
   <body>
-  <script src="https://cdn.jsdelivr.net/npm/xterm@4.19.0/lib/xterm.js"></script>
   <script src="/bricks/bricks.js"></script>
 	<script>
 		const opts = 
@@ -12,7 +12,7 @@
 	"widget": {
 		"widgettype":"Wterm",
 		"options":{
-			"ws_url":"{{entire_url('/test/dev.xterm')}}"
+			"ws_url":"ws://localhost/test/dev.xterm"
 		}
 	}
 }

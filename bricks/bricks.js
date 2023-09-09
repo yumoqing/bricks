@@ -222,8 +222,8 @@ var buildUrlwidgetHandler = function(w, target, rtdata, desc){
 		}
 		target.add_widget(w);
 	}
-	var options = desc.options.copy();
-	options.params.update(rtdata);
+	var options = objcopy(desc.options);
+	extend(options.params, rtdata);
 	var opts = {
 		"widgettype":"urlwidget",
 		"options":options
@@ -243,22 +243,22 @@ var buildBricksHandler = function(w, target, rtdata, desc){
 		}
 		target.add_widget(w);
 	}
-	var options = desc.options.copy();
-	options.options.update(rtdata);
+	var options = objcopy(desc.options);
+	extend(options.options, rtdata);
 	return f.bind(target, target, desc.mode || 'replace', options);
 }
 var buildRegisterFunctionHandler = function(w, target, rtdata, desc){
-	var f = registerfunctions.get(desc.rfname);
+	var f = objget(registerfunctions, desc.rfname);
 	if( ! f){
 		console.log('rfname:', desc.rfname, 'not registed', desc);
 		return null;
 	}
 	var params = {};
 	if (desc.params){
-		params.update(desc.params);
+		extend(params, desc.params);
 	}
 	if (rtdata){
-		params.update(rtdata);
+		extend(params, rtdata);
 	}
 	return f.bind(target, params);
 }
@@ -269,19 +269,22 @@ var buildMethodHandler = function(w, target, rtdata, desc){
 		return null;
 	}
 	var params = {};
-	params.updates(desc.params, rtdata);
+	extend(params, desc.params)
+	extend(params, rtdata);
 	return f.bind(target, params);
 }
 var buildScriptHandler = function(w, target, rtdata, desc){
 	var params = {};
-	params.updates(desc.params, rtdata);
+	extend(params, desc.params)
+	extend(params, rtdata);
 	var f = new Function('target', 'params', 'event', desc.script);
 	console.log('params=', params, 'buildScriptHandler() ..........');
 	return f.bind(target, target, params);
 }
 var buildDispatchEventHandler = function(w, target, rtdata, desc){
 	var params = {};
-	params.updates(desc.params, rtdata);
+	extend(params, desc.params)
+	extend(params, rtdata);
 	var f = function(target, event_name, params){
 		target.dispatch(event_name, params);
 	}
@@ -370,7 +373,7 @@ class BricksApp {
 			this.lang = navigator.language;
 		}
 		this.textList = [];
-		this.i18n = new I18n(opts.get('i18n', {}));
+		this.i18n = new I18n(objget(opts, 'i18n', {}));
 		this.session_id = null;
 		createTooltip();
 	}
@@ -412,16 +415,17 @@ class BricksApp {
 		this.i18n.setup_dict(d);
 	}
 	async build(){
-		//  console.log('build() begin', this.opts.widget);
+		console.log('build() begin', this.opts.widget, 'body=', Body);
 		var opts = structuredClone(this.opts.widget);
 		var w = await widgetBuild(opts, Body);
-		//  console.log('build() end', this.opts.widget);
+		console.log('build() end', this.opts.widget, w, 'body=', Body);
 		return w
 	}
 	async run(){
 		await this.change_language(this);
 		var w = await this.build();
 		this.root = w;
+		console.log('w=', w, 'Body=', Body, Wterm, 'Factory=', Factory)
 		Body.add_widget(w);
 	}
 	textsize_bigger(){

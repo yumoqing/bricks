@@ -24,7 +24,7 @@ class Modal extends Layout {
 		this.panel.dom_element.style.backgroundColor = this.opts.bgcolor|| '#e8e8e8';
 		this.panel.set_height(this.opts.height);
 		this.panel.set_css('modal');
-		archorize(this.panel.dom_element, this.opts.get('archor', 'cc'));
+		archorize(this.panel.dom_element, objget(this.opts, 'archor', 'cc'));
 		this.create_title();
 		this.content = new VBox({width:'100%'});
 		this.panel.add_widget(this.content);
@@ -43,7 +43,7 @@ class Modal extends Layout {
 		var e = document.createElement('div');
 		e.style.display = "none"; /* Hidden by default */
 		e.style.position = "fixed"; /* Stay in place */
-		e.style.zIndex = this.opts.get('org_index', 0) + 1; /* Sit on top */
+		e.style.zIndex = objget(this.opts, 'org_index', 0) + 1; /* Sit on top */
 		e.style.paddingTop = "100px"; /* Location of the box */
 		e.style.left = 0;
 		e.style.top = 0;

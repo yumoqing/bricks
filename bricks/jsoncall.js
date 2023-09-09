@@ -16,7 +16,7 @@ class HttpText {
 		this.headers = headers || {
 			"Accept":"text/html",
 		};
-		this.headers.update(headers);
+		extend(this.headers, headers);
 		this.params = {
 			"_webbricks_":1
 		}
@@ -50,7 +50,7 @@ class HttpText {
 		}
 		var session =  bricks_app.get_session();
 		if (session){
-			params.update({session:session});
+			extend(params,{session:session});
 		}
 		return params;
 	}
@@ -83,7 +83,7 @@ class HttpText {
 		var result=null;
 		result = await this.get_result_data(fetchResult);
 		if (fetchResult.ok){
-			var ck =  fetchResult.headers.get('Set-Cookie');
+			var ck =  objget(fetchResult.headers, 'Set-Cookie');
 			if (ck){
 				var session = ck.split(';')[0];
 				bricks_app.save_session(session);
@@ -179,7 +179,7 @@ class HttpJson extends HttpText {
 		this.headers = {
 			"Accept": "application/json",
 		}
-		this.headers.update(headers);
+		extend(this.headers, headers);
 	}
 	async get_result_data(resp) {
 		return await resp.json()

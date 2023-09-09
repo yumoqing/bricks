@@ -60,7 +60,7 @@ class JsWidget {
 			}
 			this[okeys[k]] = this.opts[okeys[k]];
 		}
-		this.dom_element.style.update(style);
+		extend(this.dom_element.style, style);
 		if (this.opts.css){
 			this.set_css(this.opts.css);
 		}
@@ -148,7 +148,7 @@ class JsWidget {
 		}
 	}
 	set_cssObject(cssobj){
-		this.dom_element.style.update(cssobj);
+		extend(this.dom_element.style, cssobj);
 	}
 	is_container(){
 		return this._container;

@@ -50,7 +50,7 @@ class Button extends Layout {
 		this.item_rate = opts.item_rate || 1;
 		this.set_id(this.opts.name);
 		this.opts_setup();
-		this.dom_element.style.update(style);
+		extend(this.dom_element.style, style);
 	}
 	create(){
 		this.dom_element = document.createElement('button');

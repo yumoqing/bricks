@@ -3,9 +3,9 @@ class RegisterFunction {
 		this.rfs = {};
 	}
 	register(n, f){
-		this.rfs.update({n:f});
+		extend(this.rfs, {n:f});
 	}
 	get(n){
-		return this.rfs.get(n);
+		return objget(this.rfs, n);
 	}
 }

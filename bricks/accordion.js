@@ -52,7 +52,7 @@ class Accordion extends VBox {
 		if (pos==-1){
 			debug('Accordion():name=',name, 'not found in items',this.opts.items);
 		}
-		var c = this.subcontents.get(name);
+		var c = objget(this.subcontents,name);
 		if (! c){
 			c = await widgetBuild(this.opts.items[pos].content);
 			this.subcontents[name] = c;

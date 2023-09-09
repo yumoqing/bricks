@@ -1,8 +1,5 @@
-
 /*
-need xterm.js
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@4.19.0/css/xterm.css" />
-<script src="https://cdn.jsdelivr.net/npm/xterm@4.19.0/lib/xterm.js"></script>
+dependent on xterm.js
 */
 class Wterm extends JsWidget {
 	/*
@@ -15,65 +12,24 @@ class Wterm extends JsWidget {
 	*/
 	constructor(opts){
 		super(opts);
-		schedule_once(this.open.bind(this), 0.1);
-		console.log('constructed ....Wterm');
+		schedule_once(this.open.bind(this), 0.5);
 	}
 	async open(){
-		try {
-			this.term = new Terminal({
-				cursorBlink: "block"
-			});
-			console.log('Terminal opened');
-		}
-		catch(e){
-			console.log(e);
-			return;
-		}
-		
-		this.ws = new WebSocket(this.opts.ws_url, "echo-protocol");
-		var curr_line = "";
-		var entries = [];
-		this.term.open(this.dom_element);
-		this.term.write("web shell $ ");
+		var term = new Terminal();
+		this.term = term;
+		term.open(this.dom_element);
+		var ws = new WebSocket(this.opts.ws_url);
+		ws.onmessage = msg => {
+			term.write(JSON.parse(msg.data).data);
+		};
 
-		this.term.prompt = () => {
-			if (curr_line) {
-				let data = { method: "command", command: curr_line };
-				this.ws.send(JSON.stringify(data));
+		term.onData(function(key) {
+			//Enter
+			let msg = {
+				data:{data:key},
+				type:1
 			}
-		};
-		this.term.prompt();
-
-		// Receive data from socket
-		this.ws.onmessage = msg => {
-		this.term.write("\r\n" + JSON.parse(msg.data).data);
-		curr_line = "";
-		};
-
-		this.term.on("key", function(key, ev) {
-		//Enter
-		if (ev.keyCode === 13) {
-		  if (curr_line) {
-			entries.push(curr_line);
-			this.term.write("\r\n");
-			this.term.prompt();
-		  }
-		} else if (ev.keyCode === 8) {
-		  // Backspace
-		  if (curr_line) {
-			curr_line = curr_line.slice(0, curr_line.length - 1);
-			this.term.write("\b \b");
-		  }
-		} else {
-		  curr_line += key;
-		  this.term.write(key);
-		}
-		});
-
-		// paste value
-		this.term.on("paste", function(data) {
-		curr_line += data;
-		this.term.write(data);
+			ws.send(key);
 		});
 	}
 }

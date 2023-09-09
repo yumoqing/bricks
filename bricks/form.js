@@ -65,7 +65,7 @@ class FormBody extends VBox {
 				w.focus();
 				return;
 			}
-			data.update(d);
+			extend(data, d);
 		}
 		return data;
 	}

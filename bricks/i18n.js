@@ -18,22 +18,22 @@ class I18n {
 			itxt = this.msgs[txt];
 		}
 		if (obj instanceof Object){
-				return obj.fmtstr(itxt);
+				return obj_fmtstr(obj, itxt);
 		}
 		return txt;
 	}
 	is_loaded(lang){
-		if (this.lang_msgs.get(lang)) return true;
+		if (objget(this.lang_msgs, lang)) return true;
 		return false;
 	}
 	setup_dict(dic, lang){
 		this.cur_lang = lang;
-		this.lang_msgs.update({lang:dic});
+		extend(this.lang_msgs, {lang:dic});
 		this.msgs = dic;
 	}
 	async change_lang(lang){
-		if (this.lang_msgs.get(lang)){
-			this.msgs = this.lang_msgs.get(lang);
+		if (objget(this.lang_msgs, lang)){
+			this.msgs = objget(this.lang_msgs, lang);
 			return;
 		}
 		

@@ -276,7 +276,7 @@ class UiCheck extends UiType {
 	static uitype = 'check';
 	constructor(opts){
 		super(opts);
-		UiCheck.prototype.update(Layout.prototype);
+		extend(UiCheck.prototype, Layout.prototype);
 		this.add_widget = Layout.prototype.add_widget.bind(this);
 		this.dom_element.style.width = 'auto';
 		this.dom_element.style.height = 'auto';
@@ -538,7 +538,7 @@ class UiCode extends UiType {
 	async get_data(event){
 		var params = this.opts.params;
 		if(event){
-			params.update(event.params);
+			extend(params, event.params);
 		}
 		var d = await jcall(this.opts.dataurl,
 			{
@@ -611,7 +611,7 @@ class _Input {
 		this.uitypes[Klass.uitype] = Klass;
 	}
 	factory(options){
-		var klass = this.uitypes.get(options.uitype);
+		var klass = objget(this.uitypes, options.uitype);
 		if (klass){
 			return new klass(options);
 		}

@@ -105,8 +105,8 @@ var floatViewBuilder = function(desc, rec){
 uitypesdef.setViewBuilder('float', floatViewBuilder);
 
 var codeViewBuilder = function(desc, rec){
-	var opts = desc.copy()
-	if (opts.uiparams) opts.update(opts.uiparams);
+	var opts = objcopy(desc)
+	if (opts.uiparams) extend(opts, opts.uiparams);
 	var name = desc.textFeild || 'text';
 	var v = rec[name];
 	if (! v) {

@@ -94,7 +94,7 @@ class Toolbar extends Layout {
 		console.log('Toolbar() onclock,target=', event.target, tool);
 		var e = new Event('command');
 		var d = {};
-		d.update(tool.tool_opts);
+		extend(d, tool.tool_opts);
 		if (this.opts.target){
 			d.target = this.opts.target;
 		}

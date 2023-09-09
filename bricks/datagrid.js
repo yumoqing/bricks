@@ -1,7 +1,7 @@
 class Row {
 	constructor(dg, rec) {
 		this.dg = dg;
-		this.data = rec.copy();
+		this.data = objcopy(rec);
 		this.freeze_cols = [];
 		this.normal_cols = [];
 		this.name_widgets = {};
@@ -22,19 +22,19 @@ class Row {
 			var f = fields[i];
 			var opts = f.uioptions || {};
 			var w;
-			opts.update({
+			extend(opts, {
 				name: f.name,
 				label: f.label,
 				uitype: f.uitype,
 				width: f.width,
 				required: true,
-				row_data: this.data.copy(),
+				row_data: objcopy(this.data),
 				readonly: true
 			});
 			if (opts.uitype == 'button') {
 				opts.icon = f.icon;
 				opts.action = f.action;
-				opts.action.params = this.data.copy();
+				opts.action.params = objcopy(this.data);
 				opts.action.params.row = this;
 				w = new Button(opts);
 				w.bind('click', this.button_click.bind(w))
