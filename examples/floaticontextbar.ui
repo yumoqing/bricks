@@ -1,0 +1,19 @@
+{
+	"widgettype":"FloatIconTextBar",
+	"options":{
+		"tools":[
+		{
+			"name":"add",
+			"icon":"{{entire_url('../imgs/add.png')}}",
+			"label":"add",
+			"tip":"add a record"
+		},
+		{
+			"icon":"{{entire_url('../imgs/delete.png')}}",
+			"name":"delete",
+			"label":"delete",
+			"tip":"delete a record"
+		}],
+	}
+}
+	

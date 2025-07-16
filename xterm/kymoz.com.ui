@@ -1,0 +1,6 @@
+{
+	"widgettype":"Wterm",
+	"options":{
+		"ws_url":"{{websocket_url('./kymoz.com.xterm')}}"
+	}
+}

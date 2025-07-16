@@ -1,0 +1,85 @@
+{
+	"widgettype":"VBox",
+	"options":{
+		"width":"100%",
+		"height":"100%"
+	},
+	"subwidgets":[
+		{
+			"widgettype":"HBox",
+			"options":{
+				"height":"40px"
+			},
+			"subwidgets":[
+				{
+					"id":"changetext",
+					"widgettype":"Button",
+					"options":{
+						"dynsize":false,
+						"width":"80px",
+						"i18n":true,
+						"label":"Change text"
+					}  
+				},
+				{
+					"id":"smaller",
+					"widgettype":"Button",
+					"options":{
+						"dynsize":false,
+						"width":"80px",
+						"i18n":true,
+						"label":"Small size"
+					}  
+				},
+				{
+					"id":"larger",
+					"widgettype":"Button",
+					"options":{
+						"dynsize":false,
+						"width":"80px",
+						"i18n":true,
+						"label":"larger size"
+					}
+				}
+			]
+		},
+		{
+			"widgettype":"Filler",
+			"options":{},
+			"subwidgets":[
+				{
+					"id":"text_1",
+					"widgettype":"Text",
+					"options":{
+						"dynsize":true,
+						"text":"original text"
+					}
+				}
+			]
+		}
+	],
+	"binds":[
+		{
+			"wid":"changetext",
+			"event":"click",
+			"actiontype":"method",
+			"target":"text_1",
+			"params":"new text",
+			"method":"set_text"
+		},
+		{
+			"wid":"smaller",
+			"event":"click",
+			"actiontype":"method",
+			"target":"app",
+			"method":"textsize_smaller"
+		},
+		{
+			"wid":"larger",
+			"event":"click",
+			"actiontype":"method",
+			"target":"app",
+			"method":"textsize_bigger"
+		}
+	]
+}

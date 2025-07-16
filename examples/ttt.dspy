@@ -1,0 +1,8 @@
+info(params_kw)
+return {
+	"widgettype":"Message",
+	"options":{
+		"title":"form data accepted",
+		"message":json.dumps(params_kw)
+	}
+}

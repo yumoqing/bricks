@@ -1,0 +1,22 @@
+{
+	"widgettype":"DataGrid",
+	"options": {
+		"dataurl":"list_tables.dspy",
+		"title":"数据表清单",
+		"idField":"name",
+		"fields":[
+			{
+				"name":"name",
+				"label":"Name",
+				"width":"200px",
+				"uitype":"str"
+			},
+			{
+				"name":"title",
+				"label":"中文表名",
+				"width":"420px",
+				"uitype":"str"
+			}
+		]
+	}
+}
