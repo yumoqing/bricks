@@ -13,39 +13,59 @@ bricks.Wterm = class extends bricks.JsWidget {
 		super(opts);
 		this.socket = null;
 		this.ping_timeout = opts.ping_timeout || 19;
-		schedule_once(this.open.bind(this), 0.5);
+		schedule_once(this.open.bind(this), 1);
 	}
 	charsize_sizing(){
 		var cs = bricks.app.charsize;
 		this.term.setOption('fontSize', cs);
 	}
+	send_term_size(){
+		try {
+			this.socket.send(JSON.stringify({ type: "resize", 
+						width:this.get_width(),
+						height: this.get_height(),
+						rows: this.term.rows, 
+						cols: this.term.cols }));
+		} catch (e) {
+			console.log('ws not ready');
+		}
+	}
+	send_data(d){
+		this.socket.send(JSON.stringify({type: "input", "data":d}));
+	}
+	send_heartbeat(){
+		this.socket.send(JSON.stringify({ type: "heartbeat"  }));
+	
+	}
 	heartbeat(){
 		if (this.socket.readyState != 1) return;
-		this.socket.send('_#_heartbeat_#_');
+		this.send_heartbeat();
 		this.heartbeat_task = schedule_once(this.heartbeat.bind(this), 
 								this.ping_timeout);
 	}
 	async open(){
-		var term_options = this.term_options || {};
+		var term_options = bricks.extend({width: "100%", height: "100%"}, this.term_options);
 		var term = new Terminal(term_options);
 		this.term = term;
 		term.open(this.dom_element);
-		var sessdata = bricks.app.get_session();
-		var ws = new WebSocket(this.opts.ws_url, sessdata);
+		// var sessdata = bricks.app.get_session();
+		// var ws = new WebSocket(this.opts.ws_url, sessdata);
+		var ws = new WebSocket(this.opts.ws_url);
 		this.socket = ws;
 
 		this.fitAddon = new FitAddon.FitAddon()
 		term.loadAddon(this.fitAddon)
 		this.fitAddon.fit();
 		this.charsize_sizing();
-		this.bind('resize', this.term_resize.bind(this))
 		ws.onmessage = event => {
 			var msg = JSON.parse(event.data);
 			console.log('ws msg=', msg);
-			if (msg.data == '_#_heartbeat_#_'){
+			if (msg.data.type  == 'heartbeat'){
 				console.log('connection alive');
+			} else if (msg.data.type == 'data') {
+				term.write(msg.data.data);
 			} else {
-				term.write(msg.data);
+				console.log('get server data = ', msg.data);
 			}
 		};
 		ws.onclose = (event) => {
@@ -56,22 +76,21 @@ bricks.Wterm = class extends bricks.JsWidget {
 			}
 		};
 		ws.onopen = () => {
+			this.send_term_size();
+			this.bind('resize', this.term_resize.bind(this))
 			this.heartbeat_task = schedule_once(this.heartbeat.bind(this), 
 							this.ping_timeout);
 		};
-		term.onData(function(key) {
-			//Enter
-			let msg = {
-				data:{data:key},
-				type:1
-			}
-			ws.send(key);
+		term.onData((key) => {
+			console.log('key=', key);
+			this.send_data(key);
 		});
 		term.focus();
 	}
 	term_resize(){
 		try {
 			this.fitAddon.fit();
+			this.send_term_size();
 		} catch(e){
 			console.log('resize error', e);
 		}
