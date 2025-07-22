@@ -116,17 +116,19 @@ bricks.Popup = class extends bricks.VBox {
 		this.set_style('left', x + 'px');
 	}
 	setup_resizable(){
+		console.log('============= setup_resizable() called ================')
 		this.resizable_w = new bricks.Svg({rate:1.5, url:bricks_resource('imgs/right-bottom-triangle.svg')});
 		super.add_widget(this.resizable_w);
 		this.resizable_w.set_css('resizebox');
 		this.resizable_w.bind('mousedown', this.resize_start_pos.bind(this));
-		bricks.Body.bind('mousemove', this.resizing.bind(this));
-		bricks.Body.bind('mouseup', this.stop_resizing.bind(this));
+		this.resizable_w.bind('mousemove', this.resizing.bind(this));
+		this.resizable_w.bind('mouseup', this.stop_resizing.bind(this));
+		console.log('============= setup_resizable() finished  ================')
 	}
 	resize_start_pos(e){
-		if (e.target != this.resizable_w.dom_element) 
+		if (! this.resizable_w.dom_element.contains(e.target))
 		{
-			// console.log('not event target');
+			console.log('not event target', e.target);
 			return;
 		}
 		var rect = this.showRectage();
@@ -136,16 +138,18 @@ bricks.Popup = class extends bricks.VBox {
 		this.s_width =  rect.width;
 		this.s_height = rect.height;
 		e.preventDefault();
+		this.resize_status = true;
+		console.log('============= resize_start_pos() called  ================')
 		// console.log('resize_start_pos():', this.s_width, this.s_height, this.s_offsetX, this.s_offsetY);
 	}
 	resizing(e){
-		if (e.target != this.resizable_w.dom_element){
+		if (! this.resizable_w.dom_element.contains(e.target)){
 			this.stop_resizing();
 			// console.log('resizing(): not event target');
 			return;
 		}
 		if (!this.resize_status){
-			// console.log('resizing(): not in resize status');
+			console.log('resizing(): not in resize status');
 			return;
 		}
 		var cx, cy;
@@ -155,7 +159,16 @@ bricks.Popup = class extends bricks.VBox {
 		this.set_style('height',  cy + 'px');
 		// console.log('resizing():', this.resize_status, cx, cy);
 		e.preventDefault();
+		console.log('============= resizing() called  ================')
 	}
+
+	stop_resizing(e){
+		this.resize_status = false;
+		bricks.Body.unbind('mousemove', this.resizing.bind(this));
+		bricks.Body.unbind('mouseup', this.stop_resizing.bind(this));
+		console.log('========= stop_resizing() called ===========', this.resize_status);
+	}
+	
 	positify_tl(){
 		var rect, w, h, t, l;
 		if (this.top && this.left){
@@ -223,13 +236,6 @@ bricks.Popup = class extends bricks.VBox {
 		}
 	}
 			
-	stop_resizing(e){
-		this.resize_status = false;
-		bricks.Body.unbind('mousemove', this.resizing.bind(this));
-		bricks.Body.unbind('mouseup', this.stop_resizing.bind(this));
-		// console.log('stop_resizing():', this.resize_status);
-	}
-	
 	setup_movable(){
 		this.moving_w.bind('mousedown', this.rec_start_pos.bind(this));
 		this.moving_w.bind('touchstart', this.rec_start_pos.bind(this));
@@ -457,6 +463,7 @@ bricks.PopupWindow = class extends bricks.Popup {
 		if (this.auto_open){
 			schedule_once(this.open.bind(this), 0.2);
 		}
+		console.log('resizalbe=', this.resizable);
 	}
 	build_title_bar(){
 		this.url = this.opts.icon || bricks_resource('imgs/app.svg');
