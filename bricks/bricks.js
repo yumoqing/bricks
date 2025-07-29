@@ -329,12 +329,12 @@ var _buildWidget = async function(from_widget, target, mode, options, desc){
 		if (! target.parent){
 			bricks.app.add_widget(target);
 		}
-		console.log('target=', target);
-		if (desc.popup_options.eventpos){
-			target.bind('opened', bricks.relocate_by_eventpos.bind(null, desc.event, target));
+		if (desc.popup_options){
+			if (desc.popup_options.eventpos){
+				target.bind('opened', bricks.relocate_by_eventpos.bind(null, desc.event, target));
+			}
 		}
 	}
-
 	if (mode == 'replace'){
 		target.clear_widgets();
 		target.add_widget(w);
