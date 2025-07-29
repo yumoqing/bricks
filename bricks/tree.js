@@ -319,6 +319,21 @@ bricks.Tree = class extends bricks.VScrollPanel {
 			} else {
 				d[this.parentField] = node.get_id();
 			}
+		} else if (this.opts.params.id) {
+			if (d instanceof FormData){
+				d.append(this.parentField, this.opts.params.id);
+			} else {
+				d[this.parentField] = this.opts.params.id;
+			}
+		}
+		if (this.opts.newdata_params){
+			for (const [k, v] of Object.entries(this.opts.newdata_params)){
+				if (d instanceof FormData){
+					d.append(k, v);
+				} else {
+					d[k] = v;
+				}
+			}
 		}
 		if (this.editable.add_url){
 			var jc = new bricks.HttpJson()
