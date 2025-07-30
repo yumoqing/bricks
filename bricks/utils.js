@@ -1,6 +1,10 @@
 var bricks = window.bricks || {};
 bricks.bug = false;
 
+function isString(value) {
+  return typeof value === 'string' || value instanceof String;
+}
+
 function parseRGB(colorStr) {
   const match = colorStr.match(/^rgb\s*\(\s*(\d+),\s*(\d+),\s*(\d+)\s*\)$/);
   if (!match) return null;

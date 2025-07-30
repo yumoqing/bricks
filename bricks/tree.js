@@ -123,10 +123,15 @@ bricks.TreeNode = class extends bricks.VBox {
 			widget.add_widget(this.check_w);
 			this.check_w.bind('changed', this.tree.node_checked.bind(this.tree, this))
 		}
-		var icon_url = this.icons_urls.leaf;
-		if (this.is_leaf) icon_url = this.icons_urls.leaf;
-		else if (this.node_state == 'expand') this.icon_url = this.icons_urls.open;
-		else this.icon_url = this.icons_urls.close;
+		var icon_url;
+		if ( isString(this.icons_urls){
+			icon_url = this.icons_urls);
+		} else {
+			icon_url = this.icons_urls.leaf;
+			if (this.is_leaf) icon_url = this.icons_urls.leaf;
+			else if (this.node_state == 'expand') this.icon_url = this.icons_urls.open;
+			else this.icon_url = this.icons_urls.close;
+		}
 		var img = new bricks.Svg({
 			rate:1,
 			url:this.icon_url
@@ -160,9 +165,9 @@ bricks.TreeNode = class extends bricks.VBox {
 			var icons = null;
 			if (this.tree.node_typeicons){
 				icons  = this.tree.node_typeicons[ntype];
-				var dt = this.tree.node_typeicons.default_type;
-				if (dt){
-					icon = this.tree.node_typeicons[dt];
+				if (!icons){
+					var dt = this.tree.node_typeicons.default_type;
+					icons = this.tree.node_typeicons[dt];
 				}
 			}
 		}
