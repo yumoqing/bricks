@@ -158,11 +158,11 @@ bricks.TreeNode = class extends bricks.VBox {
 		if (this.tree.opts.typeField){
 			var ntype = this.user_data[this.opts.typeField];
 			var icons = null;
-			if (this.tree.node_state_icons){
-				icons  = this.tree.node_state_icons[ntype];
-				var dt = this.tree.node_state_icons.default_type;
+			if (this.tree.node_typeicons){
+				icons  = this.tree.node_typeicons[ntype];
+				var dt = this.tree.node_typeicons.default_type;
 				if (dt){
-					icon = this.tree.node_state_icons[dt];
+					icon = this.tree.node_typeicons[dt];
 				}
 			}
 		}
@@ -189,7 +189,7 @@ bricks.Tree = class extends bricks.VScrollPanel {
 		default_type:
 		data:
 		dataurl:
-		node_state_icon:{
+		node_typeicons:{
 			nodetype:{
 				open:url,
 				close:url,
