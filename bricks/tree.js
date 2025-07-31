@@ -13,7 +13,8 @@ bricks.TreeNode = class extends bricks.VBox {
 		this.setup_icon_urls()
 		this.is_leaf_field = this.tree.is_leafField || 'is_leaf';
 		this.is_leaf = this.user_data[this.is_leaf_field];
-		this.params = bricks.extend(this.tree.params, {id:this.user_data[this.tree.opts.idField]});
+		this.params = bricks.extend({}, this.tree.params)
+		this.params = bricks.extend(this.params, {id:this.user_data[this.tree.opts.idField]});
 		if (this.tree.opts.typeField){
 			this.params.type = this.user_data[this.tree.opts.typeField];
 		}
@@ -326,10 +327,10 @@ bricks.Tree = class extends bricks.VScrollPanel {
 			} else {
 				d[this.parentField] = node.get_id();
 			}
-		} else if (this.opts.params.id) {
+		} else if (this.tree.opts.params.id) {
 			console.log('selected node not exists')
 			if (d instanceof FormData){
-				d.append(this.parentField, this.opts.params.id);
+				d.append(this.parentField, this.tree.opts.params.id);
 			} else {
 				d[this.parentField] = this.opts.params.id;
 			}
