@@ -35,6 +35,7 @@ bricks.JsWidget = class {
 		this._container = false;
 		this.parent = null;
 		this.sizable_elements = [];
+		this.set_id(bricks.uuid());
 		if (options.css){
 			this.set_css(options.css);
 		}

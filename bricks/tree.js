@@ -301,6 +301,11 @@ bricks.Tree = class extends bricks.VScrollPanel {
 				} else if (opts.selected_data){
 					d = this.selected_node.user_data
 				}
+				d.meta_data = {
+					referer: this.id,
+					title: opts.label,
+					icon: opts.icon
+				}
 				this.dispatch(opts.name, d);
 				break;
 		}
