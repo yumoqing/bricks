@@ -10,9 +10,11 @@ bricks.TreeNode = class extends bricks.VBox {
 		this.parent_node = pnode;
 		this.children_loaded = false;
 		this.user_data = data;
+		this.setup_icon_urls()
 		this.is_leaf_field = this.tree.is_leafField || 'is_leaf';
 		this.is_leaf = this.user_data[this.is_leaf_field];
-		this.params = bricks.extend(this.tree.params, {id:this.user_data[this.tree.opts.idField]});
+		this.params = bricks.extend({}, this.tree.params)
+		this.params = bricks.extend(this.params, {id:this.user_data[this.tree.opts.idField]});
 		if (this.tree.opts.typeField){
 			this.params.type = this.user_data[this.tree.opts.typeField];
 		}
@@ -34,7 +36,6 @@ bricks.TreeNode = class extends bricks.VBox {
 			}
 			this.container.hide();
 		}
-		this.setup_icon_urls()
 	}
 	getValue(){
 		var v = this.user_data;
@@ -123,13 +124,19 @@ bricks.TreeNode = class extends bricks.VBox {
 			widget.add_widget(this.check_w);
 			this.check_w.bind('changed', this.tree.node_checked.bind(this.tree, this))
 		}
-		var icon_url = this.icons_urls.leaf;
-		if (this.is_leaf) icon_url = this.icons_urls.leaf;
-		else if (this.node_state == 'expand') this.icon_url = this.icons_urls.open;
-		else this.icon_url = this.icons_urls.close;
+		var icon_url;
+		if ( isString(this.icons_urls)){
+			icon_url = this.icons_urls;
+		} else {
+			icon_url = this.icons_urls.leaf;
+			if (this.is_leaf) icon_url = this.icons_urls.leaf;
+			else if (this.node_state == 'expand') this.icon_url = this.icons_urls.open;
+			else this.icon_url = this.icons_urls.close;
+		}
+		console.log('icons=', this.icons_urls, 'icon_url=', icon_url, this.user_data);
 		var img = new bricks.Svg({
 			rate:1,
-			url:this.icon_url
+			url:icon_url
 		});
 		widget.add_widget(img);
 		if (this.tree.node_view){
@@ -154,17 +161,17 @@ bricks.TreeNode = class extends bricks.VBox {
 		this.str_w.set_text(this.user_data[this.tree.opts.textField]);
 	}
 	setup_icon_urls(){
-		
+		var icons = null;
 		if (this.tree.opts.typeField){
-			var ntype = this.user_data[this.opts.typeField];
-			var icons = null;
+			var ntype = this.user_data[this.tree.opts.typeField];
 			if (this.tree.node_typeicons){
 				icons  = this.tree.node_typeicons[ntype];
-				var dt = this.tree.node_typeicons.default_type;
-				if (dt){
-					icon = this.tree.node_typeicons[dt];
+				if (!icons){
+					var dt = this.tree.node_typeicons.default_type;
+					icons = this.tree.node_typeicons[dt];
 				}
 			}
+			console.log('ntype=', ntype, 'icons=', icons, this.user_data, this.tree.opts.typeField);
 		}
 		if (! icons){
 			icons = {
@@ -294,6 +301,11 @@ bricks.Tree = class extends bricks.VScrollPanel {
 				} else if (opts.selected_data){
 					d = this.selected_node.user_data
 				}
+				d.meta_data = {
+					referer: this.id,
+					title: opts.label,
+					icon: opts.icon
+				}
 				this.dispatch(opts.name, d);
 				break;
 		}
@@ -313,6 +325,7 @@ bricks.Tree = class extends bricks.VScrollPanel {
 		var d = event.params;
 		var node = this;
 		if (this.selected_node){
+			console.log('selected node exists')
 			node = this.selected_node;
 			if (d instanceof FormData){
 				d.append(this.parentField, node.get_id());
@@ -320,6 +333,7 @@ bricks.Tree = class extends bricks.VScrollPanel {
 				d[this.parentField] = node.get_id();
 			}
 		} else if (this.opts.params.id) {
+			console.log('selected node not exists')
 			if (d instanceof FormData){
 				d.append(this.parentField, this.opts.params.id);
 			} else {
