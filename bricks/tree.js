@@ -404,11 +404,9 @@ bricks.Tree = class extends bricks.VScrollPanel {
 		w.bind('conformed', this.delete_node_conformed.bind(this))
 	}
 	async delete_node_conformed(event){
-		var d = {};
-		d[this.idField] = this.selected_node.get_id();
 		if (this.editable.delete_url){
 			var jc = new bricks.HttpJson()
-			var desc = await jc.post(this.editable.delete_url, {params:d});
+			var desc = await jc.post(this.editable.delete_url, {params:this.selected_node.user_data});
 			if (desc.widgettype == 'Message'){
 				var pnode = this.selected_node.parent_node;
 				console.log('parent node=', pnode);
