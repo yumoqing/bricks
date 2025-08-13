@@ -296,9 +296,11 @@ bricks.DataViewer = class extends bricks.VBox {
 	
 	async delete_record_act(){
 		var id = this.select_row.user_data.id;
-		var url = this.editable.delete_data_url + '?id=' + id;
+		var url = this.editable.delete_data_url;
 		var hc = new bricks.HttpJson();
-		var desc = await hc.get(url);
+		var desc = await hc.post(url, {
+			params:this.select_row.user_data
+		});
 		var w = await bricks.widgetBuild(desc);
 		if (desc.widgettype == 'Message'){
 			this.scrollpanel.remove_widget(this.select_row);
