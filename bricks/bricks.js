@@ -267,6 +267,11 @@ bricks.buildEventHandler = async function(w, desc, event){
 		rtdata = await bricks.getRealtimeData(w, data_desc);
 	}
 	switch (desc.actiontype){
+		caae 'newwindow':
+			return bricks.buildNewWindowHandler(w, target, rtdata, desc);
+			break;
+		case 'iframe':
+			break;
 		case 'urlwidget':
 			return bricks.buildUrlwidgetHandler(w, target, rtdata, desc);
 			break;
@@ -348,6 +353,31 @@ var _buildWidget = async function(from_widget, target, mode, options, desc){
 	}
 }
 
+bricks.buildNewWindowHandler = function(w, target, rtdata, desc){
+	var options = objcopy(desc.options||{});
+	var url = options.url;
+	var params = options.params;
+	if (desc.event_params instanceof FormData){
+		console.log('can not send Formdata');
+		return;
+	}
+	rtdata = bricks.extend(rtdata, desc.event_params);
+	options = bricks.apply_data(options, rtdata);
+	if (desc.params_mapping){
+		rtdata = bricks.map(rtdata, desc.params_mapping.mapping, desc.params_mapping.need_others);
+	}
+	options.params = bricks.extend(params, rtdata);
+	var url = options.url;
+	url = addParamsToUrl(url, options.params, w);
+	var opts = {
+		"widgettype":"NewWindow",
+		"options":{
+			"name":"options.name || '_blank';
+			"url": url
+		}
+	}
+	return _buildWidget.bind(null, w, target, desc.mode || 'replace', opts, desc);
+}
 bricks.buildUrlwidgetHandler = function(w, target, rtdata, desc){
 	var options = objcopy(desc.options||{});
 	var params = options.params || {};
@@ -370,7 +400,6 @@ bricks.buildUrlwidgetHandler = function(w, target, rtdata, desc){
 		}
 		options.params = bricks.extend(params, rtdata);
 	}
-	
 	var opts = {
 		"widgettype":"urlwidget",
 		"options":options

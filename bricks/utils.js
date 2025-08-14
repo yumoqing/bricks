@@ -1,6 +1,13 @@
 var bricks = window.bricks || {};
 bricks.bug = false;
 
+function addParamsToUrl(url, params, widget) {
+  const urlObj = new URL(url, window.baseURI); // 处理相对和绝对路径
+  Object.keys(params).forEach(key => {
+    urlObj.searchParams.set(key, params[key]);
+  });
+  return urlObj.toString();
+}
 function isString(value) {
   return typeof value === 'string' || value instanceof String;
 }
