@@ -267,7 +267,7 @@ bricks.buildEventHandler = async function(w, desc, event){
 		rtdata = await bricks.getRealtimeData(w, data_desc);
 	}
 	switch (desc.actiontype){
-		caae 'newwindow':
+		case 'newwindow':
 			return bricks.buildNewWindowHandler(w, target, rtdata, desc);
 			break;
 		case 'iframe':
@@ -370,10 +370,10 @@ bricks.buildNewWindowHandler = function(w, target, rtdata, desc){
 	var url = options.url;
 	url = addParamsToUrl(url, options.params, w);
 	var opts = {
-		"widgettype":"NewWindow",
-		"options":{
-			"name":"options.name || '_blank';
-			"url": url
+		widgettype: "NewWindow",
+		options:{
+			name: options.name || '_blank',
+			url: url
 		}
 	}
 	return _buildWidget.bind(null, w, target, desc.mode || 'replace', opts, desc);
