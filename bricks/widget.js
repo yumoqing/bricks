@@ -320,10 +320,6 @@ bricks.JsWidget = class {
 		this.dom_element.removeEventListener(eventname, handler);
 	}
 	dispatch(eventname, params){
-		if (! params){
-			params = {};
-		}
-		params.referer = this.id;
 		var e = new Event(eventname);
 		e.params = params;
 		this.dom_element.dispatchEvent(e);
