@@ -290,7 +290,7 @@ bricks.Tree = class extends bricks.VScrollPanel {
 				break;
 			default:
 				if ((opts.selected_data || opts.checked_data) && ! this.selected_node){
-					w = new bricks.Error({title:'Error', message:'No selected node found'});
+					var w = new bricks.Error({title:'Error', message:'No selected node found'});
 					w.open();
 					return;
 				}

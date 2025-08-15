@@ -13,7 +13,7 @@ bricks.Iframe = class extends bricks.Layout {
 bricks.NewWindow = class extends bricks.JsWidget {
 	constructor(opts){
 		super(opts);
-		window.open(opts.url, target=opts.name || '_blank');
+		window.open(opts.url, opts.name || '_blank');
 	}
 }
 
