@@ -21,6 +21,7 @@ bricks.Wterm = class extends bricks.JsWidget {
 	}
 	send_term_size(){
 		try {
+			console.log('resize():rows=', this.term.rows, this.term.cols);
 			this.socket.send(JSON.stringify({ type: "resize", 
 						width:this.get_width(),
 						height: this.get_height(),
@@ -77,7 +78,7 @@ bricks.Wterm = class extends bricks.JsWidget {
 		};
 		ws.onopen = () => {
 			this.send_term_size();
-			this.bind('resize', this.term_resize.bind(this))
+			this.bind('element_resize', this.term_resize.bind(this))
 			this.heartbeat_task = schedule_once(this.heartbeat.bind(this), 
 							this.ping_timeout);
 		};
@@ -85,12 +86,16 @@ bricks.Wterm = class extends bricks.JsWidget {
 			console.log('key=', key);
 			this.send_data(key);
 		});
+		term.onResize(({cols, rows}) =>{
+			this.send_term_size();
+		});
 		term.focus();
 	}
 	term_resize(){
 		try {
+			console.log('widget resize event fired');
 			this.fitAddon.fit();
-			this.send_term_size();
+			# this.send_term_size();
 		} catch(e){
 			console.log('resize error', e);
 		}

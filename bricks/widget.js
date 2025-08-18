@@ -320,6 +320,9 @@ bricks.JsWidget = class {
 		this.dom_element.removeEventListener(eventname, handler);
 	}
 	dispatch(eventname, params){
+		if (typeof params === "string" || params instanceof String) {
+			console.log('event name=', eventname, 'params is string =', params, this);
+		}
 		var e = new Event(eventname);
 		e.params = params;
 		this.dom_element.dispatchEvent(e);
