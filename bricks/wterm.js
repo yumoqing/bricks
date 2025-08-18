@@ -44,6 +44,10 @@ bricks.Wterm = class extends bricks.JsWidget {
 		this.heartbeat_task = schedule_once(this.heartbeat.bind(this), 
 								this.ping_timeout);
 	}
+	async close(){
+		this.term.close();
+		this.socket.close();
+	}
 	async open(){
 		var term_options = bricks.extend({width: "100%", height: "100%"}, this.term_options);
 		var term = new Terminal(term_options);
@@ -95,7 +99,7 @@ bricks.Wterm = class extends bricks.JsWidget {
 		try {
 			console.log('widget resize event fired');
 			this.fitAddon.fit();
-			# this.send_term_size();
+			// this.send_term_size();
 		} catch(e){
 			console.log('resize error', e);
 		}
