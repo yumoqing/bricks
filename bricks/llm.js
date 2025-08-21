@@ -58,11 +58,11 @@ bricks.ModelOutput = class extends bricks.VBox {
 		var hb = new bricks.HBox({width:'100%', cheight:2});
 		this.img = new bricks.Svg({
 			rate:2,
-			tip:this.opts.model,
+			tip:this.opts.modelname,
 			url:this.icon||bricks_resource('imgs/llm.svg')
 		});
 		hb.add_widget(this.img);
-		var mname = new bricks.Text({text:this.opts.model});
+		var mname = new bricks.Text({text:this.opts.modelname});
 		hb.add_widget(mname);
 		this.add_widget(hb);
 		
@@ -185,7 +185,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		w.bind('click', this.show_setup_panel.bind(this))
 		var img = new bricks.Svg({
 			rate:2,
-			tip:this.opts.model,
+			tip:this.opts.modelname,
 			url:this.opts.icon||bricks_resource('imgs/llm.svg')
 		});
 		// var txt = new bricks.Text({text:this.opts.model});
@@ -210,14 +210,12 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		}
 		if (data instanceof FormData){
 			d.append('model', this.opts.model)
-			d.append('modelinstanceid', this.opts.modelinstanceid)
-			d.append('modeltypeid', this.opts.modeltypeid)
+			d.append('llmid', this.opts.llmid)
 			d.append('messages', JSON.stringify(this.messages));
 		} else {
 			d.messages = JSON.stringify(this.messages);
 			d.model = this.opts.model;
-			d.modelinstanceid = this.opts.modelinstanceid;
-			d.modeltypeid = this.opts.modeltypeid;
+			d.llmid = this.opts.llmid;
 		}
 		return d;
 	}
