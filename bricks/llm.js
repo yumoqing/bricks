@@ -188,7 +188,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			tip:this.opts.modelname,
 			url:this.opts.icon||bricks_resource('imgs/llm.svg')
 		});
-		// var txt = new bricks.Text({text:this.opts.model});
+		// var txt = new bricks.Text({text:this.opts.modelname});
 		w.add_widget(img);
 		// w.add_widget(txt);
 		return w;
@@ -228,6 +228,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 					tts_url:this.tts_url,
 					icon:this.opts.icon,
 					model:this.opts.model, 
+					modelname:this.opts.modelname,
 					estimate_url:this.llmio.estimate_url,
 					output_view:this.opts.output_view});
 		this.llmio.o_w.add_widget(mout);
@@ -301,6 +302,7 @@ bricks.LlmIO = class extends bricks.VBox {
 		{
 			icon:
 			model:
+			modelnmae:
 			url:
 			params:
 			use_session:

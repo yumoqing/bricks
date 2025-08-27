@@ -332,8 +332,7 @@ bricks.Tree = class extends bricks.VScrollPanel {
 			} else {
 				d[this.parentField] = node.get_id();
 			}
-		} else if (this.opts.params.id) {
-			console.log('selected node not exists')
+		} else if (this.opts.params) {
 			if (d instanceof FormData){
 				d.append(this.parentField, this.opts.params.id);
 			} else {
