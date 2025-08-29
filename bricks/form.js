@@ -90,7 +90,7 @@ bricks.FormBody = class extends bricks.VScrollPanel {
 				cheight: 2,
 				otext: f.label || f.name,
 				i18n: true
-			}
+			});
 			var txtw = new bricks.UiText({
 				name:f.name,
 				css: "filler",
