@@ -81,7 +81,29 @@ bricks.FormBody = class extends bricks.VScrollPanel {
 		this.form = form;
 		this.name_inputs = {};
 		this.fg = new bricks.FieldGroup({});
-		this.fg.build_fields(form, this, form.nontextfields)
+		this.fg.build_fields(form, this, form.nontextfields);
+		this.build_text_fields();
+	}
+	build_text_fields(){
+		this.form.textfields.forEach((f) => {
+			var labelw = new bricks.Text({
+				cheight: 2,
+				otext: f.label || f.name,
+				i18n: true
+			}
+			var txtw = new bricks.UiText({
+				name:f.name,
+				css: "filler",
+				value:f.value
+			});
+			var cell = new bricks.VBox({
+				width: "100%",
+				height: "45%"
+			});
+			cell.add_widget(labelw);
+			cell.add_widget(txtw);
+			this.add_widget(cell);
+		});
 	}
 	create(){
 		this.dom_element = this._create('form');
@@ -319,6 +341,7 @@ bricks.Form = class extends bricks.FormBase {
 			}
 		});
 		this.body = new bricks.FormBody(this, opts);
+		/*
 		if (this.textfields.length > 0){
 			var tp;
 			var tp_options = {
@@ -350,8 +373,9 @@ bricks.Form = class extends bricks.FormBase {
 			tp = new bricks.TabPanel(tp_options);
 			filler.add_widget(tp);
 		} else {
-			filler.add_widget(this.body);
 		}
+		*/
+		filler.add_widget(this.body);
 		if (! opts.notoolbar)
 			this.build_toolbar(this);
 	}
