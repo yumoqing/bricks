@@ -403,7 +403,7 @@ hr {
 	flex-shrink: 0;
 }
 .tabular-row:nth-child(odd) {
-	background-color: #5dfdfd;
+	background-color: #efefef;
 }
 .tabular-row:nth-child(even) {
 	background-color: #f9f9f9;
