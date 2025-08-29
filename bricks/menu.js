@@ -96,7 +96,7 @@ bricks.Menu = class extends bricks.VBox {
 	async load_submenu(container, event){
 		event.stopPropagation();
 		if (! container.submenu_loaded){
-			var items = this.get_submenu_items(container.submenu_url);
+			var items = await this.get_submenu_items(container.submenu_url);
 			this.create_children(container, items);
 			container.submenu_loaded = true;
 		}
