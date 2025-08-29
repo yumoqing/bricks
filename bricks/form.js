@@ -97,12 +97,15 @@ bricks.FormBody = class extends bricks.VScrollPanel {
 				value:f.value
 			});
 			var cell = new bricks.VBox({
+				css: "inputbox",
 				width: "100%",
 				height: "45%"
 			});
 			cell.add_widget(labelw);
 			cell.add_widget(txtw);
 			this.add_widget(cell);
+			this.form.name_inputs[f.name] = txtw;
+			cell.set_id(f.name);
 		});
 	}
 	create(){
