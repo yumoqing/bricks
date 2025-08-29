@@ -73,7 +73,7 @@ bricks.Menu = class extends bricks.VBox {
 				this.create_children(w1, item.items);
 				subw.bind('click', this.items_toggle_hide.bind(this, w1));
 				w.add_widget(itw);
-			else if(item.submenu){
+			} else if(item.submenu){
 				var itw = new bricks.VBox({});
 				let w1 = this.create_submenu_container();
 				w1.submenu_loaded = false;
