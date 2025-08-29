@@ -23,21 +23,24 @@ bricks.Menu = class extends bricks.VBox {
 		return cp;
 	}
 	async menu_clicked(event){
-		console.log(event);
 		let e = event.target;
 		let opts = event.params;
 		var t;
 		var popts;
-		if (this.target == 'PopupWindow'){
+		var target = opts.target || this.target;
+		var popup_options = opts.popup_options || this.popup_options;
+		if (target == 'PopupWindow'){
 			popts = bricks.get_popupwindow_default_options();
-			bricks.extend(popts, this.popup_options || {});
+			bricks.extend(popts, popup_options || {});
+			popts.icon = opts.icon;
+			popts.title = opts.label || opts.name
 			t = new bricks.PopupWindow(popts);
 		} else if (this.target == 'Popup'){
 			popts = bricks.get_popup_default_options();
-			bricks.extend(popts, this.popup_options || {});
+			bricks.extend(popts, popup_options || {});
 			t = new bricks.Popup(popts);
 		} else {
-			t = bricks.getWidgetById(this.target);
+			t = bricks.getWidgetById(target);
 		}
 		if (t){
 			var desc = {
@@ -64,17 +67,40 @@ bricks.Menu = class extends bricks.VBox {
 			let subw = this.create_menuitem(item);
 			if (item.hasOwnProperty('items')){
 				var itw = new bricks.VBox({});
-				w.add_widget(itw);
 				let w1 = this.create_submenu_container();
 				itw.add_widget(subw);
 				itw.add_widget(w1);
 				this.create_children(w1, item.items);
 				subw.bind('click', this.items_toggle_hide.bind(this, w1));
+				w.add_widget(itw);
+			else if(item.submenu){
+				var itw = new bricks.VBox({});
+				let w1 = this.create_submenu_container();
+				w1.submenu_loaded = false;
+				w1.submenu_url = item.submenu;
+				itw.add_widget(subw);
+				itw.add_widget(w1);
+				w.add_widget(itw);
+				subw.bind('click', this.load_submenu.bind(this, w1));
 			} else {
 				subw.bind('click', this.regen_menuitem_event.bind(this, item))
 				w.add_widget(subw);
 			}
 		}
+	}
+	async get_submenu_items(url){
+		var jc = new bricks.HttpJson();
+		var d = jc.get(url);
+		return d.items
+	}
+	async load_submenu(container, event){
+		event.stopPropagation();
+		if (! container.submenu_loaded){
+			var items = this.get_submenu_items(container.submenu_url);
+			this.create_children(container, items);
+			container.submenu_loaded = true;
+		}
+		container.toggle_hide();
 	}
 	items_toggle_hide(w, event){
 		w.toggle_hide();
