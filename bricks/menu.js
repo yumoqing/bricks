@@ -91,7 +91,7 @@ bricks.Menu = class extends bricks.VBox {
 	async get_submenu_items(url){
 		var jc = new bricks.HttpJson();
 		var d = jc.get(url);
-		return d.items
+		return d.options.items;
 	}
 	async load_submenu(container, event){
 		event.stopPropagation();
