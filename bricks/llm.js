@@ -471,10 +471,7 @@ bricks.LlmIO = class extends bricks.VBox {
 		await this.show_input(params);
 		for(var i=0;i<this.llmmodels.length;i++){
 			var lm = this.llmmodels[i];
-			if (lm.is_accept_source('userinput')){
-				schedule_once(lm.model_inputed.bind(lm, params), 0.01);
-				// await lm.model_inputed(params);
-			}
+			schedule_once(lm.model_inputed.bind(lm, params), 0.01);
 		};
 	}
 	async show_input(params){
