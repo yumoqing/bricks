@@ -548,7 +548,7 @@ bricks.UiImage =class extends bricks.VBox {
 			this.value = e.target.result;
 			console.log('this.value=', this.value);
 			this.imgw = new bricks.Image({
-				url:e.target.result,
+				url:this.value,
 				width:'100%'
 			});
 			this.add_widget(this.imgw);
@@ -560,20 +560,14 @@ bricks.UiImage =class extends bricks.VBox {
 		fd.append(this.name, this.resultValue());
 	}
 	resultValue(){
-		if (this.imgw){
-			this.value = this.imgw.base64();
+		if (this.value){
 			return this.value;
 		}
 		return null;
 	}
 	getValue(){
-		var ret = {}
-		if (this.imgw){
-			// ret[this.name] = this.imgw.base64()
-			ret[this.name] = this.value;
-		} else {
-			ret[this.name] = null;
-		}
+		var ret = {};
+		ret[this.name] = this.resultValue();
 		return ret;
 	}
 }
