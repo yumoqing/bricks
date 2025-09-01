@@ -178,7 +178,6 @@ bricks.LlmModel = class extends bricks.JsWidget {
 	constructor(llmio, opts){
 		super(opts);
 		this.llmio = llmio;
-		this.messages = [];
 	}
 	render_title(){
 		var w = new bricks.HBox({padding:'15px'});
@@ -203,26 +202,16 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		} else {
 			d = objcopy(data);
 		}
-		var fmt = this.opts.user_message_format;
-		if (fmt){
-			var umsg = bricks.apply_data(fmt, inputdata2dic(data));
-			this.messages.push(umsg);
-		}
 		if (data instanceof FormData){
 			d.append('model', this.opts.model)
 			d.append('llmid', this.opts.llmid)
-			d.append('messages', JSON.stringify(this.messages));
 		} else {
-			d.messages = JSON.stringify(this.messages);
 			d.model = this.opts.model;
 			d.llmid = this.opts.llmid;
 		}
 		return d;
 	}
 	async model_inputed(data){
-		if (!opts.use_session){
-			this.messages = [];
-		}
 		var mout = new bricks.ModelOutput({
 					textvoice:this.textvoice,
 					tts_url:this.tts_url,
@@ -246,13 +235,6 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			if (this.response_mode == 'sync'){
 				resp.content = bricks.escapeSpecialChars(resp.content)
 				mout.update_data(resp);
-				if (this.messages){
-					var msg = this.llm_msg_format();
-					var lmsg = bricks.apply_data(msg, resp);
-					this.messages.push(lmsg)
-				}
-			} else {
-				;
 			}
 		}
 	}
@@ -276,15 +258,8 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		// console.log('stream data=', d);
 	}
 	chunk_ended(){
-		if (! this.messages) {
-			console.log('this.messages is null !!!!!!!!!');
-			return;
-		}
-		var msg = this.llm_msg_format();
 		var txt = bricks.escapeSpecialChars(this.resp_data.content)
 		this.resp_data.content = txt;
-		var lmsg = bricks.apply_data(msg, this.resp_data);
-		this.messages.push(lmsg);
 	}
 }
 bricks.LlmIO = class extends bricks.VBox {
