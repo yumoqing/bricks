@@ -516,7 +516,7 @@ bricks.UiImage =class extends bricks.VBox {
 			"width":"90%"
 		});
 		camera.bring_to_top();
-		camera.bind('shot', this.accept_photo.bind(this));
+		camera.bind('shot', this.accept_photo.bind(this, camera));
 	}
 	accept_photo(camera, event){
 		camera.dismiss();
