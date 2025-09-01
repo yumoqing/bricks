@@ -9,6 +9,13 @@ body {
 	display: flex;
 }
 
+.responsive-img {
+  max-width: 100%; /* 限制最大宽度为容器 */
+  width: 100%;     /* 占满容器宽度 */
+  height: auto;    /* 高度自动，保持比例 */
+  display: block;  /* 避免底部留空隙 */
+}
+
 pre {
 	overflow-x: auto; /* 允许内容超出容器显示 */
 	background-color: #b5e5e5;
