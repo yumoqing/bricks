@@ -527,6 +527,7 @@ bricks.UiImage =class extends bricks.VBox {
 			url:event.params,
 			width:'100%'
 		});
+		this.value = event.params
 		this.add_widget(this.imgw);
 	}
 	handleFileSelect(event){
