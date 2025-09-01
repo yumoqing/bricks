@@ -546,7 +546,6 @@ bricks.UiImage =class extends bricks.VBox {
 				this.remove_widget(this.imgw);
 			}
 			this.value = e.target.result;
-			console.log('this.value=', this.value);
 			this.imgw = new bricks.Image({
 				url:this.value,
 				width:'100%'
