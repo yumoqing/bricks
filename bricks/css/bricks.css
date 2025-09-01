@@ -14,6 +14,7 @@ body {
   width: 100%;     /* 占满容器宽度 */
   height: auto;    /* 高度自动，保持比例 */
   display: block;  /* 避免底部留空隙 */
+  object-fit: contain; /* 确保完整显示，而不是裁切 */
 }
 
 pre {
