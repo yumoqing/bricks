@@ -136,7 +136,9 @@ bricks.ModelOutput = class extends bricks.VBox {
 		}
 		if (this.response_mode == 'strean'){
 			data.content = this.received_content + data.content;
+			this.received_content = data.content
 		}
+		console.log('response_mode=', this.response_mode, 'contnet=', data.content);
 		var desc = bricks.apply_data(this.output_view, data);
 		var w = await bricks.widgetBuild(desc, this.llmio);
 		if (! w){
@@ -250,18 +252,22 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		return this.llm_message_format || {role:'assistant', content:"${content}"}
 	}
 	chunk_response(mout, l){
-		var d = JSON.parse(l);
+		try {
+			var d = JSON.parse(l);
+		} catch(e){
+			console.log(l, 'is not a json data');
+			return
+		}
 		if (! d.content || d.content == ''){
+			console.log(l, 'content is not null');
 			return;
 		}
 		d.content = bricks.escapeSpecialChars(d.content);
-		this.resp_data = d;
 		mout.update_data(d);
 		// console.log('stream data=', d);
 	}
 	chunk_ended(){
-		var txt = bricks.escapeSpecialChars(this.resp_data.content)
-		this.resp_data.content = txt;
+		console.log('chunk end');
 	}
 }
 bricks.LlmIO = class extends bricks.VBox {
