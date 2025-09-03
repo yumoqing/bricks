@@ -134,7 +134,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 		if (typeof this.output_view === 'string'){
 			this.output_view = JSON.parse(this.output_view);
 		}
-		if (this.response_mode == 'strean'){
+		if (this.response_mode == 'stream'){
 			data.content = this.received_content + data.content;
 			this.received_content = data.content
 		}
