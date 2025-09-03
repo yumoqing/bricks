@@ -138,7 +138,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 			data.content = this.received_content + data.content;
 			this.received_content = data.content
 		}
-		console.log('response_mode=', this.response_mode, 'contnet=', data.content);
+		console.log('response_mode=', this.response_mode, 'data=',data, 'output_view=', this.output_view);
 		var desc = bricks.apply_data(this.output_view, data);
 		var w = await bricks.widgetBuild(desc, this.llmio);
 		if (! w){
@@ -222,6 +222,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 					textvoice:this.textvoice,
 					tts_url:this.tts_url,
 					icon:this.opts.icon,
+					response_mode: this.opts.response_mode,
 					model:this.opts.model, 
 					modelname:this.opts.modelname,
 					estimate_url:this.llmio.estimate_url,
