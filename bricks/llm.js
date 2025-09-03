@@ -116,6 +116,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 	}
 	async update_data(data){
 		if (this.run) {
+			this.received_content = '';
 			this.run.stop_timepass();
 			this.content.remove_widget(this.run);
 			if(this.textvoice){
@@ -132,6 +133,9 @@ bricks.ModelOutput = class extends bricks.VBox {
 		this.filler.clear_widgets();
 		if (typeof this.output_view === 'string'){
 			this.output_view = JSON.parse(this.output_view);
+		}
+		if (this.response_mode == 'strean'){
+			data.content = this.received_content + data.content;
 		}
 		var desc = bricks.apply_data(this.output_view, data);
 		var w = await bricks.widgetBuild(desc, this.llmio);
@@ -223,7 +227,6 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		this.llmio.o_w.add_widget(mout);
 		if (this.response_mode == 'stream' || this.response_mode == 'async') {
 			var d = this.inputdata2uploaddata(data);
-			console.log('data_inouted=', data, 'upload_data=', d);
 			var hr = new bricks.HttpResponseStream();
 			var resp = await hr.post(this.opts.url, {params:d});
 			await hr.handle_chunk(resp, this.chunk_response.bind(this, mout));
@@ -233,10 +236,8 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			console.log('data_inouted=', data, 'upload_data=', d);
 			var hj = new bricks.HttpJson()
 			var resp = await hj.post(this.opts.url, {params:d});
-			if (this.response_mode == 'sync'){
-				resp.content = bricks.escapeSpecialChars(resp.content)
-				mout.update_data(resp);
-			}
+			resp.content = bricks.escapeSpecialChars(resp.content)
+			mout.update_data(resp);
 		}
 	}
 	is_accept_source(source){
