@@ -142,10 +142,11 @@ bricks.ModelOutput = class extends bricks.VBox {
 			}
 		}
 		if (this.received_reasoning_content.length>0){
-			data.content = "```\\n" + this.received_reasoning_content + "\\n```\\n" + this.received_content;
+			data.content = "```\n" + this.received_reasoning_content + "\n```\n" + this.received_content;
 		} else {
 			data.content = this.received_content
 		}
+		d.content = bricks.escapeSpecialChars(d.content);
 		var desc = bricks.apply_data(this.output_view, data);
 		var w = await bricks.widgetBuild(desc, this.llmio);
 		if (! w){
@@ -270,7 +271,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			console.log(l, 'content is null and reasoning_content is null');
 			return;
 		}
-		d.content = bricks.escapeSpecialChars(d.content);
+		// d.content = bricks.escapeSpecialChars(d.content);
 		mout.update_data(d);
 		// console.log('stream data=', d);
 	}
