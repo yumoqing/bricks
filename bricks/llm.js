@@ -146,7 +146,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 				data.content = this.received_content
 			}
 		} else {
-			if data.reasoning_content){
+			if (data.reasoning_content){
 				data.content = "```\n" + data.reasoning_content + "\n```\n" + data.content;
 			}
 		}
