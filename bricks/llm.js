@@ -117,6 +117,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 	async update_data(data){
 		if (this.run) {
 			this.received_content = '';
+			this.received_reasoning_content = '';
 			this.run.stop_timepass();
 			this.content.remove_widget(this.run);
 			if(this.textvoice){
@@ -135,10 +136,16 @@ bricks.ModelOutput = class extends bricks.VBox {
 			this.output_view = JSON.parse(this.output_view);
 		}
 		if (this.response_mode == 'stream'){
-			data.content = this.received_content + data.content;
-			this.received_content = data.content
+			if(data.content) this.received_content += data.content;
+			if(data.reasoning_content){
+				this.received_reasoning_content += data.reasoning_content;
+			}
 		}
-		console.log('response_mode=', this.response_mode, 'data=',data, 'output_view=', this.output_view);
+		if (this.received_reasoning_content.length>0){
+			data.content = "```\\n" + this.received_reasoning_content + "\\n```\\n" + this.received_content;
+		} else {
+			data.content = this.received_content
+		}
 		var desc = bricks.apply_data(this.output_view, data);
 		var w = await bricks.widgetBuild(desc, this.llmio);
 		if (! w){
