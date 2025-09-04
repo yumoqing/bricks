@@ -140,13 +140,17 @@ bricks.ModelOutput = class extends bricks.VBox {
 			if(data.reasoning_content){
 				this.received_reasoning_content += data.reasoning_content;
 			}
-		}
-		if (this.received_reasoning_content.length>0){
-			data.content = "```\n" + this.received_reasoning_content + "\n```\n" + this.received_content;
+			if (this.received_reasoning_content.length>0){
+				data.content = "```\n" + this.received_reasoning_content + "\n```\n" + this.received_content;
+			} else {
+				data.content = this.received_content
+			}
 		} else {
-			data.content = this.received_content
+			if data.reasoning_content){
+				data.content = "```\n" + data.reasoning_content + "\n```\n" + data.content;
+			}
 		}
-		d.content = bricks.escapeSpecialChars(d.content);
+		data.content = bricks.escapeSpecialChars(data.content);
 		var desc = bricks.apply_data(this.output_view, data);
 		var w = await bricks.widgetBuild(desc, this.llmio);
 		if (! w){
