@@ -266,8 +266,8 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			console.log(l, 'is not a json data');
 			return
 		}
-		if (! d.content || d.content == ''){
-			console.log(l, 'content is not null');
+		if (! d.content && ! d.reasoning_content){
+			console.log(l, 'content is null and reasoning_content is null');
 			return;
 		}
 		d.content = bricks.escapeSpecialChars(d.content);
