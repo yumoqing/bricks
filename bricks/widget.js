@@ -255,10 +255,7 @@ bricks.JsWidget = class {
 		this.dom_element.style[k] = v;
 	}
 	set_csses(csses, remove_flg){
-		var arr = csses.split(' ');
-		arr.forEach(c =>{
-			this.set_css(c, remove_flg);
-		})
+		this.set_css(csses, remove_flg);
 	}
 	unset_css(css){
 		this.dom_element.classList.remove(css);
@@ -271,7 +268,7 @@ bricks.JsWidget = class {
 			} else {
 				this.dom_element.classList.remove(c);
 			}
-		}
+		});
 	}
 	set_cssObject(cssobj){
 		bricks.extend(this.dom_element.style, cssobj);
