@@ -261,7 +261,7 @@ bricks.JsWidget = class {
 		this.dom_element.classList.remove(css);
 	}
 	set_css(css, remove_flg){
-		var arr = csses.split(' ');
+		var arr = css.split(' ');
 		arr.forEach(c => {
 			if (!remove_flg){
 				this.dom_element.classList.add(c);
