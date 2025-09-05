@@ -49,8 +49,9 @@ hr {
 }
 
 .card:hover {
-	border: 2px solid #FF8844;
+	border: 2px solid red;
 }
+
 .subcard {
 	background-color: #eeeeee;
 }
