@@ -264,10 +264,13 @@ bricks.JsWidget = class {
 		this.dom_element.classList.remove(css);
 	}
 	set_css(css, remove_flg){
-		if (!remove_flg){
-			this.dom_element.classList.add(css);
-		} else {
-			this.dom_element.classList.remove(css);
+		var arr = csses.split(' ');
+		arr.forEach(c => {
+			if (!remove_flg){
+				this.dom_element.classList.add(c);
+			} else {
+				this.dom_element.classList.remove(c);
+			}
 		}
 	}
 	set_cssObject(cssobj){
