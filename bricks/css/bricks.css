@@ -47,6 +47,10 @@ hr {
 	background-color: #f5f5f5;
 	border: 1px solid #888888;
 }
+
+.card:hover {
+	border: 1px solid #8888ff;
+}
 .subcard {
 	background-color: #eeeeee;
 }
