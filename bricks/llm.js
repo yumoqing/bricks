@@ -265,6 +265,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		return this.llm_message_format || {role:'assistant', content:"${content}"}
 	}
 	chunk_response(mout, l){
+		l = l.trim();
 		try {
 			var d = JSON.parse(l);
 		} catch(e){
