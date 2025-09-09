@@ -121,6 +121,14 @@ bricks.ModelOutput = class extends bricks.VBox {
 			this.run.stop_timepass();
 			this.content.remove_widget(this.run);
 		}
+		if (data.content){
+			this.received_content += data.content;
+			this.content = this.received_content;
+		}
+		if (data.reasoning_content){
+			this.reasoning_content += data.reasoning_content;
+			data.reasoning_content = this.reasoning_content;
+		}
 		this.run = null;
 		this.filler.clear_widgets();
 		if (typeof this.output_view === 'string'){
