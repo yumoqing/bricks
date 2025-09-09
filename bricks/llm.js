@@ -272,13 +272,10 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			console.log(l, 'is not a json data');
 			return
 		}
-		if (! d.content && ! d.reasoning_content){
-			console.log(l, 'content is null and reasoning_content is null');
+		if (this.opts.response_mode == 'async' and d.status != 'SUCCESSED'){
 			return;
-		}
-		// d.content = bricks.escapeSpecialChars(d.content);
+		} 
 		mout.update_data(d);
-		// console.log('stream data=', d);
 	}
 	chunk_ended(){
 		console.log('chunk end');
