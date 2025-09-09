@@ -120,15 +120,6 @@ bricks.ModelOutput = class extends bricks.VBox {
 			this.received_reasoning_content = '';
 			this.run.stop_timepass();
 			this.content.remove_widget(this.run);
-			if(this.textvoice){
-			this.upstreaming = new bricks.UpStreaming({
-				url:this.tts_url
-			});
-			this.upstreaming.go();
-			}
-		}
-		if (this.upstreaming){
-			this.upstreaming.send(data.content);
 		}
 		this.run = null;
 		this.filler.clear_widgets();
@@ -169,9 +160,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 		}
 	}
 	finish(){
-		if (this.upstreaming){
-			this.upstreaming.finish();
-		}
+		console.log('finished')
 	}
 }
 
@@ -272,9 +261,12 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			console.log(l, 'is not a json data');
 			return
 		}
-		if (this.opts.response_mode == 'async' && d.status != 'SUCCESSED'){
-			return;
+		if (this.opts.response_mode == 'async'){
+			if(d.status != 'SUCCESSED'){
+				return;
+			}
 		} 
+		console.log('l=', l, 'd=', d);
 		mout.update_data(d);
 	}
 	chunk_ended(){

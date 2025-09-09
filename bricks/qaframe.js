@@ -105,7 +105,7 @@ bricks.QAFrame = class extends bricks.VBox {
 		console.log('show_courseware(), d=', d);
 		switch(d.type){
 			case 'video':
-				w = new bricks.VideoPlayer({
+				w = new bricks.Video({
 					width:'100%',
 					height:'100%',
 					url:d.url,

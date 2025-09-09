@@ -1098,7 +1098,7 @@ bricks.UiVideo =class extends bricks.UiStr {
 			url: bricks_resource('imgs/right_arrow.svg')});
 		this.add_widget(this.icon);
 		this.icon.bind('click', this.play_audio.bind(this));
-		this.player = new bricks.VideoPlayer({
+		this.player = new bricks.Video({
 			url:this.value
 			});
 		if (this.autoplay){
