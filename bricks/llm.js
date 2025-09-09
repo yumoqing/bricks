@@ -187,8 +187,8 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			tip:this.opts.modelname,
 			url:this.opts.icon||bricks_resource('imgs/llm.svg')
 		});
-		// var txt = new bricks.Text({text:this.opts.modelname});
 		w.add_widget(img);
+		// var txt = new bricks.Text({text:this.opts.modelname});
 		// w.add_widget(txt);
 		return w;
 	}
