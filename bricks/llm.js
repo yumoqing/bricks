@@ -272,7 +272,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			console.log(l, 'is not a json data');
 			return
 		}
-		if (this.opts.response_mode == 'async' and d.status != 'SUCCESSED'){
+		if (this.opts.response_mode == 'async' && d.status != 'SUCCESSED'){
 			return;
 		} 
 		mout.update_data(d);
