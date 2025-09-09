@@ -123,11 +123,12 @@ bricks.ModelOutput = class extends bricks.VBox {
 		}
 		if (data.content){
 			this.received_content += data.content;
-			this.content = this.received_content;
+			data.content = bricks.escapeSpecialChars(this.received_content);
+			bricks.escapeSpecialChars(data.content)
 		}
 		if (data.reasoning_content){
-			this.reasoning_content += data.reasoning_content;
-			data.reasoning_content = this.reasoning_content;
+			this.received_reasoning_content += data.reasoning_content;
+			data.reasoning_content = bricks.escapeSpecialChars(this.received_reasoning_content);
 		}
 		this.run = null;
 		this.filler.clear_widgets();
