@@ -358,8 +358,8 @@ bricks.LlmIO = class extends bricks.VBox {
 		var sopts = {
 			data_url:this.list_models_url,
 			data_params:{
-				mii:this.models[0].modelinstanceid,
-				mti:this.models[0].modeltypeid
+				llmid:this.models[0].llmid,
+				llmcatelogid:this.models[0].llmcatelogid
 			},
 			data_method:'POST',
 			col_cwidth: 24,
