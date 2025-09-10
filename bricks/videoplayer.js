@@ -62,6 +62,17 @@ bricks.VideoPlayer = class extends bricks.VBox {
 		this.bind('domoff', this.destroy.bind(this));
 	}
 
+	destroy(){
+		if (this.hls) {
+			this.hls.destroy();
+			this.hls = null;
+		}
+		if (this.dashPlayer) {
+			this.dashPlayer.reset();
+			this.dashPlayer = null;
+		}
+		this.video.src = ''; // 清空
+	}
 	init() {
 		this.loadVideo(this.opts.url); // 可替换为 mp4 / m3u8 / mpd
 		this.bindEvents();
@@ -73,16 +84,7 @@ bricks.VideoPlayer = class extends bricks.VBox {
 
 	loadVideo(src) {
 		// 销毁旧播放器
-		if (this.hls) {
-			this.hls.destroy();
-			this.hls = null;
-		}
-		if (this.dashPlayer) {
-			this.dashPlayer.reset();
-			this.dashPlayer = null;
-		}
-
-		this.video.src = ''; // 清空
+		this.destroy()
 
 		if (src.endsWith('.m3u8') || src.includes('m3u8')) {
 			if (Hls.isSupported()) {
