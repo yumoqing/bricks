@@ -1,4 +1,11 @@
+
 var bricks = window.bricks || {}
+/*
+use hls to play m3u8
+ https://cdn.jsdelivr.net/npm/hls.js@latest
+use dash to play dash
+  https://cdn.dashjs.org/latest/dash.all.min.js
+*/
 
 bricks VideoPlayer = class extends bricks.VBox {
 	constructor(opts) {
