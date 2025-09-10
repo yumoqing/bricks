@@ -15,8 +15,8 @@ bricks.VideoPlayer = class extends bricks.VBox {
 	constructor(opts) {
 		super(opts)
 		this.set_css('video-container');
-		this.video = bricks.element_from_html(`<video id="video" class="video-element"></video>`);
-		this.controls = `<div class="controls">
+		this.dom_element.innerHTML = `<video id="video" class="video-element"></video>
+    <div class="controls">
       <div class="progress-container">
         <input type="range" class="progress-bar" value="0" step="0.0001" />
       </div>
@@ -43,8 +43,8 @@ bricks.VideoPlayer = class extends bricks.VBox {
         <button class="fullscreen">⛶</button>
       </div>
     </div>`
-		this.dom_element.appendChild(this.video);
-		this.dom_element.appendChild(this.controls);
+		this.video = this.dom_element.querySelector('.video-element');
+		this.controls = this.dom_element.querySelector('.controls');
 
 		this.hls = null;
 		this.dashPlayer = null;
