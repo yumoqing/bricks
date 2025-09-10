@@ -232,3 +232,4 @@ bricks.VideoPlayer = class extends bricks.VBox {
 
 }
 bricks.Factory.register('VideoPlayer', bricks.VideoPlayer);
+bricks.Factory.register('Video', bricks.VideoPlayer);
