@@ -231,5 +231,87 @@ bricks.VideoPlayer = class extends bricks.VBox {
 	}
 
 }
+bricks.Iptv = class extends bricks.VBox {
+	/*
+	{
+		iptv_data_url:
+		playok_url:
+		playfailed_url:
+	}
+	*/
+	constructor(opts){
+		super(opts);
+		schedule_once(this.build_subwidgets.bind(this), 0.1);
+	}
+	async build_subwidgets(){
+		console.log('build_subwidgets called');
+		if (!this.user_data){
+			var jc = new bricks.HttpJson();
+			this.deviceid = bricks.deviceid('iptv')
+			this.user_data = await jc.httpcall(this.iptv_data_url, {
+				params:{
+					deviceid:this.deviceid
+				}, 
+				method:'GET'
+			});
+		}
+		console.log('this.user_data =', this.user_data);
+		this.video = new bricks.Video({
+			autoplay:true,
+			url:this.user_data.url
+		});
+		this.title_w = new bricks.Text({text:this.user_data.tv_name, wrap:false});
+		this.add_widget(this.title_w);
+		this.add_widget(this.video);
+		this.video.bind('play_ok', this.report_play_ok.bind(this));
+		this.video.bind('play_failed', this.report_play_failed.bind(this));
+	}
+	async report_play_ok(){
+		console.log(this.user_data, 'channel playing ...', this.playok_url);
+		if (this.playok_url){
+			var ht = new bricks.HttpText();
+			var resp = ht.httpcall(this.playok_url,{
+				params:{
+					deviceid:this.deviceid,
+					channelid:this.user_data.id
+				},
+				method:"GET"
+			});
+			if (resp != 'Error'){
+				console.log('report playok ok');
+			} else {
+				console.log('report playok failed');
+			}
+		} else {
+			console.log('this.playok_url not defined', this.playok_url);
+		}
+	}
+	async report_play_failed(){
+		console.log(this.user_data, 'channel play failed ...');
+		if (this.playfailed_url){
+			var ht = new bricks.HttpText();
+			var resp = ht.httpcall(this.playfailed_url,{
+				params:{
+					deviceid:this.deviceid,
+					channelid:this.user_data.id
+				},
+				method:"GET"
+			});
+			if (resp != 'Error'){
+				console.log('report playfailed ok');
+			} else {
+				console.log('report playfailed failed');
+			}
+		} else {
+			console.log('this.playfailed_url not defined', this.playfailed_url);
+		}
+	}
+	setValue(data){
+		this.user_data = data;
+		this.title_w.set_text(data.tv_name);
+		this.video.set_url(data.url);
+	}
+}
+bricks.Factory.register('Iptv', bricks.Iptv);
 bricks.Factory.register('VideoPlayer', bricks.VideoPlayer);
 bricks.Factory.register('Video', bricks.VideoPlayer);
