@@ -1,18 +1,4 @@
 var bricks = window.bricks || {};
-/* 
-We use ResizeObserver to implements dom object resize event
-*/
-bricks.resize_observer = new ResizeObserver(entries => {
-	for (let entry of entries){
-		const cr = entry.contentRect;
-		const ele = entry.target;
-		const w = ele.bricks_widget;
-		// console.log('size=', cr, 'element=', ele, w);
-		if (w){
-			w.dispatch('element_resize', cr);
-		}
-	}
-});
 
 bricks.JsWidget = class {
 	/*
@@ -55,7 +41,6 @@ bricks.JsWidget = class {
 		if (this.bgimage){
 			this.set_bg_image(this.bgimage);
 		}
-		bricks.resize_observer.observe(this.dom_element);
 	}
 	set_bg_image(url){
 		var d = this.dom_element;

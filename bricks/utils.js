@@ -1,6 +1,46 @@
 var bricks = window.bricks || {};
 bricks.bug = false;
 
+/* 
+We use ResizeObserver to implements dom object resize event
+*/
+bricks.resize_observer = new ResizeObserver(entries => {
+	for (let entry of entries){
+		const cr = entry.contentRect;
+		const ele = entry.target;
+		const w = ele.bricks_widget;
+		// console.log('size=', cr, 'element=', ele, w);
+		if (w){
+			w.dispatch('element_resize', cr);
+		}
+	}
+});
+
+/* MutationObserver for add to DOM or remove from DOM
+event: 
+	domon: add to dom
+	domoff: remove from dom
+*/
+bricks.dom_on_off_observer=new MutationObserver((mutations)=>{
+	for (let mutation of mutations) {
+		for (let n of mutation.removedNodes) {
+		  	if (n.bricks_widget){
+				var w = n.bricks_widget;
+				w.dispatch('domoff');
+			}
+		}
+		for (let n of m.addedNodes) {
+		  	if (n.bricks_widget){
+				var w = n.bricks_widget;
+				w.dispatch('domon');
+			}
+		}
+	}
+});
+bricks.resize_observer.observe(document.body, 
+								{ childList: true, subtree: true });
+bricks.dom_on_off_observer.observe(document.body, 
+								{ childList: true, subtree: true });
 function addParamsToUrl(url, params, widget) {
   const urlObj = new URL(url, window.baseURI); // 处理相对和绝对路径
   Object.keys(params).forEach(key => {
