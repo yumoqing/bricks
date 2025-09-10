@@ -710,7 +710,7 @@ opts = {
 	id
 }
 */
-bricks.dom_create(tag, opts){
+bricks.dom_create = function(tag, opts){
 	var e = document.createElement(tag);
 	if (opts.css){
 		var arr = css.split(' ');
@@ -723,7 +723,7 @@ bricks.dom_create(tag, opts){
 	}
 	return e;
 }
-bricks.element_from_html(html){
+bricks.element_from_html = function(html){
 	var e = document.createElement('div');
 	e.outerHTML = html;
 	return e;
