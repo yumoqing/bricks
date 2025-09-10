@@ -256,7 +256,7 @@ bricks.Iptv = class extends bricks.VBox {
 			});
 		}
 		console.log('this.user_data =', this.user_data);
-		this.video = new bricks.Video({
+		this.video = new bricks.VideoPlayer({
 			autoplay:true,
 			url:this.user_data.url
 		});
