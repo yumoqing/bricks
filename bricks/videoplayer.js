@@ -6,7 +6,7 @@ use dash to play dash
 	https://cdn.dashjs.org/latest/dash.all.min.js
 */
 
-bricks VideoPlayer = class extends bricks.VBox {
+bricks.VideoPlayer = class extends bricks.VBox {
 	/*
 		opts:
 			url: video source
