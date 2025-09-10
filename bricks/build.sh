@@ -10,7 +10,7 @@ SOURCES=" page_data_loader.js factory.js uitypesdef.js utils.js uitype.js \
 	llm_dialog.js llm.js websocket.js datarow.js tabular.js continueaudio.js \
 	line.js pie.js bar.js gobang.js period.js iconbarpage.js \
 	keypress.js asr.js webspeech.js countdown.js progressbar.js \
-	qaframe.js svg.js "
+	qaframe.js svg.js videoplayer.js "
 echo ${SOURCES}
 cat ${SOURCES} > ../dist/bricks.js
 # uglifyjs --compress --mangle -- ../dist/bricks.js > ../dist/bricks.min.js
