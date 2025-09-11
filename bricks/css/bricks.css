@@ -515,3 +515,71 @@ hr {
     align-self: center;
 }
 
+.video-container {
+  position: relative;
+  width: 80%;
+  max-width: 1000px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #000;
+}
+
+.video-element {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  color: white;
+  font-size: 14px;
+  padding: 10px 15px;
+  transition: opacity 0.3s;
+  opacity: 0.9;
+}
+
+.controls:hover {
+  opacity: 1;
+}
+
+.progress-container {
+  margin-bottom: 10px;
+}
+
+.progress-bar {
+  width: 100%;
+  accent-color: #ff0000;
+}
+
+.controls-bottom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.play-pause, .mute, .fullscreen {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.volume, .playback-speed, .audio-track-select {
+  font-size: 14px;
+  padding: 2px;
+}
+
+.time {
+  font-family: monospace;
+}
+
+.fullscreen {
+  margin-left: auto;
+}

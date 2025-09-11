@@ -702,6 +702,30 @@ function blobToBase64(blob) {
     reader.readAsDataURL(blob);
   });
 }
+/* 
+opts = {
+	css:
+	id
+}
+*/
+bricks.dom_create = function(tag, opts){
+	var e = document.createElement(tag);
+	if (opts.css){
+		var arr = css.split(' ');
+		arr.forEach(c =>{
+			e.classList.add(c);
+		});
+	}
+	if (opts.id){
+		e.id = opts.id;
+	}
+	return e;
+}
+bricks.element_from_html = function(html){
+	var e = document.createElement('div');
+	e.outerHTML = html;
+	return e;
+}
 /*
 // 使用队列
 const queue = new Queue();

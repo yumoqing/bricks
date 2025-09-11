@@ -1,7 +1,7 @@
 SOURCES=" page_data_loader.js factory.js uitypesdef.js utils.js uitype.js \
 	i18n.js widget.js layout.js bricks.js image.js html.js splitter.js \
 	jsoncall.js myoperator.js scroll.js menu.js popup.js camera.js  modal.js running.js \
-	markdown_viewer.js video.js audio.js toolbar.js tab.js \
+	markdown_viewer.js audio.js toolbar.js tab.js \
 	input.js registerfunction.js button.js accordion.js dataviewer.js \
 	tree.js multiple_state_image.js dynamiccolumn.js form.js message.js conform.js \
 	paging.js datagrid.js iframe.js cols.js echartsext.js \
@@ -10,7 +10,7 @@ SOURCES=" page_data_loader.js factory.js uitypesdef.js utils.js uitype.js \
 	llm_dialog.js llm.js websocket.js datarow.js tabular.js continueaudio.js \
 	line.js pie.js bar.js gobang.js period.js iconbarpage.js \
 	keypress.js asr.js webspeech.js countdown.js progressbar.js \
-	qaframe.js svg.js "
+	qaframe.js svg.js videoplayer.js "
 echo ${SOURCES}
 cat ${SOURCES} > ../dist/bricks.js
 # uglifyjs --compress --mangle -- ../dist/bricks.js > ../dist/bricks.min.js
