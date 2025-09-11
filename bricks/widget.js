@@ -41,6 +41,7 @@ bricks.JsWidget = class {
 		if (this.bgimage){
 			this.set_bg_image(this.bgimage);
 		}
+		bricks.resize_observer.observe(this.dom_element);
 	}
 	set_bg_image(url){
 		var d = this.dom_element;

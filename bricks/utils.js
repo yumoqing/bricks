@@ -37,8 +37,6 @@ bricks.dom_on_off_observer=new MutationObserver((mutations)=>{
 		}
 	}
 });
-bricks.resize_observer.observe(document.body, 
-								{ childList: true, subtree: true });
 bricks.dom_on_off_observer.observe(document.body, 
 								{ childList: true, subtree: true });
 function addParamsToUrl(url, params, widget) {
