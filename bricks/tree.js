@@ -294,7 +294,7 @@ bricks.Tree = class extends bricks.VScrollPanel {
 					w.open();
 					return;
 				}
-				if (opts.checked_data && ! this.checked_data){
+				if (opts.checked_data && this.checked_data.length == 0){
 					var w = new bricks.Error({title:'Error', message:'No checked node found'});
 					w.open();
 					return;
@@ -307,8 +307,8 @@ bricks.Tree = class extends bricks.VScrollPanel {
 				} else {
 					if (this.selected_node){
 						d = this.selected_node.user_data;
-					} else if (this.checked_data) {
-						d = this.checked_data;
+					} else if (this.checked_data.length>0) {
+						d = this.checked_data[0];
 					} else {
 						d = this.opts.params;
 					}
