@@ -28,6 +28,7 @@ bricks.Wterm = class extends bricks.JsWidget {
 			this.socket.onclose = null;
 			this.socket = null;
 		} catch(e) {
+			this.socket = null;
 			console.log('e=', e);
 		}
 	}
@@ -37,6 +38,7 @@ bricks.Wterm = class extends bricks.JsWidget {
 			this.term.dispose();
 			this.term = null;
 		} catch(e){
+			this.term = null;
 			console.log('e=', e);
 		}
 	}
