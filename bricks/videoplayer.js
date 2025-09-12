@@ -44,6 +44,7 @@ bricks.VideoPlayer = class extends bricks.VBox {
       </div>
     </div>`
 		this.video = this.dom_element.querySelector('.video-element');
+		this.video.textTracks[0].mode = 'hidden';
 		this.controls = this.dom_element.querySelector('.controls');
 
 		this.hls = null;
@@ -88,10 +89,15 @@ bricks.VideoPlayer = class extends bricks.VBox {
 
 		if (src.endsWith('.m3u8') || src.includes('m3u8')) {
 			if (Hls.isSupported()) {
-				this.hls = new Hls();
+				this.hls = new Hls({
+					enableWebVTT: false,   // 不加载 WebVTT
+					enableIMSC1: false,    // 不加载 IMSC1/TTML
+					renderTextTracksNatively: false // 不用浏览器原生 track
+				});
 				this.hls.subtitleTrack = -1; // 关闭字幕轨道
 				this.hls.loadSource(src);
 				this.hls.attachMedia(this.video);
+				this.video.textTracks[0].mode = 'hidden'; 
 				this.hls.on(Hls.Events.MANIFEST_PARSED, () => this.onLoaded());
 			} else {
 				console.error('HLS not supported');
