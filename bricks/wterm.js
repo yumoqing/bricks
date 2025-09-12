@@ -18,8 +18,13 @@ bricks.Wterm = class extends bricks.JsWidget {
 		this.bind('domoff', this.destroy.bind(this));
 	}
 	destroy(){
-		console.debug('------domoff event, destory this wdiget');
+		this.unbind('element_resize', this.term_resize.bind(this))
+		this.heartbeat_task.cancel();
+		this.heartbeat_task = null;
+		console.debug('------domoff event, destory this widget');
 		if (this.socket){
+			console.log('socket alive, destroy it');
+			this.socket.send(JSON.stringify({ type: "close"}));
 			this.socket.close(1,'close now');
 			this.socket.onopen = null;
 			this.socket.onmessage = null;
