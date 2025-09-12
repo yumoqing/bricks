@@ -44,7 +44,6 @@ bricks.VideoPlayer = class extends bricks.VBox {
       </div>
     </div>`
 		this.video = this.dom_element.querySelector('.video-element');
-		this.video.textTracks[0].mode = 'hidden';
 		this.controls = this.dom_element.querySelector('.controls');
 
 		this.hls = null;
@@ -97,7 +96,6 @@ bricks.VideoPlayer = class extends bricks.VBox {
 				this.hls.subtitleTrack = -1; // 关闭字幕轨道
 				this.hls.loadSource(src);
 				this.hls.attachMedia(this.video);
-				this.video.textTracks[0].mode = 'hidden'; 
 				this.hls.on(Hls.Events.MANIFEST_PARSED, () => this.onLoaded());
 			} else {
 				console.error('HLS not supported');
