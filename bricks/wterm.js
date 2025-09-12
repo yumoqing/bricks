@@ -18,10 +18,11 @@ bricks.Wterm = class extends bricks.JsWidget {
 		this.bind('domoff', this.destroy.bind(this));
 	}
 	destroy(){
+		console.debug('------domoff event, destory this widget');
 		this.unbind('element_resize', this.term_resize.bind(this))
 		this.heartbeat_task.cancel();
 		this.heartbeat_task = null;
-		console.debug('------domoff event, destory this widget');
+		console.debug('---1--domoff event, destory this widget');
 		if (this.socket){
 			console.log('socket alive, destroy it');
 			this.socket.send(JSON.stringify({ type: "close"}));
@@ -32,11 +33,13 @@ bricks.Wterm = class extends bricks.JsWidget {
 			this.socket.onclose = null;
 			this.socket = null;
 		}
+		console.debug('---2--domoff event, destory this widget');
 		if (this.term){
 			this.fitAddon.dispose();
 			this.term.dispose();
 			this.term = null;
 		}
+		console.debug('---3--domoff event, destory this widget');
 	}
 	charsize_sizing(){
 		var cs = bricks.app.charsize;

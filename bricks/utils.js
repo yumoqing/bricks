@@ -25,13 +25,13 @@ bricks.dom_on_off_observer=new MutationObserver((mutations)=>{
 	function handleRemoved(node) {
 		if (node.nodeType !== 1) return; // 只处理元素节点
 		if (node.bricks_widget) {
-			console.log('**** widget removed', node);
+			console.log('**** widget removed', node.bricks_widget);
 			node.bricks_widget.dispatch('domoff');
 		}
 		// 遍历后代
 		for (let child of node.querySelectorAll('*')) {
 			if (child.bricks_widget) {
-				console.log('**** widget removed (descendant)', child);
+				console.log('**** widget removed (descendant)', child.bricks_widget);
 				child.bricks_widget.dispatch('domoff');
 			}
 		}
