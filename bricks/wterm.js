@@ -18,8 +18,9 @@ bricks.Wterm = class extends bricks.JsWidget {
 		this.bind('domoff', this.destroy.bind(this));
 	}
 	destroy(){
+		console.debug('------domoff event, destory this wdiget');
 		if (this.socket){
-			this.socket.close();
+			this.socket.close(1,'close now');
 			this.socket.onopen = null;
 			this.socket.onmessage = null;
 			this.socket.onerror = null;
@@ -37,6 +38,7 @@ bricks.Wterm = class extends bricks.JsWidget {
 		this.term.setOption('fontSize', cs);
 	}
 	send_term_size(){
+		console.debug('------domon event, send the terminal size to server');
 		try {
 			console.log('resize():rows=', this.term.rows, this.term.cols);
 			this.socket.send(JSON.stringify({ type: "resize", 
