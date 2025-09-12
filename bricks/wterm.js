@@ -108,6 +108,7 @@ bricks.Wterm = class extends bricks.JsWidget {
 		term.onResize(({cols, rows}) =>{
 			this.send_term_size();
 		});
+		this.send_term_size();
 		term.focus();
 	}
 	term_resize(){

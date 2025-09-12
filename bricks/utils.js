@@ -24,7 +24,9 @@ event:
 bricks.dom_on_off_observer=new MutationObserver((mutations)=>{
 	for (let m of mutations) {
 		for (let n of m.removedNodes) {
+			console.log('**** ', m.removedNodes.length, 'nodes removed');
 		  	if (n.bricks_widget){
+				console.log('**** ', n, 'widget removed');
 				var w = n.bricks_widget;
 				w.dispatch('domoff');
 			}
