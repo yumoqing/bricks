@@ -517,7 +517,8 @@ hr {
 
 .video-container {
   position: relative;
-  width: 80%;
+  width: 100%;
+  height: auto;
   max-width: 1000px;
   overflow: hidden;
   border-radius: 12px;
