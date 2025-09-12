@@ -14,6 +14,23 @@ bricks.Wterm = class extends bricks.JsWidget {
 		this.socket = null;
 		this.ping_timeout = opts.ping_timeout || 19;
 		schedule_once(this.open.bind(this), 1);
+		this.bind('domon', this.send_term_size.bind(this));
+		this.bind('domoff', this.destroy.bind(this));
+	}
+	destroy(){
+		if (this.socket){
+			this.socket.close();
+			this.socket.onopen = null;
+			this.socket.onmessage = null;
+			this.socket.onerror = null;
+			this.socket.onclose = null;
+			this.socket = null;
+		}
+		if (this.term){
+			this.fitAddon.dispose();
+			this.term.dispose();
+			this.term = null;
+		}
 	}
 	charsize_sizing(){
 		var cs = bricks.app.charsize;
@@ -43,10 +60,6 @@ bricks.Wterm = class extends bricks.JsWidget {
 		this.send_heartbeat();
 		this.heartbeat_task = schedule_once(this.heartbeat.bind(this), 
 								this.ping_timeout);
-	}
-	async close(){
-		this.term.close();
-		this.socket.close();
 	}
 	async open(){
 		var term_options = bricks.extend({width: "100%", height: "100%"}, this.term_options);
