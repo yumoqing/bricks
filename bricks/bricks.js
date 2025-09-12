@@ -198,6 +198,7 @@ bricks.buildBind = async function(w, desc){
 		return;
 	}
 	var event = desc.event;
+	desc.event_widget = widget;
 	await bricks.buildEventBind(w, widget, event, desc);
 }
 
@@ -266,6 +267,7 @@ bricks.buildEventHandler = async function(w, desc, event){
 		}
 		rtdata = await bricks.getRealtimeData(w, data_desc);
 	}
+	rtdata.referer = desc.event_widget.id;
 	switch (desc.actiontype){
 		case 'newwindow':
 			return bricks.buildNewWindowHandler(w, target, rtdata, desc);
