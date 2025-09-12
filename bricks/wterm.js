@@ -17,6 +17,29 @@ bricks.Wterm = class extends bricks.JsWidget {
 		this.bind('domon', this.send_term_size.bind(this));
 		this.bind('domoff', this.destroy.bind(this));
 	}
+	close_websocket(){
+		try {
+			console.log('socket alive, destroy it');
+			// this.socket.send(JSON.stringify({ type: "close"}));
+			this.socket.close(1,'close now');
+			this.socket.onopen = null;
+			this.socket.onmessage = null;
+			this.socket.onerror = null;
+			this.socket.onclose = null;
+			this.socket = null;
+		} catch(e) {
+			console.log('e=', e);
+		}
+	}
+	close_terminal(){
+		try {
+			this.fitAddon.dispose();
+			this.term.dispose();
+			this.term = null;
+		} catch(e){
+			console.log('e=', e);
+		}
+	}
 	destroy(){
 		console.debug('------domoff event, destory this widget');
 		try {
@@ -28,20 +51,11 @@ bricks.Wterm = class extends bricks.JsWidget {
 		}
 		console.debug('---1--domoff event, destory this widget');
 		if (this.socket){
-			console.log('socket alive, destroy it');
-			this.socket.send(JSON.stringify({ type: "close"}));
-			this.socket.close(1,'close now');
-			this.socket.onopen = null;
-			this.socket.onmessage = null;
-			this.socket.onerror = null;
-			this.socket.onclose = null;
-			this.socket = null;
+			this.close_websocket();
 		}
 		console.debug('---2--domoff event, destory this widget');
 		if (this.term){
-			this.fitAddon.dispose();
-			this.term.dispose();
-			this.term = null;
+			this.close_terminal();
 		}
 		console.debug('---3--domoff event, destory this widget');
 	}
