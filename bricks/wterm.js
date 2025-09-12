@@ -21,7 +21,7 @@ bricks.Wterm = class extends bricks.JsWidget {
 		try {
 			console.log('socket alive, destroy it');
 			// this.socket.send(JSON.stringify({ type: "close"}));
-			this.socket.close(1,'close now');
+			this.socket.close(1000,'close now');
 			this.socket.onopen = null;
 			this.socket.onmessage = null;
 			this.socket.onerror = null;
