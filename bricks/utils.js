@@ -22,14 +22,23 @@ event:
 	domoff: remove from dom
 */
 bricks.dom_on_off_observer=new MutationObserver((mutations)=>{
+	function handleRemoved(node) {
+		if (node.nodeType !== 1) return; // 只处理元素节点
+		if (node.bricks_widget) {
+			console.log('**** widget removed', node);
+			node.bricks_widget.dispatch('domoff');
+		}
+		// 遍历后代
+		for (let child of node.querySelectorAll('*')) {
+			if (child.bricks_widget) {
+				console.log('**** widget removed (descendant)', child);
+				child.bricks_widget.dispatch('domoff');
+			}
+		}
+	}
 	for (let m of mutations) {
 		for (let n of m.removedNodes) {
-			console.log('**** ', m.removedNodes.length, 'nodes removed');
-		  	if (n.bricks_widget){
-				console.log('**** ', n, 'widget removed');
-				var w = n.bricks_widget;
-				w.dispatch('domoff');
-			}
+			handleRemoved(n);
 		}
 		for (let n of m.addedNodes) {
 		  	if (n.bricks_widget){
