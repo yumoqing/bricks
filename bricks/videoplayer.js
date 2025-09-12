@@ -89,6 +89,7 @@ bricks.VideoPlayer = class extends bricks.VBox {
 		if (src.endsWith('.m3u8') || src.includes('m3u8')) {
 			if (Hls.isSupported()) {
 				this.hls = new Hls();
+				this.hls.subtitleTrack = -1; // 关闭字幕轨道
 				this.hls.loadSource(src);
 				this.hls.attachMedia(this.video);
 				this.hls.on(Hls.Events.MANIFEST_PARSED, () => this.onLoaded());
