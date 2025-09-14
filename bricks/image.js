@@ -41,11 +41,12 @@ bricks.Image = class extends bricks.JsWidget {
 	set_url(url){
 		this.url = url;
 		if (this.opts.default_url) {
-			this.dom_element.onerror = this.set_defualt_url
+			this.dom_element.onerror = this.set_default_url.bind(this)
 		}
 		this.dom_element.src = url;
 	}
 	set_default_url(){
+		console.log('default_url', this.opts.default_url);
 		this.dom_element.onerror = null;
 		this.dom_element.src = this.opts.default_url;
 	}
