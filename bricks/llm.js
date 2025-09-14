@@ -75,7 +75,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 		this.filler.set_css('filler');
 		this.content.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
 		this.content.add_widget(this.filler);
-		this.content.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
+		// this.content.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
 		this.build_estimate_widgets();
 	}
 	build_estimate_widgets(){
@@ -476,7 +476,7 @@ bricks.LlmIO = class extends bricks.VBox {
 		w.set_css(this.msg_css||'user_msg');
 		w.set_css('filler');
 		var img = new bricks.Svg({rate:2,url:this.user_icon||bricks_resource('imgs/chat-user.svg')});
-		box.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
+		// box.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
 		box.add_widget(w);
 		box.add_widget(img);
 		this.o_w.add_widget(box);
