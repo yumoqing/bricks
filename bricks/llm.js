@@ -123,13 +123,12 @@ bricks.ModelOutput = class extends bricks.VBox {
 		}
 		if (data.content){
 			this.received_content += data.content;
-			data.content = bricks.escapeSpecialChars(this.received_content);
-			bricks.escapeSpecialChars(data.content)
 		}
+		data.content = bricks.escapeSpecialChars(this.received_content);
 		if (data.reasoning_content){
 			this.received_reasoning_content += data.reasoning_content;
-			data.reasoning_content = bricks.escapeSpecialChars(this.received_reasoning_content);
 		}
+		data.reasoning_content = bricks.escapeSpecialChars(this.received_reasoning_content);
 		this.run = null;
 		this.filler.clear_widgets();
 		if (typeof this.output_view === 'string'){
@@ -379,11 +378,7 @@ bricks.LlmIO = class extends bricks.VBox {
 							{
 								widgettype:"Svg",
 								options: {
-									url:"/appbase/show_icon.dspy",
-									method: "POST",
-									params: {
-										"id": "${iconid}"
-									}
+									url:"/appbase/show_icon.dspy?id=${iconid}"
 								}
 							},
 							{
