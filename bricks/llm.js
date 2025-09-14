@@ -371,10 +371,27 @@ bricks.LlmIO = class extends bricks.VBox {
 				},
 				subwidgets:[
 					{
-						widgettype:"Title4",
-						options:{
-							text:"${name}"
-						}
+						widgettype: "HBox",
+						options: {
+							cheight: 2
+						},
+						subwidgets: [
+							{
+								widgettype:"Svg",
+								options: {
+									url:"/appbase/show_icon.dspy",
+									params: {
+										"id": "${iconid}"
+									}
+								}
+							},
+							{
+								widgettype:"Title6",
+								options:{
+									text:"${name}"
+								}
+							}
+						]
 					},
 					{
 						widgettype:"Filler",
