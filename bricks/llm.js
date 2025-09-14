@@ -436,16 +436,8 @@ bricks.LlmIO = class extends bricks.VBox {
 		event.preventDefault();
 		event.stopPropagation();
 		var llm = event.params;
-		var d = {};
-		d.llmid = llm.id;
-		d.llmcatelogid = llm.llmcatelogid;
-		d.response_mode = llm.stream;
-		d.output_view = llm.output_view;
-		d.icon = '/appbase/show_icon.dspy?id=' + llm.iconid;
-		d.model = llm.model;
-		d.modelname = llm.name;
-		this.models.push(d);
-		this.show_added_model(d);
+		this.models.push(llm);
+		this.show_added_model(llm);
 	}
 	async open_input_widget(event){
 		event.preventDefault();
