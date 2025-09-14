@@ -380,6 +380,7 @@ bricks.LlmIO = class extends bricks.VBox {
 								widgettype:"Svg",
 								options: {
 									url:"/appbase/show_icon.dspy",
+									method: "POST",
 									params: {
 										"id": "${iconid}"
 									}
@@ -434,8 +435,17 @@ bricks.LlmIO = class extends bricks.VBox {
 	async add_new_model(event){
 		event.preventDefault();
 		event.stopPropagation();
-		this.models.push(event.params);
-		this.show_added_model(event.params);
+		var llm = event.params;
+		d = {};
+		d.llmid = llm.id;
+		d.llmcatelogid = llm.llmcatelogid;
+		d.response_mode = llm.stream;
+		d.output_view = llm.output_view;
+		d.icon = '/appbase/show_icon.dspy?id=' + llm.iconid;
+		d.model = llm.model;
+		d.modelname = llm.name;
+		this.models.push(d);
+		this.show_added_model(d);
 	}
 	async open_input_widget(event){
 		event.preventDefault();
