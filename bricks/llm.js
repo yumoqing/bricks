@@ -436,7 +436,7 @@ bricks.LlmIO = class extends bricks.VBox {
 		event.preventDefault();
 		event.stopPropagation();
 		var llm = event.params;
-		d = {};
+		var d = {};
 		d.llmid = llm.id;
 		d.llmcatelogid = llm.llmcatelogid;
 		d.response_mode = llm.stream;
