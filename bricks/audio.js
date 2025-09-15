@@ -34,9 +34,44 @@ bricks.AudioPlayer = class extends bricks.JsWidget {
 		if ( this.url ){
 			this.set_source(this.url);
 		}
+		this.playlist = [];
+	}
+	get_status() {
+		var audio = this.audio;
+		if (audio.error) {
+			return "error";
+		}
+		if (audio.ended) {
+			return "ended";
+		}
+		if (audio.paused) {
+			return "paused";
+		}
+		if (audio.readyState < 3) {
+			return "loading";  // 数据不足，可能在缓冲
+		}
+		return "playing";
+	}
+
+	add_url(url){
+		var status = this.get_status();
+		switch(status){
+			case 'error':
+			case 'ended':
+				this.set_source(url);
+				break;
+			default:
+				this.playlist.push(url);
+				break;
+		}
 	}
 	playended(e){
-		this.dispatch('ended');
+		if (this.playlist.length > 0) {
+			var url = this.playlist.shift();
+			this.set_source(url);
+		} else {
+			this.dispatch('ended');
+		}
 	}
 	set_stream_urls(response){
 		async function* dyn_urls(response) {
