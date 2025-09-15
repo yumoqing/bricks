@@ -71,7 +71,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 		this.logid = null;
 		this.run = new bricks.BaseRunning({target:this});
 		this.content.add_widget(this.run);
-		this.filler = new bricks.VBox({});
+		this.filler = new bricks.LLmOut({width: '100%'});
 		this.filler.set_css('filler');
 		this.content.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
 		this.content.add_widget(this.filler);
@@ -95,6 +95,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 		this.estimate_w.add_widget(unlikew);
 		likew.set_style('cursor', 'pointer');
 		unlikew.set_style('cursor', 'pointer');
+		this.add_widget(this.estimate_w);
 		this.estimate_w.hide();
 	}
 	async estimate_llm(val, event){
@@ -121,6 +122,8 @@ bricks.ModelOutput = class extends bricks.VBox {
 			this.run.stop_timepass();
 			this.content.remove_widget(this.run);
 		}
+		this.filler.update(data);
+		return;
 		if (data.content){
 			this.received_content += data.content;
 		}

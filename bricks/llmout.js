@@ -56,7 +56,7 @@ bricks.LlmOut = class extends bricks.VBox {
 		if (data.image){
 			if （Array.isArray(data.image){
 				this.images.concat(data.image);
-			else {
+			} else {
 				this.images.push(data.image);
 			}
 		}
@@ -94,3 +94,5 @@ bricks.LlmOut = class extends bricks.VBox {
 		}
 	}
 }
+bricks.Factory.register('LimOut', bricks.LlmOut');
+
