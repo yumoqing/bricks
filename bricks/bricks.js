@@ -204,7 +204,6 @@ bricks.buildBind = async function(w, desc){
 bricks.buildEventBind = async function(from_widget, widget, event, desc){
 	var handler = bricks.universal_handler.bind(null,from_widget, widget, desc);
 	widget.bind(event, handler);
-	
 }
 
 bricks.universal_handler = async function(from_widget, widget, desc, event){
@@ -266,6 +265,8 @@ bricks.buildEventHandler = async function(w, desc, event){
 		}
 		rtdata = await bricks.getRealtimeData(w, data_desc);
 	}
+	var widget = bricks.getWidgetById(desc.wid, w);
+	rtdata.referer_widget = widget.id;
 	switch (desc.actiontype){
 		case 'newwindow':
 			return bricks.buildNewWindowHandler(w, target, rtdata, desc);
