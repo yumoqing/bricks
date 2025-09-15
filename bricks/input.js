@@ -516,7 +516,7 @@ bricks.UiImage =class extends bricks.VBox {
 			"width":"90%"
 		});
 		camera.bring_to_top();
-		camera.bind('shot', this.accept_photo.bind(this));
+		camera.bind('shot', this.accept_photo.bind(this, camera));
 	}
 	accept_photo(camera, event){
 		camera.dismiss();
@@ -527,6 +527,7 @@ bricks.UiImage =class extends bricks.VBox {
 			url:event.params,
 			width:'100%'
 		});
+		this.value = event.params
 		this.add_widget(this.imgw);
 	}
 	handleFileSelect(event){
@@ -546,9 +547,8 @@ bricks.UiImage =class extends bricks.VBox {
 				this.remove_widget(this.imgw);
 			}
 			this.value = e.target.result;
-			console.log('this.value=', this.value);
 			this.imgw = new bricks.Image({
-				url:e.target.result,
+				url:this.value,
 				width:'100%'
 			});
 			this.add_widget(this.imgw);
@@ -560,20 +560,14 @@ bricks.UiImage =class extends bricks.VBox {
 		fd.append(this.name, this.resultValue());
 	}
 	resultValue(){
-		if (this.imgw){
-			this.value = this.imgw.base64();
+		if (this.value){
 			return this.value;
 		}
 		return null;
 	}
 	getValue(){
-		var ret = {}
-		if (this.imgw){
-			// ret[this.name] = this.imgw.base64()
-			ret[this.name] = this.value;
-		} else {
-			ret[this.name] = null;
-		}
+		var ret = {};
+		ret[this.name] = this.resultValue();
 		return ret;
 	}
 }
@@ -1104,7 +1098,7 @@ bricks.UiVideo =class extends bricks.UiStr {
 			url: bricks_resource('imgs/right_arrow.svg')});
 		this.add_widget(this.icon);
 		this.icon.bind('click', this.play_audio.bind(this));
-		this.player = new bricks.VideoPlayer({
+		this.player = new bricks.Video({
 			url:this.value
 			});
 		if (this.autoplay){

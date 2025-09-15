@@ -24,7 +24,7 @@ bricks.HScrollPanel = class extends bricks.HBox {
 	constructor(opts){
 		opts.width = '100%';
 		opts.height = '100%';
-		opts.css = 'scrollpanel';
+		opts.css = opts.css + ' scrollpanel';
 		opts.overflow = 'auto';
 		super(opts);
 		this.min_threshold = opts.min_threshold || 0.01;
@@ -66,7 +66,7 @@ bricks.VScrollPanel = class extends bricks.VBox {
 	constructor(opts){
 		opts.width = '100%';
 		opts.height = '100%';
-		opts.css = 'scrollpanel';
+		opts.css = opts.css + ' scrollpanel';
 		opts.overflow = 'auto';
 		super(opts);
 		this.min_threshold = opts.min_threshold || 0.02;

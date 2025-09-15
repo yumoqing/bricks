@@ -1,6 +1,55 @@
 var bricks = window.bricks || {};
 bricks.bug = false;
 
+/* 
+We use ResizeObserver to implements dom object resize event
+*/
+bricks.resize_observer = new ResizeObserver(entries => {
+	for (let entry of entries){
+		const cr = entry.contentRect;
+		const ele = entry.target;
+		const w = ele.bricks_widget;
+		// console.log('size=', cr, 'element=', ele, w);
+		if (w){
+			w.dispatch('element_resize', cr);
+		}
+	}
+});
+
+/* MutationObserver for add to DOM or remove from DOM
+event: 
+	domon: add to dom
+	domoff: remove from dom
+*/
+bricks.dom_on_off_observer=new MutationObserver((mutations)=>{
+	function handleRemoved(node) {
+		if (node.nodeType !== 1) return; // 只处理元素节点
+		if (node.bricks_widget) {
+			console.log('**** widget removed', node.bricks_widget);
+			node.bricks_widget.dispatch('domoff');
+		}
+		// 遍历后代
+		for (let child of node.querySelectorAll('*')) {
+			if (child.bricks_widget) {
+				console.log('**** widget removed (descendant)', child.bricks_widget);
+				child.bricks_widget.dispatch('domoff');
+			}
+		}
+	}
+	for (let m of mutations) {
+		for (let n of m.removedNodes) {
+			handleRemoved(n);
+		}
+		for (let n of m.addedNodes) {
+		  	if (n.bricks_widget){
+				var w = n.bricks_widget;
+				w.dispatch('domon');
+			}
+		}
+	}
+});
+bricks.dom_on_off_observer.observe(document.body, 
+								{ childList: true, subtree: true });
 function addParamsToUrl(url, params, widget) {
   const urlObj = new URL(url, window.baseURI); // 处理相对和绝对路径
   Object.keys(params).forEach(key => {
@@ -663,6 +712,30 @@ function blobToBase64(blob) {
     reader.onerror = reject;
     reader.readAsDataURL(blob);
   });
+}
+/* 
+opts = {
+	css:
+	id
+}
+*/
+bricks.dom_create = function(tag, opts){
+	var e = document.createElement(tag);
+	if (opts.css){
+		var arr = css.split(' ');
+		arr.forEach(c =>{
+			e.classList.add(c);
+		});
+	}
+	if (opts.id){
+		e.id = opts.id;
+	}
+	return e;
+}
+bricks.element_from_html = function(html){
+	var e = document.createElement('div');
+	e.outerHTML = html;
+	return e;
 }
 /*
 // 使用队列

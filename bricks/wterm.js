@@ -14,12 +14,61 @@ bricks.Wterm = class extends bricks.JsWidget {
 		this.socket = null;
 		this.ping_timeout = opts.ping_timeout || 19;
 		schedule_once(this.open.bind(this), 1);
+		this.bind('domon', this.send_term_size.bind(this));
+		this.bind('domoff', this.destroy.bind(this));
+	}
+	close_websocket(){
+		try {
+			console.log('socket alive, destroy it');
+			// this.socket.send(JSON.stringify({ type: "close"}));
+			this.socket.close(1000,'close now');
+			this.socket.onopen = null;
+			this.socket.onmessage = null;
+			this.socket.onerror = null;
+			this.socket.onclose = null;
+			this.socket = null;
+		} catch(e) {
+			this.socket = null;
+			console.log('e=', e);
+		}
+	}
+	close_terminal(){
+		try {
+			this.fitAddon.dispose();
+			this.term.dispose();
+			this.term = null;
+		} catch(e){
+			this.term = null;
+			console.log('e=', e);
+		}
+	}
+	destroy(){
+		console.debug('------domoff event, destory this widget');
+		try {
+			if (this.heartbeat_task){
+				this.heartbeat_task.cancel();
+				this.heartbeat_task = null;
+			}
+			this.unbind('element_resize', this.term_resize.bind(this))
+		} catch(e) {
+			console.log('error ', e);
+		}
+		console.debug('---1--domoff event, destory this widget');
+		if (this.socket){
+			this.close_websocket();
+		}
+		console.debug('---2--domoff event, destory this widget');
+		if (this.term){
+			this.close_terminal();
+		}
+		console.debug('---3--domoff event, destory this widget');
 	}
 	charsize_sizing(){
 		var cs = bricks.app.charsize;
 		this.term.setOption('fontSize', cs);
 	}
 	send_term_size(){
+		console.debug('------domon event, send the terminal size to server');
 		try {
 			console.log('resize():rows=', this.term.rows, this.term.cols);
 			this.socket.send(JSON.stringify({ type: "resize", 
@@ -43,10 +92,6 @@ bricks.Wterm = class extends bricks.JsWidget {
 		this.send_heartbeat();
 		this.heartbeat_task = schedule_once(this.heartbeat.bind(this), 
 								this.ping_timeout);
-	}
-	async close(){
-		this.term.close();
-		this.socket.close();
 	}
 	async open(){
 		var term_options = bricks.extend({width: "100%", height: "100%"}, this.term_options);
@@ -93,6 +138,7 @@ bricks.Wterm = class extends bricks.JsWidget {
 		term.onResize(({cols, rows}) =>{
 			this.send_term_size();
 		});
+		this.send_term_size();
 		term.focus();
 	}
 	term_resize(){

@@ -1,18 +1,4 @@
 var bricks = window.bricks || {};
-/* 
-We use ResizeObserver to implements dom object resize event
-*/
-bricks.resize_observer = new ResizeObserver(entries => {
-	for (let entry of entries){
-		const cr = entry.contentRect;
-		const ele = entry.target;
-		const w = ele.bricks_widget;
-		// console.log('size=', cr, 'element=', ele, w);
-		if (w){
-			w.dispatch('element_resize', cr);
-		}
-	}
-});
 
 bricks.JsWidget = class {
 	/*
@@ -255,20 +241,20 @@ bricks.JsWidget = class {
 		this.dom_element.style[k] = v;
 	}
 	set_csses(csses, remove_flg){
-		var arr = csses.split(' ');
-		arr.forEach(c =>{
-			this.set_css(c, remove_flg);
-		})
+		this.set_css(csses, remove_flg);
 	}
 	unset_css(css){
 		this.dom_element.classList.remove(css);
 	}
 	set_css(css, remove_flg){
-		if (!remove_flg){
-			this.dom_element.classList.add(css);
-		} else {
-			this.dom_element.classList.remove(css);
-		}
+		var arr = css.split(' ');
+		arr.forEach(c => {
+			if (!remove_flg){
+				this.dom_element.classList.add(c);
+			} else {
+				this.dom_element.classList.remove(c);
+			}
+		});
 	}
 	set_cssObject(cssobj){
 		bricks.extend(this.dom_element.style, cssobj);

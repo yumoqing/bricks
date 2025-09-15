@@ -10,23 +10,12 @@ bricks.Image = class extends bricks.JsWidget {
 	constructor(opts){
 		super(opts);
 		this.opts = opts;
-		this.options_parse();
+		if (this.opts.url){
+			this.set_url(this.opts.url);
+		}
 	}
 	create(){
 		this.dom_element = document.createElement('img');
-	}
-	options_parse(){
-		if (this.opts.hasOwnProperty('url')){
-			this.set_url(this.opts.url);
-		}
-		if (this.opts.hasOwnProperty('width')){
-			this.width = this.opts.width;
-			this.dom_element.style.width = this.width;
-		}
-		if (this.opts.hasOwnProperty('height')){
-			this.height = this.opts.height;
-			this.dom_element.style.height = this.height;
-		}
 	}
 	removeBase64Header(base64String) {
 		return base64String.replace(/^data:[^;]*;base64,/, '');
@@ -51,7 +40,15 @@ bricks.Image = class extends bricks.JsWidget {
 	}
 	set_url(url){
 		this.url = url;
+		if (this.opts.default_url) {
+			this.dom_element.onerror = this.set_default_url.bind(this)
+		}
 		this.dom_element.src = url;
+	}
+	set_default_url(){
+		console.log('default_url', this.opts.default_url);
+		this.dom_element.onerror = null;
+		this.dom_element.src = this.opts.default_url;
 	}
 }
 

@@ -198,6 +198,7 @@ bricks.buildBind = async function(w, desc){
 		return;
 	}
 	var event = desc.event;
+	desc.event_widget = widget;
 	await bricks.buildEventBind(w, widget, event, desc);
 }
 

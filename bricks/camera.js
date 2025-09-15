@@ -81,7 +81,8 @@ bricks.Camera = class extends bricks.Popup {
         canvas.width = this.video.videoWidth;
 		const context = canvas.getContext('2d');
         context.drawImage(this.video, 0, 0);
-		this.imgw.set_url(canvas.toDataURL('image/jpeg'));
+		this.dataurl = canvas.toDataURL('image/jpeg', 0.95);
+		this.imgw.set_url(this.dataurl);
 		this.task = schedule_once(this.show_picture.bind(this), this.task_period);
 		this.show_cnt += 1;
 	}
@@ -118,8 +119,7 @@ bricks.Camera = class extends bricks.Popup {
 		}
 		this.task_period = 0;
 		this.task = null;
-		var d = this.imgw.base64();
-		this.dispatch('shot', d);
+		this.dispatch('shot', this.dataurl);
 	}
 }
 

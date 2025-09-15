@@ -75,7 +75,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 		this.filler.set_css('filler');
 		this.content.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
 		this.content.add_widget(this.filler);
-		this.content.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
+		// this.content.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
 		this.build_estimate_widgets();
 	}
 	build_estimate_widgets(){
@@ -116,18 +116,19 @@ bricks.ModelOutput = class extends bricks.VBox {
 	}
 	async update_data(data){
 		if (this.run) {
+			this.received_content = '';
+			this.received_reasoning_content = '';
 			this.run.stop_timepass();
 			this.content.remove_widget(this.run);
-			if(this.textvoice){
-			this.upstreaming = new bricks.UpStreaming({
-				url:this.tts_url
-			});
-			this.upstreaming.go();
-			}
 		}
-		if (this.upstreaming){
-			this.upstreaming.send(data.content);
+		if (data.content){
+			this.received_content += data.content;
 		}
+		data.content = bricks.escapeSpecialChars(this.received_content);
+		if (data.reasoning_content){
+			this.received_reasoning_content += data.reasoning_content;
+		}
+		data.reasoning_content = bricks.escapeSpecialChars(this.received_reasoning_content);
 		this.run = null;
 		this.filler.clear_widgets();
 		if (typeof this.output_view === 'string'){
@@ -151,9 +152,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 		}
 	}
 	finish(){
-		if (this.upstreaming){
-			this.upstreaming.finish();
-		}
+		console.log('finished')
 	}
 }
 
@@ -178,7 +177,6 @@ bricks.LlmModel = class extends bricks.JsWidget {
 	constructor(llmio, opts){
 		super(opts);
 		this.llmio = llmio;
-		this.messages = [];
 	}
 	render_title(){
 		var w = new bricks.HBox({padding:'15px'});
@@ -188,8 +186,8 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			tip:this.opts.modelname,
 			url:this.opts.icon||bricks_resource('imgs/llm.svg')
 		});
-		// var txt = new bricks.Text({text:this.opts.modelname});
 		w.add_widget(img);
+		// var txt = new bricks.Text({text:this.opts.modelname});
 		// w.add_widget(txt);
 		return w;
 	}
@@ -203,30 +201,21 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		} else {
 			d = objcopy(data);
 		}
-		var fmt = this.opts.user_message_format;
-		if (fmt){
-			var umsg = bricks.apply_data(fmt, inputdata2dic(data));
-			this.messages.push(umsg);
-		}
 		if (data instanceof FormData){
 			d.append('model', this.opts.model)
 			d.append('llmid', this.opts.llmid)
-			d.append('messages', JSON.stringify(this.messages));
 		} else {
-			d.messages = JSON.stringify(this.messages);
 			d.model = this.opts.model;
 			d.llmid = this.opts.llmid;
 		}
 		return d;
 	}
 	async model_inputed(data){
-		if (!opts.use_session){
-			this.messages = [];
-		}
 		var mout = new bricks.ModelOutput({
 					textvoice:this.textvoice,
 					tts_url:this.tts_url,
 					icon:this.opts.icon,
+					response_mode: this.opts.response_mode,
 					model:this.opts.model, 
 					modelname:this.opts.modelname,
 					estimate_url:this.llmio.estimate_url,
@@ -234,26 +223,17 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		this.llmio.o_w.add_widget(mout);
 		if (this.response_mode == 'stream' || this.response_mode == 'async') {
 			var d = this.inputdata2uploaddata(data);
-			console.log('data_inouted=', data, 'upload_data=', d);
 			var hr = new bricks.HttpResponseStream();
 			var resp = await hr.post(this.opts.url, {params:d});
 			await hr.handle_chunk(resp, this.chunk_response.bind(this, mout));
 			this.chunk_ended();
 		} else {
 			var d = this.inputdata2uploaddata(data);
+			console.log('data_inouted=', data, 'upload_data=', d);
 			var hj = new bricks.HttpJson()
 			var resp = await hj.post(this.opts.url, {params:d});
-			if (this.response_mode == 'sync'){
-				resp.content = bricks.escapeSpecialChars(resp.content)
-				mout.update_data(resp);
-				if (this.messages){
-					var msg = this.llm_msg_format();
-					var lmsg = bricks.apply_data(msg, resp);
-					this.messages.push(lmsg)
-				}
-			} else {
-				;
-			}
+			resp.content = bricks.escapeSpecialChars(resp.content)
+			mout.update_data(resp);
 		}
 	}
 	is_accept_source(source){
@@ -266,25 +246,24 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		return this.llm_message_format || {role:'assistant', content:"${content}"}
 	}
 	chunk_response(mout, l){
-		var d = JSON.parse(l);
-		if (! d.content || d.content == ''){
-			return;
+		l = l.trim();
+		try {
+			var d = JSON.parse(l);
+		} catch(e){
+			console.log(l, 'is not a json data');
+			return
 		}
-		d.content = bricks.escapeSpecialChars(d.content);
-		this.resp_data = d;
+		if (this.opts.response_mode == 'async'){
+			if(d.status != 'SUCCEEDED'){
+				console.log('filter all message not successed');
+				return;
+			}
+		} 
+		console.log('l=', l, 'd=', d);
 		mout.update_data(d);
-		// console.log('stream data=', d);
 	}
 	chunk_ended(){
-		if (! this.messages) {
-			console.log('this.messages is null !!!!!!!!!');
-			return;
-		}
-		var msg = this.llm_msg_format();
-		var txt = bricks.escapeSpecialChars(this.resp_data.content)
-		this.resp_data.content = txt;
-		var lmsg = bricks.apply_data(msg, this.resp_data);
-		this.messages.push(lmsg);
+		console.log('chunk end');
 	}
 }
 bricks.LlmIO = class extends bricks.VBox {
@@ -378,8 +357,8 @@ bricks.LlmIO = class extends bricks.VBox {
 		var sopts = {
 			data_url:this.list_models_url,
 			data_params:{
-				mii:this.models[0].modelinstanceid,
-				mti:this.models[0].modeltypeid
+				llmid:this.models[0].llmid,
+				llmcatelogid:this.models[0].llmcatelogid
 			},
 			data_method:'POST',
 			col_cwidth: 24,
@@ -391,10 +370,24 @@ bricks.LlmIO = class extends bricks.VBox {
 				},
 				subwidgets:[
 					{
-						widgettype:"Title4",
-						options:{
-							text:"${name}"
-						}
+						widgettype: "HBox",
+						options: {
+							cheight: 2
+						},
+						subwidgets: [
+							{
+								widgettype:"Svg",
+								options: {
+									url:"/appbase/show_icon.dspy?id=${iconid}"
+								}
+							},
+							{
+								widgettype:"Title6",
+								options:{
+									text:"${name}"
+								}
+							}
+						]
 					},
 					{
 						widgettype:"Filler",
@@ -437,8 +430,9 @@ bricks.LlmIO = class extends bricks.VBox {
 	async add_new_model(event){
 		event.preventDefault();
 		event.stopPropagation();
-		this.models.push(event.params);
-		this.show_added_model(event.params);
+		var llm = event.params;
+		this.models.push(llm);
+		this.show_added_model(llm);
 	}
 	async open_input_widget(event){
 		event.preventDefault();
@@ -471,10 +465,7 @@ bricks.LlmIO = class extends bricks.VBox {
 		await this.show_input(params);
 		for(var i=0;i<this.llmmodels.length;i++){
 			var lm = this.llmmodels[i];
-			if (lm.is_accept_source('userinput')){
-				schedule_once(lm.model_inputed.bind(lm, params), 0.01);
-				// await lm.model_inputed(params);
-			}
+			schedule_once(lm.model_inputed.bind(lm, params), 0.01);
 		};
 	}
 	async show_input(params){
@@ -485,7 +476,7 @@ bricks.LlmIO = class extends bricks.VBox {
 		w.set_css(this.msg_css||'user_msg');
 		w.set_css('filler');
 		var img = new bricks.Svg({rate:2,url:this.user_icon||bricks_resource('imgs/chat-user.svg')});
-		box.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
+		// box.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
 		box.add_widget(w);
 		box.add_widget(img);
 		this.o_w.add_widget(box);

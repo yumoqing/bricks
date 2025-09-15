@@ -289,17 +289,29 @@ bricks.Tree = class extends bricks.VScrollPanel {
 				this.update_node();
 				break;
 			default:
-				if ((opts.selected_data || opts.checked_data) && ! this.selected_node){
+				if (opts.selected_data && ! this.selected_node){
 					var w = new bricks.Error({title:'Error', message:'No selected node found'});
 					w.open();
 					return;
 				}
-				console.log('opts=', opts);
-				var d = null;
-				if (opts.checked_data){
-					d = this.checked_data
-				} else if (opts.selected_data){
-					d = this.selected_node.user_data
+				if (opts.checked_data && this.checked_data.length == 0){
+					var w = new bricks.Error({title:'Error', message:'No checked node found'});
+					w.open();
+					return;
+				}
+				var d = {};
+				if (opts.selected_data){
+					d = this.selected_node.user_data;
+				} else if (opts.checked_data){
+					d = this.checked_data;
+				} else {
+					if (this.selected_node){
+						d = this.selected_node.user_data;
+					} else if (this.checked_data.length>0) {
+						d = this.checked_data[0];
+					} else {
+						d = this.opts.params;
+					}
 				}
 				d.meta_data = {
 					referer: this.id,
