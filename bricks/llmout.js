@@ -75,7 +75,7 @@ bricks.LlmOut = class extends bricks.VBox {
 			var txt = bricks.escapeSpecialChars(this.content);
 			this.c_w = new bricks.MdWidget({
 				mdtext: txt,
-				css: 'resp-content';
+				css: 'resp-content',
 				width: '100%'
 			});
 			this.add_widget(this.c_w);
