@@ -584,3 +584,10 @@ hr {
 .fullscreen {
   margin-left: auto;
 }
+
+.thinking-content {
+	background-color: #f0d0d0;
+}
+.resp-content {
+	background-color: #f0d0f0;
+}
