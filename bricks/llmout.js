@@ -62,7 +62,7 @@ bricks.LlmOut = class extends bricks.VBox {
 		}
 		this.clear_widgets();
 		if (this.reasoning_content.length) {
-			var txt = bricks.escapeSpecialChars('<think>\n\n' + this.reasoning_content + '\n\n'</think>');
+			var txt = bricks.escapeSpecialChars('<think>\n\n' + this.reasoning_content + '\n\n</think>');
 			this.rc_w = new bricks.MdWidget({
 				mdtext: txt,
 				width: '100%'
