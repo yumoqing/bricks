@@ -54,7 +54,7 @@ bricks.LlmOut = class extends bricks.VBox {
 			this.content += data.content;
 		}
 		if (data.image){
-			if （Array.isArray(data.image){
+			if (Array.isArray(data.image)){
 				this.images.concat(data.image);
 			} else {
 				this.images.push(data.image);
