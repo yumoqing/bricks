@@ -71,7 +71,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 		this.logid = null;
 		this.run = new bricks.BaseRunning({target:this});
 		this.content.add_widget(this.run);
-		this.filler = new bricks.LLmOut({width: '100%'});
+		this.filler = new bricks.LlmOut({width: '100%'});
 		this.filler.set_css('filler');
 		this.content.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
 		this.content.add_widget(this.filler);
@@ -117,8 +117,6 @@ bricks.ModelOutput = class extends bricks.VBox {
 	}
 	async update_data(data){
 		if (this.run) {
-			this.received_content = '';
-			this.received_reasoning_content = '';
 			this.run.stop_timepass();
 			this.content.remove_widget(this.run);
 		}
