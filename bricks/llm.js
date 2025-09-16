@@ -119,6 +119,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 		if (this.run) {
 			this.run.stop_timepass();
 			this.content.remove_widget(this.run);
+			this.run = null;
 		}
 		this.filler.update(data);
 		return;
