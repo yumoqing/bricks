@@ -62,9 +62,10 @@ bricks.LlmOut = class extends bricks.VBox {
 		}
 		this.clear_widgets();
 		if (this.reasoning_content.length) {
-			var txt = bricks.escapeSpecialChars('<think>\n\n' + this.reasoning_content + '\n\n</think>');
+			var txt = bricks.escapeSpecialChars(this.reasoning_content);
 			this.rc_w = new bricks.MdWidget({
 				mdtext: txt,
+				bgcolor: '#f0d0d0',
 				width: '100%'
 			});
 			this.add_widget(this.rc_w);
@@ -73,6 +74,7 @@ bricks.LlmOut = class extends bricks.VBox {
 			var txt = bricks.escapeSpecialChars(this.content);
 			this.c_w = new bricks.MdWidget({
 				mdtext: txt,
+				bgcolor: '#f0d0f0',
 				width: '100%'
 			});
 			this.add_widget(this.c_w);
