@@ -38,7 +38,7 @@ bricks.LlmOut = class extends bricks.VBox {
 		}
 		if (data.video){
 			if (!this.v_w){
-				this.v_w = mew bricks.VideoPlayer({
+				this.v_w = new bricks.VideoPlayer({
 					width: '100%',
 					url: data.video,
 					autoplay: true
