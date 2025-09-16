@@ -94,5 +94,5 @@ bricks.LlmOut = class extends bricks.VBox {
 		}
 	}
 }
-bricks.Factory.register('LimOut', bricks.LlmOut');
+bricks.Factory.register('LlmOut', bricks.LlmOut);
 
