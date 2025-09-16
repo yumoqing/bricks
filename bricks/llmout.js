@@ -69,7 +69,7 @@ bricks.LlmOut = class extends bricks.VBox {
 			});
 			this.add_widget(this.rc_w);
 		}
-		if (this.reasoning_content.length) {
+		if (this.content.length) {
 			var txt = bricks.escapeSpecialChars(this.content);
 			this.c_w = new bricks.MdWidget({
 				mdtext: txt,
