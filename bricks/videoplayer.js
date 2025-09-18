@@ -59,7 +59,7 @@ bricks.VideoPlayer = class extends bricks.VBox {
 
 		this.bind('domon', this.init.bind(this));
 		this.bind('domoff', this.destroy.bind(this));
-		this.bind('click', this,show_controls.bind(this));
+		this.bind('click', this.show_controls.bind(this));
 		schedule_once(this.hide_controls.bind(this), 40);
 	}
 
