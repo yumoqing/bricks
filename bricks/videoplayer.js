@@ -13,7 +13,7 @@ bricks.VideoPlayer = class extends bricks.VBox {
 			autoplay:true or false
 	*/
 	constructor(opts) {
-		super(opts)
+		super(opts);
 		this.set_css('video-container');
 		this.dom_element.innerHTML = `<video id="video" class="video-element"></video>
     <div class="controls">
@@ -45,7 +45,6 @@ bricks.VideoPlayer = class extends bricks.VBox {
     </div>`
 		this.video = this.dom_element.querySelector('.video-element');
 		this.controls = this.dom_element.querySelector('.controls');
-
 		this.hls = null;
 		this.dashPlayer = null;
 
@@ -60,8 +59,17 @@ bricks.VideoPlayer = class extends bricks.VBox {
 
 		this.bind('domon', this.init.bind(this));
 		this.bind('domoff', this.destroy.bind(this));
+		this.bind('click', this,show_controls.bind(this);
+		schedule_once(this.hide_controls.bind(this), 40);
 	}
 
+	show_controls(){
+		this.controls.style.display = '';
+		schedule_once(this.hide_controls.bind(this), 40);
+	}
+	hide_controls(){
+		this.controls.style.display = 'none';
+	}
 	destroy(){
 		if (this.hls) {
 			this.hls.destroy();
@@ -162,10 +170,29 @@ bricks.VideoPlayer = class extends bricks.VBox {
 
 		// 全屏
 		this.fullscreenBtn.addEventListener('click', () => {
-			if (this.dom_element.requestFullscreen) {
-				this.dom_element.requestFullscreen();
-			} else if (this.dom_element.webkitRequestFullscreen) {
-				this.dom_element.webkitRequestFullscreen();
+			var full_txt='⛶';
+			var norm_txt = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" 
+       fill="currentColor" viewBox="0 0 16 16">
+    <path d="M3 3h5V1H1v7h2V3zm10 0v5h2V1h-7v2h5zM3 13V8H1v7h7v-2H3zm10 0h-5v2h7V8h-2v5z"/>
+  </svg>`;
+  			if (this.dom_element == document.fullscreenElement){
+				this.fullscreenBtn.textContet = full_txt;
+				if (document.exitFullscreen) {
+					document.exitFullscreen();
+				} else if (document.webkitExitFullscreen) { // Safari
+					document.webkitExitFullscreen();
+				} else if (document.msExitFullscreen) { // IE/Edge 旧版
+					document.msExitFullscreen();
+				}
+			} else {
+				this.fullscreenBtn.textContet = norm_txt;
+				if (this.dom_element.requestFullscreen) {
+					this.dom_element.requestFullscreen();
+				} else if (this.dom_element.webkitRequestFullscreen) {
+					this.dom_element.webkitRequestFullscreen();
+				} else if(this.dom_element.msRequestFullscreen){
+					this.dom_element.msRequestFullscreen();
+				}
 			}
 		});
 
