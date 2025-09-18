@@ -1077,16 +1077,6 @@ bricks.UiAudio =class extends bricks.UiStr {
 	play_audio(){
 		this.player.toggle_play();
 	}
-	play_audio(){
-		if(this.value!=this.player.src){
-			this.player.stop();
-			this.player.set_source(this.value);
-			this.player.play();
-			return
-		}
-		this.player.toggle_play();
-		this.btn.dispatch('click');
-	}
 }
 bricks.UiVideo =class extends bricks.UiStr {
 	constructor(opts){
@@ -1097,30 +1087,20 @@ bricks.UiVideo =class extends bricks.UiStr {
 		this.icon = new bricks.Svg({
 			url: bricks_resource('imgs/right_arrow.svg')});
 		this.add_widget(this.icon);
-		this.icon.bind('click', this.play_audio.bind(this));
+		this.icon.bind('click', this.play_vide.bind(this));
 		this.player = new bricks.Video({
 			url:this.value
 			});
 		if (this.autoplay){
-			schedule_once(this.autoplay_audio.bind(this), 1);
+			schedule_once(this.autoplay_video.bind(this), 1);
 		}
 
 	}
-	autoplay_audio(){
+	autoplay_vide(){
 		this.icon.dispatch('click');
 	}
-	play_audio(){
+	play_vide(){
 		this.player.toggle_play();
-	}
-	play_audio(){
-		if(this.value!=this.player.src){
-			this.player.stop();
-			this.player.set_source(this.value);
-			this.player.play();
-			return
-		}
-		this.player.toggle_play();
-		this.btn.dispatch('click');
 	}
 }
 var Input = new bricks._Input();
