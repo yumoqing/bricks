@@ -185,7 +185,7 @@ bricks.VideoPlayer = class extends bricks.VBox {
 					document.msExitFullscreen();
 				}
 			} else {
-				this.fullscreenBtn.textContent = norm_txt;
+				this.fullscreenBtn.innerHTML = norm_txt;
 				if (this.dom_element.requestFullscreen) {
 					this.dom_element.requestFullscreen();
 				} else if (this.dom_element.webkitRequestFullscreen) {
