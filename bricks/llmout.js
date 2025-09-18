@@ -64,7 +64,7 @@ bricks.LlmOut = class extends bricks.VBox {
 		if (this.reasoning_content.length) {
 			var txt = bricks.escapeSpecialChars(this.reasoning_content);
 			this.rc_w = new bricks.MdWidget({
-				mdtext: txt,
+				mdtext: this.reasoning_content,
 				css: 'thinking-content',
 				bgcolor: '#f0d0d0',
 				width: '100%'
@@ -74,7 +74,7 @@ bricks.LlmOut = class extends bricks.VBox {
 		if (this.content.length) {
 			var txt = bricks.escapeSpecialChars(this.content);
 			this.c_w = new bricks.MdWidget({
-				mdtext: txt,
+				mdtext: this.content,
 				css: 'resp-content',
 				width: '100%'
 			});

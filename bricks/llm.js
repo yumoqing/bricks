@@ -44,7 +44,6 @@ bricks.LlmMsgAudio = class extends bricks.UpStreaming {
 bricks.ModelOutput = class extends bricks.VBox {
 	/* {
 		icon:
-		output_view:
 	}
 	完成模型输出的控件的初始化以及获得数据后的更新， 更新是的数据在流模式下，需要使用累积数据
 	*/
@@ -123,35 +122,6 @@ bricks.ModelOutput = class extends bricks.VBox {
 		}
 		this.filler.update(data);
 		return;
-		if (data.content){
-			this.received_content += data.content;
-		}
-		data.content = bricks.escapeSpecialChars(this.received_content);
-		if (data.reasoning_content){
-			this.received_reasoning_content += data.reasoning_content;
-		}
-		data.reasoning_content = bricks.escapeSpecialChars(this.received_reasoning_content);
-		this.run = null;
-		this.filler.clear_widgets();
-		if (typeof this.output_view === 'string'){
-			this.output_view = JSON.parse(this.output_view);
-		}
-		var desc = bricks.apply_data(this.output_view, data);
-		var w = await bricks.widgetBuild(desc, this.llmio);
-		if (! w){
-			console.log('widgetBuild() return null, desc=', this.output_view, desc, 'data=', data);
-			return;
-		}
-		w.set_css('llm_msg');
-		w.set_style('width', '100%');
-		this.filler.add_widget(w);
-		this.filler.add_widget(this.estimate_w);
-		if (data.logid){
-			this.logid = data.logid;
-			if (this.estimate_url){
-				this.estimate_w.show();
-			}
-		}
 	}
 	finish(){
 		console.log('finished')
@@ -164,7 +134,6 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			icon:
 			model:
 			url:
-			output_view:
 			params:
 			user_message_format:
 			system_message_format:
@@ -204,10 +173,10 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			d = objcopy(data);
 		}
 		if (data instanceof FormData){
-			d.append('model', this.opts.model)
+			if( ! this.llmio.model_inputed ) d.append('model', this.opts.model)
 			d.append('llmid', this.opts.llmid)
 		} else {
-			d.model = this.opts.model;
+			if (! this.llmio.model_inputed) d.model = this.opts.model;
 			d.llmid = this.opts.llmid;
 		}
 		return d;
@@ -220,8 +189,8 @@ bricks.LlmModel = class extends bricks.JsWidget {
 					response_mode: this.opts.response_mode,
 					model:this.opts.model, 
 					modelname:this.opts.modelname,
-					estimate_url:this.llmio.estimate_url,
-					output_view:this.opts.output_view});
+					estimate_url:this.llmio.estimate_url
+					});
 		this.llmio.o_w.add_widget(mout);
 		if (this.response_mode == 'stream' || this.response_mode == 'async') {
 			var d = this.inputdata2uploaddata(data);
@@ -276,7 +245,6 @@ bricks.LlmIO = class extends bricks.VBox {
 		list_models_url:
 		input_fields:
 		input_view:
-		output_view:
 		models:
 	}
 	models:[
@@ -313,6 +281,9 @@ bricks.LlmIO = class extends bricks.VBox {
 				tip:'add new model',
 				css:'clickable'
 		});
+		this.input_fields.forEach(f => {
+			if (f.name == 'model') this.model_inputed = True;
+		}
 		bottom_box.add_widget(this.i_w);
 		bottom_box.add_widget(this.nm_w);
 		
