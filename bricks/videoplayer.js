@@ -176,7 +176,7 @@ bricks.VideoPlayer = class extends bricks.VBox {
     <path d="M3 3h5V1H1v7h2V3zm10 0v5h2V1h-7v2h5zM3 13V8H1v7h7v-2H3zm10 0h-5v2h7V8h-2v5z"/>
   </svg>`;
   			if (this.dom_element == document.fullscreenElement){
-				this.fullscreenBtn.textContet = full_txt;
+				this.fullscreenBtn.textContent = full_txt;
 				if (document.exitFullscreen) {
 					document.exitFullscreen();
 				} else if (document.webkitExitFullscreen) { // Safari
@@ -185,7 +185,7 @@ bricks.VideoPlayer = class extends bricks.VBox {
 					document.msExitFullscreen();
 				}
 			} else {
-				this.fullscreenBtn.textContet = norm_txt;
+				this.fullscreenBtn.textContent = norm_txt;
 				if (this.dom_element.requestFullscreen) {
 					this.dom_element.requestFullscreen();
 				} else if (this.dom_element.webkitRequestFullscreen) {
