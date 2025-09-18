@@ -283,7 +283,7 @@ bricks.LlmIO = class extends bricks.VBox {
 		});
 		this.input_fields.forEach(f => {
 			if (f.name == 'model') this.model_inputed = True;
-		}
+		});
 		bottom_box.add_widget(this.i_w);
 		bottom_box.add_widget(this.nm_w);
 		
