@@ -68,7 +68,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 		this.content = new bricks.HBox({width:'100%'});
 		this.add_widget(this.content);
 		this.logid = null;
-		this.run = new bricks.BaseRunning({target:this});
+		this.run = new bricks.BaseRunning({target:this, cheight:2, cwidth:2});
 		this.content.add_widget(this.run);
 		this.filler = new bricks.LlmOut({width: '100%', css: 'card'});
 		this.filler.set_css('filler');
