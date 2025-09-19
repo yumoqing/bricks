@@ -24,7 +24,7 @@ bricks.LlmOut = class extends bricks.VBox {
 	}
 	
 	update(data){
-		if (data.audiao){
+		if (data.audio){
 			if (!this.a_w) {
 				this.a_w = new bricks.AudioPlay({
 					width: '100%',
