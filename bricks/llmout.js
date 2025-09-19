@@ -25,12 +25,13 @@ bricks.LlmOut = class extends bricks.VBox {
 	
 	update(data){
 		if (data.audio){
+			var url = data.audio;
+			if (! data.audio.startsWith('http')){
+				if (! data.audio.startsWith('data:audio/')){
+					url = 'data:audio/wav;base64,' + url;
+				}
+			}
 			if (!this.a_w) {
-				var url = data.audio;
-				if (! data.audio.startsWith('http')){
-					if (! data.audio.startsWith('data:audio/'){
-						url = 'data:audio/wav;base64,' + url;
-					}
 				this.a_w = new bricks.AudioPlayer({
 					width: '100%',
 					autoplay: true,
@@ -38,7 +39,7 @@ bricks.LlmOut = class extends bricks.VBox {
 					cheight:2
 				});
 			} else {
-				this.a_w.add_url(data.audio);
+				this.a_w.add_url(url);
 			}
 		}
 		if (data.video){
