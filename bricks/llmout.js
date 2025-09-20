@@ -1,15 +1,9 @@
 var bricks = window.bricks || {};
 
 /*
-根据大模型返回数据自动构造显示内容
-大模型返回json格式数据，下面的属性可选
-reasoning_content:推理文本
-content：应答文本
-audio：语音url或base64语音
-video：视频url或base64视频
-image：如果是个数组，则多个图片url
+bricks.UserInputView
+将所有输入转换成一个Markdown，音视频媒体数据独立显示
 */
-
 bricks.UserInputView = class extends bricks.VBox {
 	constructor(opts){
 		super(opts);
@@ -54,6 +48,16 @@ bricks.UserInputView = class extends bricks.VBox {
 		}
 	}
 }
+/*
+根据大模型返回数据自动构造显示内容
+大模型返回json格式数据，下面的属性可选
+reasoning_content:推理文本
+content：应答文本
+audio：语音url或base64语音
+video：视频url或base64视频
+image：如果是个数组，则多个图片url
+*/
+
 bricks.LlmOut = class extends bricks.VBox {
 	constructor(opts){
 		super(opts);
