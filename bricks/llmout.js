@@ -28,9 +28,16 @@ bricks.UserInputView = class extends bricks.VBox {
 						width: '100%'
 					});
 				} else if (f.name.startsWith('image')){
-					mdtext += '\n![' + f.label || f.name + ']('+ data[f.name] + ')\n';
+					mdtext += `
+![${f.label || f.name}](${data[f.name]})
+`;
 				} else {
-					mdtext += '\n* ' + f.label || f.name + '\n```\n' + data[f.name] + '\n```\n';
+					mdtext += `
+* ${f.label || f.name}
+\`\`\`
+${data[f.name]}
+\`\`\`
+`;
 				}
 			}
 		});
