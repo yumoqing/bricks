@@ -27,7 +27,7 @@ bricks.UserInputView = class extends bricks.VBox {
 						autoplay:true,
 						width: '100%'
 					});
-				} else if (f.name.startsWidth('image')){
+				} else if (f.name.startsWith('image')){
 					mdtext += '\n![' + f.label || f.name + ']('+ data[f.name] + ')\n';
 				} else {
 					mdtext += '\n# ' + f.label || f.name + '\n```' + data[f.name] + '\n```\n';
