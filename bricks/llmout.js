@@ -21,7 +21,7 @@ bricks.UserInputView = class extends bricks.VBox {
 						autoplay:true,
 						width: '100%'
 					});
-				} else if (f.name.startsWith('audio'){
+				} else if (f.name.startsWith('audio')){
 					this.a_w = new bricks.AudioPlayer({
 						url:data[f.name],
 						autoplay:true,
