@@ -968,7 +968,7 @@ class Renderer {
       return text;
     }
 
-    let out = `<img src="${href}" alt="${text}"`;
+    let out = `<img src="${href}" alt="${text}" style="width: 100%" `;
     if (title) {
       out += ` title="${title}"`;
     }
