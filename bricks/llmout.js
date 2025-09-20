@@ -10,6 +10,50 @@ video：视频url或base64视频
 image：如果是个数组，则多个图片url
 */
 
+bricks.UserInputView = class extends bricks.VBox {
+	constructor(opts){
+		super(opts);
+		this.v_w = null;
+		this.a_v = null;
+		this.images = [];
+	}
+	show_input(data){
+		var mdtext = '';
+		this.input_fields.forEach(f =>{
+			if (data[f.name]){
+				if (f.name.startsWith('video')){
+					this.v_w = new bricks.VideoPlayer({
+						url:data[f.name],
+						autoplay:true
+						width: '100%'
+					});
+				} else if (f.name.startsWith('audio'){
+					this.a_w = new bricks.AudioPlayer({
+						url:data[f.name],
+						autoplay:true
+						width: '100%'
+					});
+				} else if (f.name.startsWidth('image'){
+					mdtext += '\n![' + f.label || f.name + ']('+ data[f.name] + ')\n';
+				} else {
+					mdtext += '\n# ' + f.label || f.name + '\n```' + data[f.name] + '\n```\n';
+				}
+			}
+		});
+		this.clear_widgets();
+		var w = new bricks.MdWidget({
+			width: '100%',
+			mdtext:mdtext
+		});
+		this.add_widget(w);
+		if (this.v_w){
+			this.add_widget(this.v_w);
+		}
+		if (this.a_w){
+			this.add_widget(this.a_w);
+		}
+	}
+}
 bricks.LlmOut = class extends bricks.VBox {
 	constructor(opts){
 		super(opts);
