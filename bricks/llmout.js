@@ -18,13 +18,13 @@ bricks.UserInputView = class extends bricks.VBox {
 				if (f.name.startsWith('video')){
 					this.v_w = new bricks.VideoPlayer({
 						url:data[f.name],
-						autoplay:true
+						autoplay:true,
 						width: '100%'
 					});
 				} else if (f.name.startsWith('audio'){
 					this.a_w = new bricks.AudioPlayer({
 						url:data[f.name],
-						autoplay:true
+						autoplay:true,
 						width: '100%'
 					});
 				} else if (f.name.startsWidth('image'){
