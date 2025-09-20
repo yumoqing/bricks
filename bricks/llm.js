@@ -281,10 +281,6 @@ bricks.LlmIO = class extends bricks.VBox {
 				tip:'add new model',
 				css:'clickable'
 		});
-		this.inputshower = new bricks.UserInputView({
-			input_fields:this.input_fields,
-			width: '100%'
-		});
 		this.input_fields.forEach(f => {
 			if (f.name == 'model') this.model_inputed = True;
 		});
@@ -304,6 +300,24 @@ bricks.LlmIO = class extends bricks.VBox {
 			this.show_added_model(m);
 		});
 	}
+    async show_input(params){
+        var box = new bricks.HBox({width:'100%'});
+        var data = inputdata2dic(params);
+        console.log('data=', data, 'input_view=', this.input_view);
+        var w = new bricks.UserInputView({
+			width: '100%',
+			input_fields: this.input_fields,
+			data:data
+		});
+        w.set_css(this.msg_css||'user_msg');
+        w.set_css('filler');
+        var img = new bricks.Svg({rate:2,url:this.user_icon||bricks_resource('imgs/chat-user.svg')}); 
+        // box.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
+        box.add_widget(w);
+        box.add_widget(img);
+        this.o_w.add_widget(box);
+    }   
+
 	show_added_model(m){
 		if (this.textvoice){
 			m.textvoice = true;
@@ -439,7 +453,7 @@ bricks.LlmIO = class extends bricks.VBox {
 	}
 	async handle_input(event){
 		var params = event.params;
-		this.inputshower.show_input(params)
+		this.show_input(params);
 		for(var i=0;i<this.llmmodels.length;i++){
 			var lm = this.llmmodels[i];
 			schedule_once(lm.model_inputed.bind(lm, params), 0.01);

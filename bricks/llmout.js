@@ -9,7 +9,7 @@ bricks.UserInputView = class extends bricks.VBox {
 		super(opts);
 		this.v_w = null;
 		this.a_v = null;
-		this.images = [];
+		this.show_input(this.data);
 	}
 	show_input(data){
 		var mdtext = '';
