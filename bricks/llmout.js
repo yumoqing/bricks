@@ -30,7 +30,7 @@ bricks.UserInputView = class extends bricks.VBox {
 				} else if (f.name.startsWith('image')){
 					mdtext += '\n![' + f.label || f.name + ']('+ data[f.name] + ')\n';
 				} else {
-					mdtext += '\n# ' + f.label || f.name + '\n```' + data[f.name] + '\n```\n';
+					mdtext += '\n* ' + f.label || f.name + '\n```\n' + data[f.name] + '\n```\n';
 				}
 			}
 		});
@@ -39,6 +39,7 @@ bricks.UserInputView = class extends bricks.VBox {
 			width: '100%',
 			mdtext:mdtext
 		});
+		console.log('mdtext=', mdtext);
 		this.add_widget(w);
 		if (this.v_w){
 			this.add_widget(this.v_w);
