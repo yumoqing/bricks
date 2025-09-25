@@ -129,7 +129,7 @@ bricks.DataViewer = class extends bricks.VBox {
 					name:'clone',
 					tip:'update selected record',
 					selected_row:true,
-					icon:this.editable.clone_icon || bricks_resource('imgs/clonevg')
+					icon:this.editable.clone_icon || bricks_resource('imgs/clone.svg')
 				},
 				{
 					name:'delete',
