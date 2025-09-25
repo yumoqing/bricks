@@ -229,8 +229,10 @@ bricks.FormBase = class extends bricks.Layout {
 		}
 		return this.get_formdata();
 	}
+
 	get_formdata(){
 		var data = new FormData();
+		var changed = false;
 		for (var name in this.name_inputs){
 			if (! this.name_inputs.hasOwnProperty(name)){
 				continue;
@@ -245,23 +247,23 @@ bricks.FormBase = class extends bricks.Layout {
 			if (d[name] === null){
 				continue;
 			}
+			if (this.origin_data[name] == d[name]){
+				continue;
+			}
 			w.set_formdata(data);
+			changed = true;
 		}
 		this.data = data;
-		return data;
+		if (changed){
+			return data;
+		}
+		return null
 	}
 	async validation(){
 		var running = new bricks.Running({target:this});
 		try {
 			var data;
 			data = this.get_formdata();
-			/*
-			if (this.need_formdata){
-				data = this.get_formdata();
-			} else {
-				data = this.getValue();
-			}
-			*/
 			if (! data) {
 				running.dismiss();
 				return;
@@ -282,6 +284,14 @@ bricks.FormBase = class extends bricks.Layout {
 		}
 		running.dismiss();
 	}
+	save_origin_data(){
+		this.origin_data = {};
+		for (var name in this.name_inputs){
+			var w = this.name_inputs[name];
+			var d = w.getValue();
+			this.origin_data[name] = d[name];
+		}
+	}
 }
 
 bricks.InlineForm = class extends bricks.FormBase {
@@ -293,6 +303,7 @@ bricks.InlineForm = class extends bricks.FormBase {
 		this.fg = new bricks.FieldGroup({});
 		this.fg.build_fields(this, this, this.opts.fields)
 		this.build_toolbar(this.children[0]);
+		this.save_origin_data();
 	}
 }
 
@@ -381,6 +392,7 @@ bricks.Form = class extends bricks.FormBase {
 		filler.add_widget(this.body);
 		if (! opts.notoolbar)
 			this.build_toolbar(this);
+		this.save_origin_data();
 	}
 }
 

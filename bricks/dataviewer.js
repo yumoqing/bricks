@@ -126,6 +126,12 @@ bricks.DataViewer = class extends bricks.VBox {
 					icon:this.editable.update_icon || bricks_resource('imgs/edit.svg')
 				},
 				{
+					name:'clone',
+					tip:'update selected record',
+					selected_row:true,
+					icon:this.editable.clone_icon || bricks_resource('imgs/clonevg')
+				},
+				{
 					name:'delete',
 					tip:'delete selected record',
 					selected_row:true,
@@ -162,6 +168,10 @@ bricks.DataViewer = class extends bricks.VBox {
 		}
 		if (tdesc.name == 'update'){
 			await this.update_record(this.select_row);
+			return;
+		}
+		if (tdesc.name == 'clone'){
+			await this.clone_record(this.select_row);
 			return;
 		}
 		if (tdesc.name == 'delete'){
@@ -207,7 +217,7 @@ bricks.DataViewer = class extends bricks.VBox {
 		}
 		return fs;
 	}
-	async build_editform(data){
+	def build_add_form(){
 		var hidefields = [];
 		if (!this.data_params){
 			this.data_params = {}
@@ -215,9 +225,6 @@ bricks.DataViewer = class extends bricks.VBox {
 		var opts = this.opts.editor || {};
 		opts.widgettype = 'Form';
 		var submit_url = this.editable.new_data_url;
-		if (data) {
-			submit_url = this.editable.update_data_url;
-		}
 		opts.options = {
 			submit_url: submit_url,
 			width: '100%',
@@ -226,21 +233,64 @@ bricks.DataViewer = class extends bricks.VBox {
 		var fs = this.get_hidefields();
 		for (var i=0;i<this.fields.length;i++){
 			var f = bricks.extend({}, this.fields[i]);
-			if (data){
-				f.value = data[f.name];
-			}
 			fs.push(f);
 		}
-		if (data){
-			fs.push({name:'id', value:data.id, uitype:'hide'})
+		opts.options.fields = fs
+		var formw = new bricks.Form(opts);
+		return formw;
+	}
+	def build_update_form(data){
+		var hidefields = [];
+		if (!this.data_params){
+			this.data_params = {}
+		}
+		var opts = this.opts.editor || {};
+		opts.widgettype = 'Form';
+		var submit_url = this.editable.new_data_url;
+		opts.options = {
+			submit_url: submit_url,
+			submit_changed:true,
+			width: '100%',
+			height: '100%'
+		};
+		var fs = this.get_hidefields();
+		for (var i=0;i<this.fields.length;i++){
+			var f = bricks.extend({}, this.fields[i]);
+			f.value = data[f.name];
+			fs.push(f);
+		}
+		fs.push({name:'id', value:data.id, uitype:'hide'})
+		opts.options.fields = fs
+		var formw = new bricks.Form(opts);
+		return formw;
+	}
+	def build_clone_form(data){
+		var hidefields = [];
+		if (!this.data_params){
+			this.data_params = {}
+		}
+		var opts = this.opts.editor || {};
+		opts.widgettype = 'Form';
+		var submit_url = this.editable.new_data_url;
+		opts.options = {
+			submit_url: submit_url,
+			width: '100%',
+			height: '100%'
+		};
+		var fs = this.get_hidefields();
+		for (var i=0;i<this.fields.length;i++){
+			var f = bricks.extend({}, this.fields[i]);
+			f.value = data[f.name];
+			fs.push(f);
 		}
 		opts.options.fields = fs
-		var title = "Add record";
-		if (data){
-			title = "Edit record";
-		}
+		var formw = new bricks.Form(opts);
+		return formw;
+	}
+	def build_window(icon, title, form){
 		var f = new bricks.PopupWindow({
 				"title": title,
+				"icon": icon,
 				"widget":this,
 				"archor":"cc",
 				"movable":true,
@@ -249,18 +299,17 @@ bricks.DataViewer = class extends bricks.VBox {
 				"width":"90%",
 				"height":"70%"
 		});
-		var form = await bricks.widgetBuild(opts, this);
 		form.bind('cancel', f.dismiss.bind(f));
 		f.add_widget(form);
 		f.open();
-		return {
-			win: f,
-			form:form
-		}
+		return f
 	}
 	async add_record(){
-		var widgets = await this.build_editform(null);
-		widgets.form.bind('submited', this.add_record_finish.bind(this, widgets.win));
+		var icon = bricks_resource('imgs/add.svg');
+		var title = bricks.app.i18n._("Add record");
+		var form = this.build_add_form();
+		var win = this.build_window(icon, title, form);
+		form.bind('submited', this.add_record_finish.bind(this, win));
 	}
 	async add_record_finish(f, event){
 		f.dismiss();
@@ -271,8 +320,11 @@ bricks.DataViewer = class extends bricks.VBox {
 	}
 	async update_record(){
 		var record = this.select_row.user_data;
-		var widgets = await this.build_editform(record);
-		widgets.form.bind('submited', this.update_record_finish.bind(this, widgets.win, widgets.form));
+		var icon = bricks_resource('imgs/edit.svg');
+		var title = bricks.app.i18n._("Update record");
+		var form = this.build_update_form(record);
+		var win = this.build_window(icon, title, form);
+		form.bind('submited', this.update_record_finish.bind(this, win));
 	}
 	async update_record_finish(win, form, event){
 		await this.renew_record_view(form, this.select_row);
@@ -281,6 +333,14 @@ bricks.DataViewer = class extends bricks.VBox {
 		var w = await bricks.widgetBuild(desc);
 		w.open();
 		win.dismiss();
+	}
+	async def clone_record(){
+		var record = this.select_row.user_data;
+		var icon = bricks_resource('imgs/clone.svg');
+		var title = bricks.app.i18n._("Clone record");
+		var form = this.build_update_form(record);
+		var win = this.build_window(icon, title, form);
+		form.bind('submited', this.add_record_finish.bind(this, win));
 	}
 	delete_record(row, record){
 		var conform_w = new bricks.Conform({

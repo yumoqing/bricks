@@ -244,7 +244,6 @@ bricks.LlmIO = class extends bricks.VBox {
 		user_icon:
 		list_models_url:
 		input_fields:
-		input_view:
 		models:
 	}
 	models:[
@@ -303,7 +302,7 @@ bricks.LlmIO = class extends bricks.VBox {
     async show_input(params){
         var box = new bricks.HBox({width:'100%'});
         var data = inputdata2dic(params);
-        console.log('data=', data, 'input_view=', this.input_view);
+        console.log('data=', data);
         var w = new bricks.UserInputView({
 			width: '100%',
 			input_fields: this.input_fields,
