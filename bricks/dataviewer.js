@@ -217,7 +217,7 @@ bricks.DataViewer = class extends bricks.VBox {
 		}
 		return fs;
 	}
-	def build_add_form(){
+	build_add_form(){
 		var hidefields = [];
 		if (!this.data_params){
 			this.data_params = {}
@@ -239,7 +239,7 @@ bricks.DataViewer = class extends bricks.VBox {
 		var formw = new bricks.Form(opts);
 		return formw;
 	}
-	def build_update_form(data){
+	build_update_form(data){
 		var hidefields = [];
 		if (!this.data_params){
 			this.data_params = {}
@@ -264,7 +264,7 @@ bricks.DataViewer = class extends bricks.VBox {
 		var formw = new bricks.Form(opts);
 		return formw;
 	}
-	def build_clone_form(data){
+	build_clone_form(data){
 		var hidefields = [];
 		if (!this.data_params){
 			this.data_params = {}
@@ -287,7 +287,7 @@ bricks.DataViewer = class extends bricks.VBox {
 		var formw = new bricks.Form(opts);
 		return formw;
 	}
-	def build_window(icon, title, form){
+	build_window(icon, title, form){
 		var f = new bricks.PopupWindow({
 				"title": title,
 				"icon": icon,
@@ -334,7 +334,7 @@ bricks.DataViewer = class extends bricks.VBox {
 		w.open();
 		win.dismiss();
 	}
-	async def clone_record(){
+	async clone_record(){
 		var record = this.select_row.user_data;
 		var icon = bricks_resource('imgs/clone.svg');
 		var title = bricks.app.i18n._("Clone record");
