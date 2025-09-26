@@ -113,6 +113,11 @@ bricks.FormBody = class extends bricks.VScrollPanel {
 	}
 }
 
+/*
+submit_changed: false
+fields
+submit_url
+*/
 bricks.FormBase = class extends bricks.Layout {
 	constructor(opts){
 		super(opts);
@@ -247,8 +252,10 @@ bricks.FormBase = class extends bricks.Layout {
 			if (d[name] === null){
 				continue;
 			}
-			if (name != 'id' && this.origin_data[name] == d[name]){
-				continue;
+			if (this.submit_changed){
+				if (name != 'id' && this.origin_data[name] == d[name]){
+					continue;
+				}
 			}
 			w.set_formdata(data);
 			changed = true;
