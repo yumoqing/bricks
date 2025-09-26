@@ -230,7 +230,7 @@ bricks.DataViewer = class extends bricks.VBox {
 			var f = bricks.extend({}, this.fields[i]);
 			fs.push(f);
 		}
-		opts.options.fields = fs
+		opts.fields = fs
 		var formw = new bricks.Form(opts);
 		return formw;
 	}
@@ -250,7 +250,7 @@ bricks.DataViewer = class extends bricks.VBox {
 			fs.push(f);
 		}
 		fs.push({name:'id', value:data.id, uitype:'hide'})
-		opts.options.fields = fs
+		opts.fields = fs
 		var formw = new bricks.Form(opts);
 		return formw;
 	}
@@ -268,7 +268,7 @@ bricks.DataViewer = class extends bricks.VBox {
 			f.value = data[f.name];
 			fs.push(f);
 		}
-		opts.options.fields = fs
+		opts.fields = fs
 		var formw = new bricks.Form(opts);
 		return formw;
 	}
