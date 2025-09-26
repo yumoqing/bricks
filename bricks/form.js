@@ -347,7 +347,7 @@ bricks.Form = class extends bricks.FormBase {
 		this.add_widget(filler);
 		this.nontextfields = [];
 		this.textfields = [];
-		this.opts.fields.forEach((f) => {
+		this.options.fields.forEach((f) => {
 			if (f.uitype == 'text'){
 				this.textfields.push(f);
 			} else {
