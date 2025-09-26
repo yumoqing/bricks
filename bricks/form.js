@@ -244,10 +244,10 @@ bricks.FormBase = class extends bricks.Layout {
 				w.focus();
 				return;
 			}
-			if (name != 'id' && d[name] === null){
+			if (d[name] === null){
 				continue;
 			}
-			if (this.origin_data[name] == d[name]){
+			if (name != 'id' && this.origin_data[name] == d[name]){
 				continue;
 			}
 			w.set_formdata(data);
