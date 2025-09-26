@@ -244,7 +244,7 @@ bricks.FormBase = class extends bricks.Layout {
 				w.focus();
 				return;
 			}
-			if (name != 'id' and d[name] === null){
+			if (name != 'id' && d[name] === null){
 				continue;
 			}
 			if (this.origin_data[name] == d[name]){
