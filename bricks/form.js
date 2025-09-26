@@ -347,7 +347,7 @@ bricks.Form = class extends bricks.FormBase {
 		this.add_widget(filler);
 		this.nontextfields = [];
 		this.textfields = [];
-		this.fields.forEach((f) => {
+		this.opts.fields.forEach((f) => {
 			if (f.uitype == 'text'){
 				this.textfields.push(f);
 			} else {
@@ -355,40 +355,6 @@ bricks.Form = class extends bricks.FormBase {
 			}
 		});
 		this.body = new bricks.FormBody(this, opts);
-		/*
-		if (this.textfields.length > 0){
-			var tp;
-			var tp_options = {
-				height: "100%",
-				tab_pos: "top",
-				items:[
-					{
-						"name":"form",
-						"label":"Form",
-						"content":this.body
-					}
-				]
-			};
-			this.textfields.forEach((f) => {
-				var txtw = new bricks.UiText({
-					name:f.name,
-					width:"100%",
-					height:"100%",
-					value:f.value
-				});
-				txtw.bind('active', txtw.focus.bind(txtw));
-				tp_options.items.push({
-					name:f.name,
-					label:f.label,
-					content:txtw
-				});
-				this.name_inputs[f.name] = txtw;
-			});
-			tp = new bricks.TabPanel(tp_options);
-			filler.add_widget(tp);
-		} else {
-		}
-		*/
 		filler.add_widget(this.body);
 		if (! opts.notoolbar)
 			this.build_toolbar(this);
