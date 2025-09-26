@@ -323,7 +323,7 @@ bricks.DataViewer = class extends bricks.VBox {
 		var record = this.select_row.user_data;
 		var icon = bricks_resource('imgs/clone.svg');
 		var title = bricks.app.i18n._("Clone record");
-		var form = this.build_update_form(record);
+		var form = this.build_clone_form(record);
 		var win = this.build_window(icon, title, form);
 		form.bind('submited', this.add_record_finish.bind(this, win));
 	}
