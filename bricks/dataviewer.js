@@ -309,7 +309,7 @@ bricks.DataViewer = class extends bricks.VBox {
 		var title = bricks.app.i18n._("Update record");
 		var form = this.build_update_form(record);
 		var win = this.build_window(icon, title, form);
-		form.bind('submited', this.update_record_finish.bind(this, win));
+		form.bind('submited', this.update_record_finish.bind(this, win, form));
 	}
 	async update_record_finish(win, form, event){
 		await this.renew_record_view(form, this.select_row);
