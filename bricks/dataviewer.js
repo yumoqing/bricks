@@ -127,7 +127,7 @@ bricks.DataViewer = class extends bricks.VBox {
 				},
 				{
 					name:'clone',
-					tip:'update selected record',
+					tip:'clone selected record',
 					selected_row:true,
 					icon:this.editable.clone_icon || bricks_resource('imgs/clone.svg')
 				},
@@ -219,13 +219,8 @@ bricks.DataViewer = class extends bricks.VBox {
 	}
 	build_add_form(){
 		var hidefields = [];
-		if (!this.data_params){
-			this.data_params = {}
-		}
-		var opts = this.opts.editor || {};
-		opts.widgettype = 'Form';
 		var submit_url = this.editable.new_data_url;
-		opts.options = {
+		var opts= {
 			submit_url: submit_url,
 			width: '100%',
 			height: '100%'
@@ -241,13 +236,8 @@ bricks.DataViewer = class extends bricks.VBox {
 	}
 	build_update_form(data){
 		var hidefields = [];
-		if (!this.data_params){
-			this.data_params = {}
-		}
-		var opts = this.opts.editor || {};
-		opts.widgettype = 'Form';
-		var submit_url = this.editable.new_data_url;
-		opts.options = {
+		var submit_url = this.editable.update_data_url;
+		var opts = {
 			submit_url: submit_url,
 			submit_changed:true,
 			width: '100%',
@@ -266,13 +256,8 @@ bricks.DataViewer = class extends bricks.VBox {
 	}
 	build_clone_form(data){
 		var hidefields = [];
-		if (!this.data_params){
-			this.data_params = {}
-		}
-		var opts = this.opts.editor || {};
-		opts.widgettype = 'Form';
 		var submit_url = this.editable.new_data_url;
-		opts.options = {
+		var opts = {
 			submit_url: submit_url,
 			width: '100%',
 			height: '100%'
