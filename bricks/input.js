@@ -594,7 +594,7 @@ bricks.UiImage =class extends bricks.UiFile {
 	}
 	show_image(event){
 		var params = event.params;
-		if (! params instanceof Array){
+		if (params instanceof File){
 			params = [ params ];
 		}
 		this.preview.clear_widgets();
