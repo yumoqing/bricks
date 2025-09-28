@@ -497,6 +497,9 @@ bricks.UiImage =class extends bricks.VBox {
 				rate:2});
 		this.add_widget(this.camera_w);
 		this.camera_w.bind('click', this.take_photo.bind(this));
+		this.bind('dragover', {event) => {
+			event.preventDefault();
+		});
 		this.bind('drop', this.dropHandle.bind(this));
 		this.input = document.createElement('input');
 		this.input.type = 'file';
