@@ -197,9 +197,14 @@ bricks.AudioRecorder = class extends bricks.HBox {
 		this.add_widget(this.rec_btn);
 		this.add_widget(this.rec_time);
 		this.recordData = null;
+		this.bind('record_started', this.begin_recording.bind(this));
 		if (this.upload_url){
 			this.bind('record_ended', this.upload.bind(this));
 		}
+	}
+	begin_recording(){
+		this.recordData = null;
+		this.rec.start();
 	}
 	rec_btn_pressed(){
 		if(this.rec_btn.url == this.start_icon){
@@ -233,7 +238,6 @@ bricks.AudioRecorder = class extends bricks.HBox {
 		newRec.open(function(){//打开麦克风授权获得相关资源
 			this.mic_opened = true;
 			this.rec=newRec;
-			this.rec.start();
 			this.dispatch('record_started');
 			//此处创建这些音频可视化图形绘制浏览器支持妥妥的
 			//this.wave=Recorder.FrequencyHistogramView({elem:".recwave"});
@@ -251,7 +255,6 @@ bricks.AudioRecorder = class extends bricks.HBox {
 		};
 	}
 	start_recording(){
-		this.recordData = null;
 		if (this.mic_opened){
 			this.rec.start();
 			this.dispatch('record_started');
