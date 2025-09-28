@@ -581,13 +581,6 @@ bricks.UiImage =class extends bricks.UiFile {
 	}
 	accept_photo(camera, event){
 		camera.dismiss();
-		if (this.imgw){
-			this.remove_widget(this.imgw);
-		}
-		this.imgw = new bricks.Image({
-			url:event.params,
-			width:'100%'
-		});
 		this.value = event.params
 		this.dispatch('changed', this.value);
 		// this.add_widget(this.imgw);
@@ -595,6 +588,9 @@ bricks.UiImage =class extends bricks.UiFile {
 	show_image(event){
 		var params = event.params;
 		if (params instanceof File){
+			params = [ params ];
+		}
+		if (params instanceof String){
 			params = [ params ];
 		}
 		this.preview.clear_widgets();
@@ -606,7 +602,7 @@ bricks.UiImage =class extends bricks.UiFile {
 	_show_image(file) {
 		const reader = new FileReader();
 		reader.onload = (e) => {
-			imgw = new bricks.Image({
+			var imgw = new bricks.Image({
 				url:file,
 				width:'100%'
 			});
