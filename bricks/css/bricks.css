@@ -588,6 +588,10 @@ hr {
 .thinking-content {
 	background-color: #fdfcf5;
 }
+.resp-error {
+	background-color: #f04444;
+	background-color: #f0f4f4;
+}
 .resp-content {
 	background-color: #f0eed8;
 }

@@ -22,6 +22,7 @@ bricks.UserInputView = class extends bricks.VBox {
 						width: '100%'
 					});
 				} else if (f.name.startsWith('audio')){
+					console.log('audio:', f.name, data[f.name]);
 					this.a_w = new bricks.AudioPlayer({
 						url:data[f.name],
 						autoplay:true,
@@ -62,6 +63,7 @@ ${data[f.name]}
 大模型返回json格式数据，下面的属性可选
 reasoning_content:推理文本
 content：应答文本
+error: 错误信息
 audio：语音url或base64语音
 video：视频url或base64视频
 image：如果是个数组，则多个图片url
@@ -78,6 +80,7 @@ bricks.LlmOut = class extends bricks.VBox {
 		this.images = [];
 		this.reasoning_content = '';
 		this.content = '';
+		this.error = '';
 	}
 	
 	update(data){
@@ -110,6 +113,9 @@ bricks.LlmOut = class extends bricks.VBox {
 				this.v_w.add_url(data.video);
 			}
 		}
+		if (data.error){
+			this.error += data.error;
+		}
 		if (data.reasoning_content){
 			this.reasoning_content += data.reasoning_content;
 		}
@@ -124,6 +130,17 @@ bricks.LlmOut = class extends bricks.VBox {
 			}
 		}
 		this.clear_widgets();
+		if (this.error.length) {
+			var txt = bricks.escapeSpecialChars(this.error);
+			this.c_w = new bricks.MdWidget({
+				mdtext: this.content,
+				css: 'resp-error',
+				width: '100%'
+			});
+			this.add_widget(this.c_w);
+			this.content = '';
+			this.reasoning_content = '';
+		}
 		if (this.reasoning_content.length) {
 			var txt = bricks.escapeSpecialChars(this.reasoning_content);
 			this.rc_w = new bricks.MdWidget({
