@@ -463,7 +463,6 @@ bricks.UiFile = class extends bricks.VBox {
 		opts.width = opts.width || '100%';
 		super(opts);
 		this.set_css('droparea');
-		this.add_widget(this.camera_w);
 		this.bind('dragover', (event) => {
 			event.preventDefault();
 		});
