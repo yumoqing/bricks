@@ -566,6 +566,7 @@ bricks.UiImage =class extends bricks.UiFile {
 		this.add_widget(this.camera_w);
 		this.camera_w.bind('click', this.take_photo.bind(this));
 		this.preview = new bricks.VBox({width: '100%'});
+		this.add_widget(this.preview);
 		this.bind('changed', this.show_image.bind(this));
 	}
 	take_photo(event){
