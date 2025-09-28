@@ -45,7 +45,7 @@ bricks.MultipleStateImage = class extends bricks.Layout {
 	}
 }
 
-bricks.MultipleStateIcon = class extends bricks.Icon {
+bricks.MultipleStateIcon = class extends bricks.Svg {
 	constructor(opts){
 		opts.url = opts.urls[opts.state];
 		super(opts);
