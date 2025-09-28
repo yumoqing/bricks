@@ -25,7 +25,7 @@ bricks.Camera = class extends bricks.Popup {
 		if (this.opts.type == 'recorder'){
 			this.record_status == 'standby';
 			var shot_btn = new bricks.Svg({
-				url: bricks_resource('imgs/switch_recording.svg'),
+				url: bricks_resource('imgs/start_recording.svg'),
 				tip: 'Start record video',
 				margin: '10px',
 				rate: 2.5
@@ -52,7 +52,7 @@ bricks.Camera = class extends bricks.Popup {
 		})
 		del_btn.bind('click', this.dismiss.bind(this));
 		if (this.opts.type == 'recorder'){
-			shot_btn.bind('click', this.start_recording.bind(this));
+			shot_btn.bind('click', this.switch_recording.bind(this));
 		} else {
 			shot_btn.bind('click', this.take_picture.bind(this));
 		}
