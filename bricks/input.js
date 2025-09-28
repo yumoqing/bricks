@@ -518,8 +518,8 @@ bricks.UiFile = class extends bricks.VBox {
 		event.preventDefault();
 		this.set_css('hover', true);
 		var files = [];
-		event.dataTransfer.files.forEach(f => {
-			if (f.type.startsWith(this.opts.accept)){
+		for (const f of event.dataTransfer.files) {
+			if (this.opts.accept && f.type.startsWith(this.opts.accept)){
 				files.push(f);
 			}
 		});
