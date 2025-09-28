@@ -45,33 +45,5 @@ bricks.MultipleStateImage = class extends bricks.Layout {
 	}
 }
 
-bricks.MultipleStateIcon = class extends bricks.Svg {
-	constructor(opts){
-		opts.url = opts.urls[opts.state];
-		super(opts);
-		this.state = opts.state;
-		this.urls = opts.urls;
-		this.bind('click', this.change_state.bind(this));
-	}
-	change_state(event){
-		event.stopPropagation();
-		var states = Object.keys(this.urls);
-		for (var i=0;i<states.length;i++){
-			if (states[i] == this.state){
-				var k = i + 1;
-				if (k >= states.length) k = 0;
-				this.set_state(states[k]);
-				this.dispatch('state_changed', this.state);
-				break;
-			}
-		}
-	}
-	set_state(state){
-		this.state = state;
-		this.set_url(this.urls[state]);
-	}
-
-}
 bricks.Factory.register('MultipleStateImage', bricks.MultipleStateImage);
-bricks.Factory.register('MultipleStateIcon', bricks.MultipleStateIcon);
 
