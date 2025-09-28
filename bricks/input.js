@@ -495,6 +495,7 @@ bricks.UiImage =class extends bricks.VBox {
 				url:bricks_resource('imgs/camera.svg'),
 				tip:'use cemera to take a picture',
 				rate:2});
+		this.set_css('droparea');
 		this.add_widget(this.camera_w);
 		this.camera_w.bind('click', this.take_photo.bind(this));
 		this.bind('dragover', (event) => {
@@ -504,10 +505,10 @@ bricks.UiImage =class extends bricks.VBox {
       		this.bind(eventName, (e) => e.preventDefault(), false);
 		});
 		this.bind('dragenter', () => {
-			this.css('hover');
+			this.set_css('hover');
 		});
 		this.bind('dragleave', () => {
-			this.css('hover', true);
+			this.set_css('hover', true);
 		});
 		this.bind('drop', this.dropHandle.bind(this));
 		this.input = document.createElement('input');
@@ -547,8 +548,8 @@ bricks.UiImage =class extends bricks.VBox {
 		this.show_image(file);
 	}
 	dropHandle(event){
-		e.preventDefault();
-		this.css('hover', true);
+		event.preventDefault();
+		this.set_css('hover', true);
 		const file = e.dataTransfer.files[0];
 		this.show_image(file);
 

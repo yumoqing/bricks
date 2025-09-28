@@ -595,3 +595,13 @@ hr {
 .resp-content {
 	background-color: #f0eed8;
 }
+.droparea {
+	border: 2px dashed #666;
+	border-radius: 10px;
+	color: #666;
+}
+.droparea:hover {
+	border-color: #00aaff;
+	color: #00aaff;
+	background: #f0faff;
+}
