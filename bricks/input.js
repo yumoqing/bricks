@@ -500,6 +500,15 @@ bricks.UiImage =class extends bricks.VBox {
 		this.bind('dragover', (event) => {
 			event.preventDefault();
 		});
+		["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
+      		this.bind(evebtName, (e) => e.preventDefault(), false);
+		});
+		this.bind('dragenter', () => {
+			this.css('hover');
+		});
+		this.bind('dragleave', () => {
+			this.css('hover', true);
+		});
 		this.bind('drop', this.dropHandle.bind(this));
 		this.input = document.createElement('input');
 		this.input.type = 'file';
@@ -539,6 +548,7 @@ bricks.UiImage =class extends bricks.VBox {
 	}
 	dropHandle(event){
 		e.preventDefault();
+		this.css('hover', true);
 		const file = e.dataTransfer.files[0];
 		this.show_image(file);
 
