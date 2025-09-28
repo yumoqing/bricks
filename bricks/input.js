@@ -454,51 +454,16 @@ bricks.UiEmail =class extends bricks.UiStr {
 	}
 }
 
-bricks.UiFile =class extends bricks.UiStr {
+bricks.UiFile = class extends bricks.VBox {
 	/*
-	{
-		accept:
-		capture:"user" or "environment"
-		multiple:
-	}
+        accept:
+        multiple:
 	*/
 	constructor(opts){
-		super(opts);
-		this.uitype='file';
-		this.dom_element.type = 'file';
-		if (this.opts.accept)
-			this.dom_element.accept = this.opts.accept;
-		if (this.opts.capture)
-			this.dom_element.capture = this.opts.capture;
-		if (this.opts.multiple) 
-			this.dom_element.multiple = true;
-		this.fileContents = [];
-	}
-	get_files(){
-		return this.dom_element.files;
-	}
-	resultValue(){
-		return this.get_files()[0];
-	}
-	setValue(v){
-		return;
-		this.value = v;
-	}
-}
-
-bricks.UiImage =class extends bricks.VBox {
-	constructor(opts){
-		opts.name = opts.name || 'image';
 		opts.width = opts.width || '100%';
 		super(opts);
-		this.uitype='image';
-		this.camera_w = new bricks.Svg({
-				url:bricks_resource('imgs/camera.svg'),
-				tip:'use cemera to take a picture',
-				rate:2});
 		this.set_css('droparea');
 		this.add_widget(this.camera_w);
-		this.camera_w.bind('click', this.take_photo.bind(this));
 		this.bind('dragover', (event) => {
 			event.preventDefault();
 		});
@@ -514,12 +479,95 @@ bricks.UiImage =class extends bricks.VBox {
 		this.bind('drop', this.dropHandle.bind(this));
 		this.input = document.createElement('input');
 		this.input.type = 'file';
-		this.input.accept = 'image/*';
+		if (opts.accept) this.input.accept = opts.accept;
+		if (opts.multiple) this.input.multiple = true;
 		this.input.addEventListener('change', this.handleFileSelect.bind(this));
 		// this.bind('click', this.handleClick.bind(this));
 		this.add_widget(new bricks.Text({text:'drop in or click to choose file'}));
 		this.dom_element.appendChild(this.input);
-		this.imgw = null;
+	}
+	set_input_file(files){
+		const dt = new DataTransfer();
+		if (this.opts.multiple){
+			this.value = [];
+			files.forEach(f => {
+				dt.items.add(f);
+				this.value.push(f);
+			});
+			this.input.files = dt.files;
+		else {
+			var f = files[0]
+			this.value = f;
+			dt.items.add(f);
+			this.input.files = dt.files;
+		}
+	}
+	handleFileSelect(event){
+		if (this.opts.multiple){
+			files = [];
+			event.target.files.forEach(f => {
+				files.push(f);
+			});
+			this.value = files;
+			return
+		}
+		const file = event.target.files[0];
+		this.value = file;
+		this.dispatch('changed', this.value)
+	}
+	dropHandle(event){
+		event.preventDefault();
+		this.set_css('hover', true);
+		var files = [];
+		event.dataTransfer.files.forEach(f => {
+			if (f.type.startsWith(this.opts.accept)){
+				files.push(f);
+			}
+		});
+		if (this.opts.multiple){
+			this.value = files;
+			this.set_input_file(files);
+		} else {
+			this.value = file[0];
+			this.set_input_file([this.value]);
+		}
+		this.dispatch('changed', this.value);
+	}
+	set_formdata(fd){
+		fd.append(this.name, this.resultValue());
+	}
+	resultValue(){
+		if (this.value){
+			return this.value;
+		}
+		if (this.input.files.length)
+			return this.input.files[0];
+		return null;
+	}
+	getValue(){
+		var ret = {};
+		ret[this.name] = this.resultValue();
+		return ret;
+	}
+}
+
+bricks.UiImage =class extends bricks.UiFile {
+	constructor(opts){
+		opts.name = opts.name || 'image';
+		opts.width = opts.width || '100%';
+		opts.accept = 'image/*';
+		super(opts);
+		this.input.accept = 'image/*';
+		this.uitype='image';
+		this.camera_w = new bricks.Svg({
+				url:bricks_resource('imgs/camera.svg'),
+				tip:'use cemera to take a picture',
+				rate:2});
+		this.set_css('droparea');
+		this.add_widget(this.camera_w);
+		this.camera_w.bind('click', this.take_photo.bind(this));
+		this.preview = new bricks.VBox({width: '100%'});
+		this.bind('changed', this.show_image.bind(this));
 	}
 	take_photo(event){
 		event.stopPropagation();
@@ -542,51 +590,30 @@ bricks.UiImage =class extends bricks.VBox {
 			width:'100%'
 		});
 		this.value = event.params
-		this.add_widget(this.imgw);
+		this.dispatch('changed', this.value);
+		// this.add_widget(this.imgw);
 	}
-	handleFileSelect(event){
-		const file = event.target.files[0];
-		this.show_image(file);
+	show_image(event){
+		var params = event.params;
+		if (! params instanceof Array){
+			params = [ params ];
+		}
+		this.preview.clear_widgets();
+		params.forEach( f => {
+			this._show_image(f);
+		});
 	}
-	dropHandle(event){
-		event.preventDefault();
-		this.set_css('hover', true);
-		const file = event.dataTransfer.files[0];
-		const dt = new DataTransfer();
-		dt.items.add(file);
-		this.input.files = dt.files;
-		this.show_image(file);
 
-	}
-	show_image(file) {
+	_show_image(file) {
 		const reader = new FileReader();
 		reader.onload = (e) => {
-			if (this.imgw){
-				this.remove_widget(this.imgw);
-			}
-			this.value = e.target.result;
-			this.imgw = new bricks.Image({
-				url:this.value,
+			imgw = new bricks.Image({
+				url:file,
 				width:'100%'
 			});
-			this.add_widget(this.imgw);
+			this.preview.add_widget(imgw);
 		};
 		reader.readAsDataURL(file);
-	}
-	set_formdata(fd){
-		// fd.append(this.name, this.resultValue(), 'test.svg');
-		fd.append(this.name, this.resultValue());
-	}
-	resultValue(){
-		if (this.value){
-			return this.value;
-		}
-		return null;
-	}
-	getValue(){
-		var ret = {};
-		ret[this.name] = this.resultValue();
-		return ret;
 	}
 }
 
@@ -1071,7 +1098,7 @@ bricks._Input = class {
 	}
 }
 
-bricks.UiAudio =class extends bricks.UiStr {
+bricks.UiAudio =class extends bricks.UiFile {
 	constructor(opts){
 		super(opts);
 		this.uitype = 'audio';
