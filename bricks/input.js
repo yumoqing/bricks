@@ -495,7 +495,7 @@ bricks.UiFile = class extends bricks.VBox {
 				this.value.push(f);
 			});
 			this.input.files = dt.files;
-		else {
+		} else {
 			var f = files[0]
 			this.value = f;
 			dt.items.add(f);
