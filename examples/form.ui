@@ -137,8 +137,6 @@
 					{
 						"uitype":"image",
 						"name":"Image",
-						"height":"100px",
-						"width":"100px",
 						"label":"Image",
 						"required":true
 					},
