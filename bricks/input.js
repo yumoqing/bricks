@@ -567,7 +567,7 @@ bricks.UiVideo =class extends bricks.UiFile {
 		this.camera_w.bind('click', this.open_recorder.bind(this));
 		this.preview = new bricks.VBox({width: '100%'});
 		this.add_widget(this.preview);
-		this.bind('changed', this.show_image.bind(this));
+		this.bind('changed', this.show_video.bind(this));
 	}
 	open_recorder(event){
 		event.stopPropagation();
