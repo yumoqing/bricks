@@ -501,7 +501,7 @@ bricks.UiImage =class extends bricks.VBox {
 			event.preventDefault();
 		});
 		["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
-      		this.bind(evebtName, (e) => e.preventDefault(), false);
+      		this.bind(eventName, (e) => e.preventDefault(), false);
 		});
 		this.bind('dragenter', () => {
 			this.css('hover');
