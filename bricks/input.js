@@ -591,7 +591,7 @@ bricks.UiImage =class extends bricks.UiFile {
 		if (params instanceof File){
 			params = [ params ];
 		}
-		if (params instanceof String){
+		if (typeof params == 'string'){
 			params = [ params ];
 		}
 		this.preview.clear_widgets();
@@ -601,10 +601,17 @@ bricks.UiImage =class extends bricks.UiFile {
 	}
 
 	_show_image(file) {
+		if (typeof file == 'string'){
+			var imgw = new bricks.Image({
+				url:file,
+				width:'100%'
+			});
+			this.preview.add_widget(imgw);
+		}
 		const reader = new FileReader();
 		reader.onload = (e) => {
 			var imgw = new bricks.Image({
-				url:file,
+				url:e.target.result,
 				width:'100%'
 			});
 			this.preview.add_widget(imgw);
