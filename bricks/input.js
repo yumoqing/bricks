@@ -522,7 +522,7 @@ bricks.UiFile = class extends bricks.VBox {
 			if (this.opts.accept && f.type.startsWith(this.opts.accept)){
 				files.push(f);
 			}
-		});
+		};
 		if (this.opts.multiple){
 			this.value = files;
 			this.set_input_file(files);
