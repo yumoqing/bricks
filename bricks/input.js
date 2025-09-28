@@ -555,9 +555,8 @@ bricks.UiImage =class extends bricks.UiFile {
 	constructor(opts){
 		opts.name = opts.name || 'image';
 		opts.width = opts.width || '100%';
-		opts.accept = 'image/*';
+		opts.accept = 'image/';
 		super(opts);
-		this.input.accept = 'image/*';
 		this.uitype='image';
 		this.camera_w = new bricks.Svg({
 				url:bricks_resource('imgs/camera.svg'),
