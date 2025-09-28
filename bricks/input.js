@@ -489,6 +489,7 @@ bricks.UiFile =class extends bricks.UiStr {
 bricks.UiImage =class extends bricks.VBox {
 	constructor(opts){
 		opts.name = opts.name || 'image';
+		opts.width = opts.width || '100%';
 		super(opts);
 		this.uitype='image';
 		this.camera_w = new bricks.Svg({
@@ -551,6 +552,9 @@ bricks.UiImage =class extends bricks.VBox {
 		event.preventDefault();
 		this.set_css('hover', true);
 		const file = event.dataTransfer.files[0];
+		const dt = new DataTransfer();
+		dt.items.add(file);
+		this.input.files = dt.files;
 		this.show_image(file);
 
 	}
