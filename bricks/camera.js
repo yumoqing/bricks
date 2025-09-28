@@ -3,6 +3,7 @@ bricks.Camera = class extends bricks.Popup {
 	/*
 	{
 		fps:60
+		type: picture or recorder
 	}
 	*/
 	constructor(opts){
@@ -20,12 +21,23 @@ bricks.Camera = class extends bricks.Popup {
 		this.cur_camera_id = 0;
 		this.add_widget(filler);
 		this.add_widget(hbox);
-		var shot_btn = new bricks.Svg({
-			url:bricks_resource('imgs/camera.svg'),
-			margin: '10px',
-			tip:'Take a picture',
-			rate:2.5
-		});
+		this.record_status == '';
+		if (this.opts.type == 'recorder'){
+			this.record_status == 'standby';
+			var shot_btn = new bricks.Svg({
+				url: bricks_resource('imgs/start_recording.svg'),
+				tip: 'Start record video',
+				margin: '10px',
+				rate: 2.5
+			});
+		} else {
+			var shot_btn = new bricks.Svg({
+				url:bricks_resource('imgs/camera.svg'),
+				margin: '10px',
+				tip:'Take a picture',
+				rate:2.5
+			});
+		}
 		var switch_btn = new bricks.Svg({
 			url:bricks_resource('imgs/switch-camera.svg'),
 			tip:'switch camera',
@@ -33,13 +45,17 @@ bricks.Camera = class extends bricks.Popup {
 			rate:1.5
 		});
 		var del_btn = new bricks.Svg({
-			url:bricks_resource('imgs/delete.Svg'),
+			url:bricks_resource('imgs/delete.svg'),
 			tip:'canel it',
 			margin: '10px',
 			rate:1.5
 		})
 		del_btn.bind('click', this.dismiss.bind(this));
-		shot_btn.bind('click', this.take_picture.bind(this));
+		if (this.opts.type == 'recorder'){
+			shot_btn.bind('click', this.start_recording.bind(this));
+		} else {
+			shot_btn.bind('click', this.take_picture.bind(this));
+		}
 		switch_btn.bind('click', this.switch_camera.bind(this, switch_btn));
 		this.imgw = new bricks.Image({
 			width:'100%'
@@ -86,6 +102,17 @@ bricks.Camera = class extends bricks.Popup {
 		this.task = schedule_once(this.show_picture.bind(this), this.task_period);
 		this.show_cnt += 1;
 	}
+	switch_recording(){
+		if (this.record_status == 'recording'){
+			this.record_status == 'standby';
+			this.shot_btn.set_url(bricks_resource('imgs/start_recording.svg'));
+			this.viderecorder_stop();
+		} else {
+			this.record_status == 'recording';
+			this.shot_btn.set_url(bricks_resource('imgs/stop_recording.svg'));
+			this.videorecorder_start();
+		}
+	}
 	videorecorder_start(){
 		if (!this.stream) {
 		  throw new Error('Media stream is not initialized. Call init() first.');
@@ -105,6 +132,7 @@ bricks.Camera = class extends bricks.Popup {
 				const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
 				const url = URL.createObjectURL(blob);
 				resolve({ blob, url });
+				this.dispatch('recorded', url);
 			};
 			this.mediaRecorder.stop();
 			this.mediaRecorder = null;

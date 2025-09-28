@@ -141,6 +141,11 @@
 						"required":true
 					},
 					{
+						"uitype":"video",
+						"name":"video_file",
+						"label":"Video"
+					},
+					{
 						"uitype":"text",
 						"name":"text",
 						"value":"This is a test",

@@ -551,6 +551,76 @@ bricks.UiFile = class extends bricks.VBox {
 	}
 }
 
+bricks.UiVideo =class extends bricks.UiFile {
+	constructor(opts){
+		opts.name = opts.name || 'image';
+		opts.width = opts.width || '100%';
+		opts.accept = 'video/';
+		super(opts);
+		this.uitype='video';
+		this.camera_w = new bricks.Svg({
+				url:bricks_resource('imgs/camera.svg'),
+				tip:'use cemera to record video',
+				rate:2});
+		this.set_css('droparea');
+		this.add_widget(this.camera_w);
+		this.camera_w.bind('click', this.open_recorder.bind(this));
+		this.preview = new bricks.VBox({width: '100%'});
+		this.add_widget(this.preview);
+		this.bind('changed', this.show_image.bind(this));
+	}
+	open_recorder(event){
+		event.stopPropagation();
+		var camera = new bricks.Camera({
+			"archor":"cc",
+			"auto_open":true,
+			"type": "recorder",
+			"height":"90%",
+			"width":"90%"
+		});
+		camera.bring_to_top();
+		camera.bind('recorded', this.accept_video.bind(this, camera));
+	}
+	accept_video(camera, event){
+		camera.dismiss();
+		this.value = event.params
+		this.dispatch('changed', this.value);
+	}
+	show_video(event){
+		var params = event.params;
+		if (params instanceof File){
+			params = [ params ];
+		}
+		if (typeof params == 'string'){
+			params = [ params ];
+		}
+		this.preview.clear_widgets();
+		params.forEach( f => {
+			this._show_video(f);
+		});
+	}
+
+	_show_video(file) {
+		if (typeof file == 'string'){
+			var vw = new bricks.VideoPlayer({
+				url:file,
+				audoplay: true,
+				width:'100%'
+			});
+			this.preview.add_widget(vw);
+		}
+		const reader = new FileReader();
+		reader.onload = (e) => {
+			var imgw = new bricks.VideoPlayer({
+				url:e.target.result,
+				autoplay: true,
+				width:'100%'
+			});
+			this.preview.add_widget(imgw);
+		};
+		reader.readAsDataURL(file);
+	}
+}
 bricks.UiImage =class extends bricks.UiFile {
 	constructor(opts){
 		opts.name = opts.name || 'image';
@@ -1123,31 +1193,6 @@ bricks.UiAudio =class extends bricks.UiFile {
 		this.icon.dispatch('click');
 	}
 	play_audio(){
-		this.player.toggle_play();
-	}
-}
-bricks.UiVideo =class extends bricks.UiStr {
-	constructor(opts){
-		super(opts);
-		this.uitype = 'video';
-		this.autoplay = opts.autoplay;
-		this.readonly = opts.readonly;
-		this.icon = new bricks.Svg({
-			url: bricks_resource('imgs/right_arrow.svg')});
-		this.add_widget(this.icon);
-		this.icon.bind('click', this.play_vide.bind(this));
-		this.player = new bricks.Video({
-			url:this.value
-			});
-		if (this.autoplay){
-			schedule_once(this.autoplay_video.bind(this), 1);
-		}
-
-	}
-	autoplay_vide(){
-		this.icon.dispatch('click');
-	}
-	play_vide(){
 		this.player.toggle_play();
 	}
 }
