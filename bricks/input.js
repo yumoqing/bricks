@@ -550,7 +550,7 @@ bricks.UiImage =class extends bricks.VBox {
 	dropHandle(event){
 		event.preventDefault();
 		this.set_css('hover', true);
-		const file = e.dataTransfer.files[0];
+		const file = event.dataTransfer.files[0];
 		this.show_image(file);
 
 	}
