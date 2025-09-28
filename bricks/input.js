@@ -519,15 +519,16 @@ bricks.UiFile = class extends bricks.VBox {
 		this.set_css('hover', true);
 		var files = [];
 		for (const f of event.dataTransfer.files) {
-			if (this.opts.accept && f.type.startsWith(this.opts.accept)){
-				files.push(f);
+			if (this.opts.accept && ! f.type.startsWith(this.opts.accept)){
+				continue;
 			}
+			files.push(f);
 		};
 		if (this.opts.multiple){
 			this.value = files;
 			this.set_input_file(files);
 		} else {
-			this.value = file[0];
+			this.value = files[0];
 			this.set_input_file([this.value]);
 		}
 		this.dispatch('changed', this.value);
