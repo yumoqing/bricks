@@ -24,14 +24,14 @@ bricks.Camera = class extends bricks.Popup {
 		this.record_status == '';
 		if (this.opts.type == 'recorder'){
 			this.record_status == 'standby';
-			var shot_btn = new bricks.Svg({
+			this.shot_btn = new bricks.Svg({
 				url: bricks_resource('imgs/start_recording.svg'),
 				tip: 'Start record video',
 				margin: '10px',
 				rate: 2.5
 			});
 		} else {
-			var shot_btn = new bricks.Svg({
+			this.shot_btn = new bricks.Svg({
 				url:bricks_resource('imgs/camera.svg'),
 				margin: '10px',
 				tip:'Take a picture',
@@ -52,16 +52,16 @@ bricks.Camera = class extends bricks.Popup {
 		})
 		del_btn.bind('click', this.dismiss.bind(this));
 		if (this.opts.type == 'recorder'){
-			shot_btn.bind('click', this.switch_recording.bind(this));
+			this.shot_btn.bind('click', this.switch_recording.bind(this));
 		} else {
-			shot_btn.bind('click', this.take_picture.bind(this));
+			this.shot_btn.bind('click', this.take_picture.bind(this));
 		}
 		switch_btn.bind('click', this.switch_camera.bind(this, switch_btn));
 		this.imgw = new bricks.Image({
 			width:'100%'
 		});
 		hbox.add_widget(switch_btn);
-		hbox.add_widget(shot_btn);
+		hbox.add_widget(this.shot_btn);
 		hbox.add_widget(new bricks.Filler({}));
 		hbox.add_widget(del_btn);
 		filler.add_widget(this.imgw);
