@@ -35,7 +35,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		schedule_once(this.open_recorder.bind(this), 0.1);
 	}
 	tick_task(){
-		this.task = schedule_once(this.tick_taask.bind(this), this.task_period);
+		this.task = schedule_once(this.tick_task.bind(this), this.task_period);
 		this.timepass.set_text(bricks.timeDiff(this.start_time));
 	}
 	async switch_record(){
@@ -89,7 +89,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		};
 
 		this.start_time = Date.now();
-		this.task = schedule_once(this.tick_taask.bind(this), this.task_period);
+		this.task = schedule_once(this.tick_task.bind(this), this.task_period);
 		this.mediaRecorder.start();
 		this.dispatch('record_started')
 		console.log("Recording started...");
