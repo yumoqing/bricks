@@ -82,7 +82,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 			} else {
 				filename = 'recorded_audio.wav'
 			}
-			const file = new Fil e([blob], 
+			const file = new File([blob], 
 						filename, 
 						{ type: this.mimetype });
 			var data = {
