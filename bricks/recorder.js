@@ -137,7 +137,7 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 		this.preview.add_widget(this.imgw);
 		this.task = schedule_once(this.show_picture.bind(this), this.task_period);
 	}
-	show_picture(){
+	async show_picture(){
 		if (this.task_period == 0){
 			return;
 		}
