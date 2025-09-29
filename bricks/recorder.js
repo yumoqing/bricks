@@ -87,7 +87,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 
 	close_recorder(){
 		if (this.stream){
-			if this.mediaRecorder){
+			if (this.mediaRecorder){
 				this.mediaRecorder.stop();
 				this.mediaRecorder = null;
 			}
