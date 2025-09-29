@@ -16,7 +16,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 			tip: 'start or stop record',
 			rate: 2
 		});
-		this.timepass = new bricks.Text({text:'', cheight: 10});
+		this.timepass = new bricks.Text({text:'00:00:00', cheight: 10});
 		var filler = new bricks.Filler({});
 		var cancel = new bricks.Svg({
 						url: bricks_resource('imgs/delete.svg'), 
@@ -38,11 +38,11 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		console.log('toggle_record called');
 		if (this.record_status == 'standby'){
 			this.start_recorder();
-			this.toggle_record.url = bricks_resource('imgs/stop_recording.svg');
+			this.toggle_record.set_url(bricks_resource('imgs/stop_recording.svg'));
 			this.record_status = 'recording';
 		} else {
 			this.stop_recorder();
-			this.toggle_record.url = bricks_resource('imgs/start_recording.svg');
+			this.toggle_record.set_url(bricks_resource('imgs/start_recording.svg'));
 			this.record_status = 'standby';
 		}
 	}
@@ -86,8 +86,8 @@ bricks.MediaRecorder = class extends bricks.Popup {
 	stop_recorder(){
 		this.normal_stop = true;
 		this.time_diff = bricks.timeDiff(this.start_time);
-		this.mediaRecorder.stop();
 		this.timepass.set_text(this.time_diff);
+		this.mediaRecorder.stop();
 		this.mediaRecorder = null;
 		this.close_recorder();
 		console.log("Recording stopped.");
