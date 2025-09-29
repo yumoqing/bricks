@@ -34,6 +34,10 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		this.toggle_record.disabled(true);
 		schedule_once(this.open_recorder.bind(this), 0.1);
 	}
+	tick_task(){
+		this.task = schedule_once(this.tick_taask.bind(this), this.task_period);
+		this.timepass.set_text(bricks.timeDiff(this.start_time));
+	}
 	async switch_record(){
 		console.log('toggle_record called');
 		if (this.record_status == 'standby'){
@@ -71,16 +75,21 @@ bricks.MediaRecorder = class extends bricks.Popup {
 			const blob = new Blob(this.recordedChunks, 
 							{ type: this.mimetype }); 
 			// 1. 在本地播放
-			const videoURL = URL.createObjectURL(blob);
+			const url = URL.createObjectURL(blob);
 			// 2. 转成 File 对象
 			const file = new File([blob], 
 						"recorded_video.webm", 
 						{ type: this.mimetype });
-			this.dispatch('record_end', file);
+			var data = {
+				url: url,
+				file: file
+			}
+			this.dispatch('record_end', data);
 			console.log('"record_end" fired', file);
 		};
 
 		this.start_time = Date.now();
+		this.task = schedule_once(this.tick_taask.bind(this), this.task_period);
 		this.mediaRecorder.start();
 		this.dispatch('record_started')
 		console.log("Recording started...");
@@ -97,6 +106,10 @@ bricks.MediaRecorder = class extends bricks.Popup {
 	}
 
 	close_recorder(){
+		if (this.task){
+			this.task.cancel();
+			this.task = null;
+		}
 		if (this.stream){
 			if (this.mediaRecorder){
 				this.mediaRecorder.stop();
@@ -148,8 +161,11 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 		this.camera_width = settings.width;
 		this.imgw = new bricks.Image({width: '100%'});
 		this.preview.add_widget(this.imgw);
-		this.task = schedule_once(this.show_picture.bind(this), this.task_period);
 		this.toggle_record.disabled(false);
+	}
+	tick_task(){
+		super.tick_task();
+		this.show_picture();
 	}
 	async show_picture(){
 		if (this.task_period == 0){
@@ -160,13 +176,6 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 		this.imgw.set_url(this.dataurl);
 		this.task = schedule_once(this.show_picture.bind(this), 
 									this.task_period);
-	}
-	close_recorder(){
-		super.close_recorder();
-		if (this.task){
-			this.task.cancel();
-			this.task = null;
-		}
 	}
 }
 bricks.SysCamera= class extends bricks.SysVideoRecorder {
@@ -180,7 +189,7 @@ bricks.SysCamera= class extends bricks.SysVideoRecorder {
 		this.task_period = 0;
 		this.task = null;
 		this.dispatch('shot', this.dataurl);
-		this.dismiss();
+		this.close_recorder();
 	}
 }
 bricks.Factory.register('SysCamera', bricks.SysCamera);

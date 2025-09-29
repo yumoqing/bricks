@@ -505,24 +505,25 @@ bricks.UiFile = class extends bricks.VBox {
 		if (this.opts.multiple){
 			files = [];
 			event.target.files.forEach(f => {
-				files.push(f);
+				if (! this.accept || f.type.startsWith(this.accept)){
+					files.push(f);
+				}
 			});
 			this.value = files;
-			return
+		} else {
+			const file = event.target.files[0];
+			this.value = file;
 		}
-		const file = event.target.files[0];
-		this.value = file;
-		this.dispatch('changed', this.value)
+		this.dispatch('changed', this.value);
+		console.log('"changed" fired', this.value);
 	}
 	dropHandle(event){
 		event.preventDefault();
-		this.set_css('hover', true);
 		var files = [];
 		for (const f of event.dataTransfer.files) {
-			if (this.opts.accept && ! f.type.startsWith(this.opts.accept)){
-				continue;
+			if (! this.opts.accept || f.type.startsWith(this.opts.accept)){
+				files.push(f);
 			}
-			files.push(f);
 		};
 		if (this.opts.multiple){
 			this.value = files;
@@ -532,6 +533,7 @@ bricks.UiFile = class extends bricks.VBox {
 			this.set_input_file([this.value]);
 		}
 		this.dispatch('changed', this.value);
+		console.log('"changed" fired', this.value);
 	}
 	set_formdata(fd){
 		fd.append(this.name, this.resultValue());
@@ -583,9 +585,9 @@ bricks.UiVideo =class extends bricks.UiFile {
 	}
 	accept_video(recorder, event){
 		recorder.dismiss();
-		this.value = event.params
+		this.value = event.params.file
 		console.log('record finished, value=', this.value);
-		this.dispatch('changed', this.value);
+		this.dispatch('changed', event.params.url);
 	}
 	show_video(event){
 		var params = event.params;
