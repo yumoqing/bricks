@@ -130,11 +130,12 @@ bricks.Camera = class extends bricks.Popup {
 			resolve({ blob, url });
 			this.recordedChunks = [];
 			this.dispatch('recorded', url);
+			console.log('record end')
 		}
 		this.mediaRecorder.start();
 	}
 	videorecorder_stop(){
-		this.mediaRecirder.stop();
+		this.mediaRecorder.stop();
 	}
 	take_picture(event){
 		event.stopPropagation();
