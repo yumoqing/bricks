@@ -525,7 +525,6 @@ bricks.UiFile = class extends bricks.VBox {
 			}
 		};
 		if (files.length == 0) return;
-		consoles.log('dragin files=', files)
 		if (this.opts.multiple){
 			this.value = files;
 			this.set_input_file(files);
@@ -663,7 +662,8 @@ bricks.UiVideo =class extends bricks.UiFile {
 		this.dispatch('changed', this.getValue());
 	}
 	show_video(event){
-		var params = event.params[this.name];
+		var params = this.value;
+		console.log('params=', params);
 		if (params instanceof File){
 			params = [ params ];
 		}
