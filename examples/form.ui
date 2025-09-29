@@ -75,8 +75,7 @@
 					{
 						"uitype":"file",
 						"name":"file",
-						"label":"File",
-						"required":true
+						"label":"File"
 					},
 					{
 						"uitype":"str",
@@ -137,8 +136,12 @@
 					{
 						"uitype":"image",
 						"name":"Image",
-						"label":"Image",
-						"required":true
+						"label":"Image"
+					},
+					{
+						"uitype":"audio",
+						"name":"audio",
+						"label":"Audio"
 					},
 					{
 						"uitype":"video",
