@@ -248,8 +248,11 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 		if (this.task_period == 0){
 			return;
 		}
-		const blob = await this.imageCapture.takePhoto();
+		blob = await this.imageCapture.takePhoto();
 		this.dataurl = URL.createObjectURL(blob);
+		this.imgfile = new File([blob],
+                        'image.jpg',
+                        { type: 'image/jpeg' });
 		this.imgw.set_url(this.dataurl);
 		this.pic_task = schedule_once(this.show_picture.bind(this), 
 									this.task_period);
@@ -272,7 +275,10 @@ bricks.SysCamera= class extends bricks.SysVideoRecorder {
 		}
 		this.task_period = 0;
 		this.task = null;
-		this.dispatch('shot', this.dataurl);
+		const file = new File([blob],
+                        filename,
+                        { type: this.mimetype });
+		this.dispatch('shot', {url: this.dataurl, file:this.imgfile});
 		this.close_recorder();
 	}
 }

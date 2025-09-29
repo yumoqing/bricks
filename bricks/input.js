@@ -484,6 +484,22 @@ bricks.UiFile = class extends bricks.VBox {
 		this.add_widget(new bricks.Text({text:'drop in or click to choose file'}));
 		this.dom_element.appendChild(this.input);
 	}
+	handleFileSelect(event){
+		if (this.opts.multiple){
+			files = [];
+			event.target.files.forEach(f => {
+				if (! this.accept || f.type.startsWith(this.accept)){
+					files.push(f);
+				}
+			});
+			this.value = files;
+		} else {
+			const file = event.target.files[0];
+			this.value = file;
+		}
+		console.log('"changed" fired', this.value);
+		this.dispatch('changed', this.value);
+	}
 	set_input_file(files){
 		const dt = new DataTransfer();
 		if (this.opts.multiple){
@@ -500,22 +516,6 @@ bricks.UiFile = class extends bricks.VBox {
 			this.input.files = dt.files;
 		}
 	}
-	handleFileSelect(event){
-		if (this.opts.multiple){
-			files = [];
-			event.target.files.forEach(f => {
-				if (! this.accept || f.type.startsWith(this.accept)){
-					files.push(f);
-				}
-			});
-			this.value = files;
-		} else {
-			const file = event.target.files[0];
-			this.value = file;
-		}
-		this.dispatch('changed', this.value);
-		console.log('"changed" fired', this.value);
-	}
 	dropHandle(event){
 		event.preventDefault();
 		var files = [];
@@ -524,6 +524,8 @@ bricks.UiFile = class extends bricks.VBox {
 				files.push(f);
 			}
 		};
+		if (files.length == 0) return;
+		consoles.log('dragin files=', files)
 		if (this.opts.multiple){
 			this.value = files;
 			this.set_input_file(files);
@@ -531,7 +533,6 @@ bricks.UiFile = class extends bricks.VBox {
 			this.value = files[0];
 			this.set_input_file([this.value]);
 		}
-		this.dispatch('changed', this.value);
 		console.log('"changed" fired', this.value);
 	}
 	set_formdata(fd){
@@ -584,7 +585,9 @@ bricks.UiAudio =class extends bricks.UiFile {
 		recorder.dismiss();
 		this.value = event.params.file
 		console.log('record finished, value=', this.value);
-		this.dispatch('changed', event.params.url);
+		var data = {};
+		data[this.name] = this.value;
+		this.dispatch('changed', data);
 	}
 	show_audio(event){
 		var params = event.params;
@@ -656,10 +659,12 @@ bricks.UiVideo =class extends bricks.UiFile {
 		recorder.dismiss();
 		this.value = event.params.file
 		console.log('record finished, value=', this.value);
-		this.dispatch('changed', event.params.url);
+		var data = {};
+		data[this.name] = this.value;
+		this.dispatch('changed', data);
 	}
 	show_video(event){
-		var params = event.params;
+		var params = event.params[this.name];
 		if (params instanceof File){
 			params = [ params ];
 		}
@@ -726,12 +731,14 @@ bricks.UiImage =class extends bricks.UiFile {
 	}
 	accept_photo(camera, event){
 		camera.dismiss();
-		this.value = event.params
-		this.dispatch('changed', this.value);
-		// this.add_widget(this.imgw);
+		this.value = event.params.file;
+		this.set_input_file([this.value]);
+		var data = {};
+		data['name'] = this.value;
+		this.dispatch('changed', data);
 	}
 	show_image(event){
-		var params = event.params;
+		var params = event.params[this.value];
 		if (params instanceof File){
 			params = [ params ];
 		}
