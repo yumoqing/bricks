@@ -36,6 +36,15 @@ bricks.MediaRecorder = class extends bricks.Popup {
 	}
 	async switch_record(){
 		console.log('toggle_record called');
+		if (this.record_status == 'standby'){
+			this.start_recorder();
+			this.toggle_record.url = bricks_resource('imgs/stop_recording.svg');
+			this.record_status = 'recording';
+		} else {
+			this.stop_recorder();
+			this.toggle_record.url = bricks_resource('imgs/start_recording.svg');
+			this.record_status = 'standby';
+		}
 	}
 	cancel_record(){
 		this.close_recorder();
