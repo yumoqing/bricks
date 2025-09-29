@@ -97,7 +97,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 	}
 }
 
-class bricks.WidgetRecorder = bricks.MediaRecorder {
+bricks.WidgetRecorder = class extends bricks.MediaRecorder {
 	async open_recorder(){
 		var widget = bricks.getWidgetById(this.opts.widgetid,bricks.app);
 		if (widget.dom_element.tagName == 'VIDEO'){
@@ -110,7 +110,7 @@ class bricks.WidgetRecorder = bricks.MediaRecorder {
 		this.stream = source.captureStream();
 	}
 }
-class bricks.SysAudioRecorder = bricks.MediaRecorder {
+bricks.SysAudioRecorder = class extends bricks.MediaRecorder {
 	async open_recorder(){
 		var options = {}
 		options.audio = true;
@@ -120,7 +120,7 @@ class bricks.SysAudioRecorder = bricks.MediaRecorder {
 		this.preview.disabled(true);
 	}
 }
-class bricks.SysVideoRecorder = bricks.MediaRecorder {
+bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 	async open_recorder(){
 		var options = {
 			audio: true,
@@ -155,7 +155,7 @@ class bricks.SysVideoRecorder = bricks.MediaRecorder {
 		}
 	}
 }
-class bricks.TakePhoto= bricks.SysVideoRecorder {
+bricks.SysCamera= class extends bricks.SysVideoRecorder {
 	switch_record(){
 		event.stopPropagation();
 		if (this.task){
