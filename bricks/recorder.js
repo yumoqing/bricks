@@ -77,8 +77,13 @@ bricks.MediaRecorder = class extends bricks.Popup {
 			// 1. 在本地播放
 			const url = URL.createObjectURL(blob);
 			// 2. 转成 File 对象
-			const file = new File([blob], 
-						"recorded_video.webm", 
+			if (this.mimetype == 'video/mp4'){
+				filename = 'recorded_video.mp4';
+			} else {
+				filename = 'recorded_audio.wav'
+			}
+			const file = new Fil e([blob], 
+						filename, 
 						{ type: this.mimetype });
 			var data = {
 				url: url,
@@ -94,7 +99,9 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		this.dispatch('record_started')
 		console.log("Recording started...");
 	}
-
+	file_name(){
+		return 'noname';
+	}
 	stop_recorder(){
 		this.normal_stop = true;
 		this.time_diff = bricks.timeDiff(this.start_time);

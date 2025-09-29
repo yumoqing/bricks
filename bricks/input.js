@@ -481,7 +481,6 @@ bricks.UiFile = class extends bricks.VBox {
 		if (opts.accept) this.input.accept = opts.accept;
 		if (opts.multiple) this.input.multiple = true;
 		this.input.addEventListener('change', this.handleFileSelect.bind(this));
-		// this.bind('click', this.handleClick.bind(this));
 		this.add_widget(new bricks.Text({text:'drop in or click to choose file'}));
 		this.dom_element.appendChild(this.input);
 	}
@@ -553,9 +552,81 @@ bricks.UiFile = class extends bricks.VBox {
 	}
 }
 
+bricks.UiAudio =class extends bricks.UiFile {
+	constructor(opts){
+		opts.name = opts.name || 'audio_file';
+		opts.width = opts.width || '100%';
+		opts.accept = 'audio/';
+		super(opts);
+		this.uitype='video';
+		this.camera_w = new bricks.Svg({
+				url:bricks_resource('imgs/mic.svg'),
+				tip:'use mic to record audio',
+				rate:2});
+		this.add_widget(this.camera_w);
+		this.camera_w.bind('click', this.open_recorder.bind(this));
+		this.preview = new bricks.VBox({width: '100%'});
+		this.add_widget(this.preview);
+		this.bind('changed', this.show_audio.bind(this));
+	}
+	open_recorder(event){
+		event.stopPropagation();
+		var recorder = new bricks.SysAudioRecorder({
+			"archor":"cc",
+			"auto_open":true,
+			"type": "recorder",
+			"cheight":3,
+			"cwidth":20
+		});
+		recorder.bring_to_top();
+		recorder.bind('record_end', this.accept_audio.bind(this, recorder));
+	}
+	accept_audio(recorder, event){
+		recorder.dismiss();
+		this.value = event.params.file
+		console.log('record finished, value=', this.value);
+		this.dispatch('changed', event.params.url);
+	}
+	show_audio(event){
+		var params = event.params;
+		if (params instanceof File){
+			params = [ params ];
+		}
+		if (typeof params == 'string'){
+			params = [ params ];
+		}
+		this.preview.clear_widgets();
+		params.forEach( f => {
+			this._show_audio(f);
+		});
+	}
+
+	_show_audio(file) {
+		if (typeof file == 'string'){
+			var vw = new bricks.AudioPlayer({
+				url:file,
+				audoplay: true,
+				width:'100%'
+			});
+			this.preview.add_widget(vw);
+			return;
+		}
+		const reader = new FileReader();
+		reader.onload = (e) => {
+			var imgw = new bricks.AudioPlayer({
+				url:e.target.result,
+				autoplay: true,
+				width:'100%'
+			});
+			console.log('show audio', e.target.result);
+			this.preview.add_widget(imgw);
+		};
+		reader.readAsDataURL(file);
+	}
+}
 bricks.UiVideo =class extends bricks.UiFile {
 	constructor(opts){
-		opts.name = opts.name || 'image';
+		opts.name = opts.name || 'video_file';
 		opts.width = opts.width || '100%';
 		opts.accept = 'video/';
 		super(opts);
@@ -1176,31 +1247,6 @@ bricks._Input = class {
 	}
 }
 
-bricks.UiAudio =class extends bricks.UiFile {
-	constructor(opts){
-		super(opts);
-		this.uitype = 'audio';
-		this.autoplay = opts.autoplay;
-		this.readonly = opts.readonly;
-		this.icon = new bricks.Svg({
-			url: bricks_resource('imgs/right_arrow.svg')});
-		this.add_widget(this.icon);
-		this.icon.bind('click', this.play_audio.bind(this));
-		this.player = new bricks.AudioPlayer({
-			url:this.value
-			});
-		if (this.autoplay){
-			schedule_once(this.autoplay_audio.bind(this), 1);
-		}
-
-	}
-	autoplay_audio(){
-		this.icon.dispatch('click');
-	}
-	play_audio(){
-		this.player.toggle_play();
-	}
-}
 var Input = new bricks._Input();
 Input.register('UiAudioRecorder', 'audiorecorder', bricks.UiAudioRecorder);
 Input.register('UiStr', 'str', bricks.UiStr);
