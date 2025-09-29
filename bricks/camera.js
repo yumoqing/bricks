@@ -26,7 +26,7 @@ bricks.Camera = class extends bricks.Popup {
 			this.record_status == 'standby';
 			this.shot_btn = new bricks.Svg({
 				url: bricks_resource('imgs/start_recording.svg'),
-				tip: 'Start record video',
+				tip: 'Start or stop record video',
 				margin: '10px',
 				rate: 2.5
 			});
@@ -124,22 +124,17 @@ bricks.Camera = class extends bricks.Popup {
 			this.recordedChunks.push(event.data);
 		  }
 		};
+		this.mediaRecorder.onstop = () => {
+			const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
+			const url = URL.createObjectURL(blob);
+			resolve({ blob, url });
+			this.recordedChunks = [];
+			this.dispatch('recorded', url);
+		}
 		this.mediaRecorder.start();
 	}
 	videorecorder_stop(){
-		return new Promise((resolve) => {
-				console.log('go here!')
-			this.mediaRecorder.onstop = () => {
-				console.log('stoped');
-				const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
-				const url = URL.createObjectURL(blob);
-				resolve({ blob, url });
-				this.dispatch('recorded', url);
-			};
-			this.mediaRecorder.stop();
-			this.mediaRecorder = null;
-			this.recordedChunks = [];
-		});
+		this.mediaRecirder.stop();
 	}
 	take_picture(event){
 		event.stopPropagation();
