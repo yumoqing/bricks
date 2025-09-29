@@ -498,7 +498,7 @@ bricks.UiFile = class extends bricks.VBox {
 			this.value = file;
 		}
 		console.log('"changed" fired', this.value);
-		this.dispatch('changed', this.value);
+		this.dispatch('changed', this.getValue());
 	}
 	set_input_file(files){
 		const dt = new DataTransfer();
@@ -533,7 +533,8 @@ bricks.UiFile = class extends bricks.VBox {
 			this.value = files[0];
 			this.set_input_file([this.value]);
 		}
-		console.log('"changed" fired', this.value);
+		this.dispatch('changed', this.getValue());
+		console.log('"changed" fired', this.getValue());
 	}
 	set_formdata(fd){
 		fd.append(this.name, this.resultValue());
@@ -584,13 +585,12 @@ bricks.UiAudio =class extends bricks.UiFile {
 	accept_audio(recorder, event){
 		recorder.dismiss();
 		this.value = event.params.file
+		this.set_input_file([this.value]);
 		console.log('record finished, value=', this.value);
-		var data = {};
-		data[this.name] = this.value;
-		this.dispatch('changed', data);
+		this.dispatch('changed', this.getValue());
 	}
 	show_audio(event){
-		var params = event.params;
+		var params = this.value;
 		if (params instanceof File){
 			params = [ params ];
 		}
@@ -658,10 +658,9 @@ bricks.UiVideo =class extends bricks.UiFile {
 	accept_video(recorder, event){
 		recorder.dismiss();
 		this.value = event.params.file
+		this.set_input_file([this.value]);
 		console.log('record finished, value=', this.value);
-		var data = {};
-		data[this.name] = this.value;
-		this.dispatch('changed', data);
+		this.dispatch('changed', this.getValue());
 	}
 	show_video(event){
 		var params = event.params[this.name];
@@ -738,7 +737,7 @@ bricks.UiImage =class extends bricks.UiFile {
 		this.dispatch('changed', data);
 	}
 	show_image(event){
-		var params = event.params[this.value];
+		var params = event.params[this.name];
 		if (params instanceof File){
 			params = [ params ];
 		}
