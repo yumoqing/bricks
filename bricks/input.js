@@ -644,7 +644,7 @@ bricks.UiImage =class extends bricks.UiFile {
 	}
 	take_photo(event){
 		event.stopPropagation();
-		var camera = new bricks.Camera({
+		var camera = new bricks.SysCamera({
 			"archor":"cc",
 			"auto_open":true,
 			"height":"90%",

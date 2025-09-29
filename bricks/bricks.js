@@ -636,6 +636,18 @@ bricks.App = class extends bricks.Layout {
 			console.error('获取摄像头数量出错:', error);
 		}
 	}
+	async start_media(opts){
+		/* opts:
+			type:device or 'widget'
+			widgetid:
+			widget:
+			audio:true,
+			video:true
+			vpos:
+		*/
+	}
+	async stop_media(media_stream){
+	}
     async start_camera(vpos) {
 		if (typeof(vpos) == 'undefined') vpos = 0;
 		if (this.video_devices === null){

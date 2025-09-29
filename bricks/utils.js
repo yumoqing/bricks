@@ -1,6 +1,18 @@
 var bricks = window.bricks || {};
 bricks.bug = false;
 
+bricks.timeDiff = function(startTime) {
+  const now = Date.now();
+  const diff = now - (startTime instanceof Date ? startTime.getTime() : startTime); // 毫秒差值
+
+  const hours = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, "0");
+  const minutes = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, "0");
+  const seconds = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, "0");
+  const milliseconds = String(diff % 1000).padStart(3, "0");
+
+  return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+}
+
 /* 
 We use ResizeObserver to implements dom object resize event
 */
