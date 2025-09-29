@@ -571,18 +571,18 @@ bricks.UiVideo =class extends bricks.UiFile {
 	}
 	open_recorder(event){
 		event.stopPropagation();
-		var camera = new bricks.Camera({
+		var recorder = new bricks.SysVideoRecorder({
 			"archor":"cc",
 			"auto_open":true,
 			"type": "recorder",
 			"height":"90%",
 			"width":"90%"
 		});
-		camera.bring_to_top();
-		camera.bind('recorded', this.accept_video.bind(this, camera));
+		recorder.bring_to_top();
+		recorder.bind('record_end', this.accept_video.bind(this, recorder));
 	}
-	accept_video(camera, event){
-		camera.dismiss();
+	accept_video(recorder, event){
+		recorder.dismiss();
 		this.value = event.params
 		console.log('record finished, value=', this.value);
 		this.dispatch('changed', this.value);
