@@ -78,6 +78,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 			blob = await this.blob_convert(blob);
 			const url = URL.createObjectURL(blob);
 			// 2. 转成 File 对象
+			var filename;
 			if (this.mimetype == 'video/mp4'){
 				filename = 'recorded_video.mp4';
 			} else {
