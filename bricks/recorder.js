@@ -54,7 +54,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 	}
 	async start_recorder(){
 		this.normal_stop = false;
-		this.mediaRecorder = new MediaRecorder(stream, 
+		this.mediaRecorder = new MediaRecorder(this.stream, 
 								{mimeType: this.mimetype});
 		this.recordedChunks = [];
 		this.mediaRecorder.ondataavailable = (event) => {
