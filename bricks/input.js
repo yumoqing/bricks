@@ -558,7 +558,7 @@ bricks.UiAudio =class extends bricks.UiFile {
 		opts.width = opts.width || '100%';
 		opts.accept = 'audio/';
 		super(opts);
-		this.uitype='video';
+		this.uitype='audio';
 		this.camera_w = new bricks.Svg({
 				url:bricks_resource('imgs/mic.svg'),
 				tip:'use mic to record audio',
@@ -574,7 +574,6 @@ bricks.UiAudio =class extends bricks.UiFile {
 		var recorder = new bricks.SysAudioRecorder({
 			"archor":"cc",
 			"auto_open":true,
-			"type": "recorder",
 			"cheight":3,
 			"cwidth":20
 		});
@@ -632,7 +631,7 @@ bricks.UiVideo =class extends bricks.UiFile {
 		super(opts);
 		this.uitype='video';
 		this.camera_w = new bricks.Svg({
-				url:bricks_resource('imgs/camera.svg'),
+				url:bricks_resource('imgs/video-recorder.svg'),
 				tip:'use cemera to record video',
 				rate:2});
 		this.set_css('droparea');
@@ -647,7 +646,6 @@ bricks.UiVideo =class extends bricks.UiFile {
 		var recorder = new bricks.SysVideoRecorder({
 			"archor":"cc",
 			"auto_open":true,
-			"type": "recorder",
 			"height":"90%",
 			"width":"90%"
 		});
