@@ -104,11 +104,11 @@ bricks.Camera = class extends bricks.Popup {
 	}
 	switch_recording(){
 		if (this.record_status == 'recording'){
-			this.record_status == 'standby';
+			this.record_status = 'standby';
 			this.shot_btn.set_url(bricks_resource('imgs/start_recording.svg'));
 			this.viderecorder_stop();
 		} else {
-			this.record_status == 'recording';
+			this.record_status = 'recording';
 			this.shot_btn.set_url(bricks_resource('imgs/stop_recording.svg'));
 			this.videorecorder_start();
 		}
