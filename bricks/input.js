@@ -607,7 +607,9 @@ bricks.UiVideo =class extends bricks.UiFile {
 				audoplay: true,
 				width:'100%'
 			});
+			this.value = file;
 			this.preview.add_widget(vw);
+			return;
 		}
 		const reader = new FileReader();
 		reader.onload = (e) => {
@@ -616,6 +618,7 @@ bricks.UiVideo =class extends bricks.UiFile {
 				autoplay: true,
 				width:'100%'
 			});
+			this.value = e.target.result;
 			this.preview.add_widget(imgw);
 		};
 		reader.readAsDataURL(file);
