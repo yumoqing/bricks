@@ -127,6 +127,7 @@ bricks.Camera = class extends bricks.Popup {
 		this.mediaRecorder.onstop = () => {
 			const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
 			const url = URL.createObjectURL(blob);
+			console.log('recorded url=', url);
 			this.recordedChunks = [];
 			this.dispatch('recorded', url);
 			console.log('record end')
