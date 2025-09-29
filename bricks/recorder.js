@@ -129,7 +129,7 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 		this.mimetype = 'video/mp4';
 		this.stream = await navigator.mediaDevices.getUserMedia(options);
 		this.imgw = new bricks.Image({width: '100%'});
-		this.preview.add_widget(imgw);
+		this.preview.add_widget(this.imgw);
 		this.task = schedule_once(this.show_picture.bind(this), this.task_period);
 	}
 	show_picture(){
