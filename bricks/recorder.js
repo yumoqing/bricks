@@ -72,9 +72,10 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		this.mediaRecorder.onstop = async () => {
 			console.log('onstop() called', this.normal_stop);
 			if (!this.normal_stop) return;
-			const blob = new Blob(this.recordedChunks, 
+			var blob = new Blob(this.recordedChunks, 
 							{ type: this.mimetype }); 
 			// 1. 在本地播放
+			blob = await this.blob_convert(blob);
 			const url = URL.createObjectURL(blob);
 			// 2. 转成 File 对象
 			if (this.mimetype == 'video/mp4'){
@@ -99,8 +100,8 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		this.dispatch('record_started')
 		console.log("Recording started...");
 	}
-	file_name(){
-		return 'noname';
+	async blob_convert(blob){
+		return blob;
 	}
 	stop_recorder(){
 		this.normal_stop = true;
@@ -147,10 +148,81 @@ bricks.SysAudioRecorder = class extends bricks.MediaRecorder {
 	async open_recorder(){
 		var options = {}
 		options.audio = true;
-		this.mimetype = 'audio/wav';
+		this.mimetype = 'audio/webm';
 		this.stream = await navigator.mediaDevices.getUserMedia(options);
 		this.toggle_record.disabled(false);
 		this.preview.disabled(true);
+	}
+	async blob_convert(webmBlob){
+		// 2. 解码 WebM → PCM
+		const arrayBuffer = await webmBlob.arrayBuffer();
+		const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+		const decodedData = await audioCtx.decodeAudioData(arrayBuffer);
+
+		// 3. 转换为 WAV Blob
+		const wavBlob = this.encodeWAV(decodedData);
+		return wavBlob;
+	}
+	encodeWAV(audioBuffer) {
+		const numChannels = audioBuffer.numberOfChannels;
+		const sampleRate = audioBuffer.sampleRate;
+		const format = 1; // PCM
+		const bitDepth = 16;
+
+		// interleave channels
+		let result;
+		if (numChannels === 2) {
+			result = this.interleave(audioBuffer.getChannelData(0), audioBuffer.getChannelData(1));
+		} else {
+			result = audioBuffer.getChannelData(0);
+		}
+
+		// float → 16-bit PCM
+		const buffer = new ArrayBuffer(44 + result.length * 2);
+		const view = new DataView(buffer);
+
+		/* RIFF header */
+		this.writeString(view, 0, "RIFF");
+		view.setUint32(4, 36 + result.length * 2, true);
+		this.writeString(view, 8, "WAVE");
+		this.writeString(view, 12, "fmt ");
+		view.setUint32(16, 16, true);
+		view.setUint16(20, format, true);
+		view.setUint16(22, numChannels, true);
+		view.setUint32(24, sampleRate, true);
+		view.setUint32(28, sampleRate * numChannels * (bitDepth / 8), true);
+		view.setUint16(32, numChannels * (bitDepth / 8), true);
+		view.setUint16(34, bitDepth, true);
+
+		this.writeString(view, 36, "data");
+		view.setUint32(40, result.length * 2, true);
+
+		// PCM samples
+		let offset = 44;
+		for (let i = 0; i < result.length; i++, offset += 2) {
+			const s = Math.max(-1, Math.min(1, result[i]));
+			view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+		}
+		return new Blob([view], { type: "audio/wav" });
+	}
+
+	interleave(left, right) {
+		const length = left.length + right.length;
+		const result = new Float32Array(length);
+
+		let inputIndex = 0;
+		for (let i = 0; i < length;) {
+			result[i++] = left[inputIndex];
+			result[i++] = right[inputIndex];
+			inputIndex++;
+		}
+		return result;
+	}
+
+	writeString(view, offset, string) {
+		for (let i = 0; i < string.length; i++) {
+			view.setUint8(offset + i, string.charCodeAt(i));
+		}
 	}
 }
 bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
