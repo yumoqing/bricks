@@ -162,10 +162,7 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 		this.imgw = new bricks.Image({width: '100%'});
 		this.preview.add_widget(this.imgw);
 		this.toggle_record.disabled(false);
-	}
-	tick_task(){
-		super.tick_task();
-		this.show_picture();
+		this.pic_task = schedule_once(this.show_picture.bind(this), this.task_period);
 	}
 	async show_picture(){
 		if (this.task_period == 0){
@@ -174,8 +171,15 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 		const blob = await this.imageCapture.takePhoto();
 		this.dataurl = URL.createObjectURL(blob);
 		this.imgw.set_url(this.dataurl);
-		this.task = schedule_once(this.show_picture.bind(this), 
+		this.pic_task = schedule_once(this.show_picture.bind(this), 
 									this.task_period);
+	}
+	close_recorder(){
+		super.close_recorder();
+		if (this.pic_task){
+			this.pic_task.cancel();
+			this.pic_task = null;
+		}
 	}
 }
 bricks.SysCamera= class extends bricks.SysVideoRecorder {
