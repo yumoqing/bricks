@@ -584,6 +584,7 @@ bricks.UiVideo =class extends bricks.UiFile {
 	accept_video(camera, event){
 		camera.dismiss();
 		this.value = event.params
+		console.log('record finished, value=', this.value);
 		this.dispatch('changed', this.value);
 	}
 	show_video(event){
@@ -607,7 +608,6 @@ bricks.UiVideo =class extends bricks.UiFile {
 				audoplay: true,
 				width:'100%'
 			});
-			this.value = file;
 			this.preview.add_widget(vw);
 			return;
 		}
@@ -618,7 +618,7 @@ bricks.UiVideo =class extends bricks.UiFile {
 				autoplay: true,
 				width:'100%'
 			});
-			this.value = e.target.result;
+			console.log('show video', e.target.result);
 			this.preview.add_widget(imgw);
 		};
 		reader.readAsDataURL(file);
