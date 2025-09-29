@@ -734,7 +734,7 @@ bricks.UiImage =class extends bricks.UiFile {
 		this.value = event.params.file;
 		this.set_input_file([this.value]);
 		var data = {};
-		data['name'] = this.value;
+		data[this.name] = this.value;
 		this.dispatch('changed', data);
 	}
 	show_image(event){
