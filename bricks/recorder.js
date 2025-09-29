@@ -248,7 +248,7 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 		if (this.task_period == 0){
 			return;
 		}
-		blob = await this.imageCapture.takePhoto();
+		var blob = await this.imageCapture.takePhoto();
 		this.dataurl = URL.createObjectURL(blob);
 		this.imgfile = new File([blob],
                         'image.jpg',
