@@ -275,9 +275,6 @@ bricks.SysCamera= class extends bricks.SysVideoRecorder {
 		}
 		this.task_period = 0;
 		this.task = null;
-		const file = new File([blob],
-                        filename,
-                        { type: this.mimetype });
 		this.dispatch('shot', {url: this.dataurl, file:this.imgfile});
 		this.close_recorder();
 	}
