@@ -19,7 +19,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		this.timepass = new bricks.Text({text:'', cheight: 10});
 		var filler = new bricks.Filler({});
 		var cancel = new bricks.Svg({
-						url: '/imgs/delete.svg', 
+						url: bricks_resource('imgs/delete.svg'), 
 						rate:2,
 						tip: 'cancel recording'});
 		cancel.bind('click', this.cancel_record.bind(this))
@@ -94,6 +94,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 			this.stream.getTracks().forEach(track => track.stop());
 			this.stream = null;
 		}
+		this.dismiss();
 	}
 }
 
@@ -157,6 +158,7 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 }
 bricks.SysCamera= class extends bricks.SysVideoRecorder {
 	switch_record(){
+		console.log('shot it ............');
 		event.stopPropagation();
 		if (this.task){
 			task.cancel();
@@ -165,6 +167,7 @@ bricks.SysCamera= class extends bricks.SysVideoRecorder {
 		this.task_period = 0;
 		this.task = null;
 		this.dispatch('shot', this.dataurl);
+		this.dismiss();
 	}
 }
 bricks.Factory.register('SysCamera', bricks.SysCamera);
