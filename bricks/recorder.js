@@ -38,7 +38,6 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		console.log('toggle_record called');
 	}
 	cancel_record(){
-		this.toggle_record.disabled = true;
 		this.close_recorder();
 	}
 	async open_recorder(){
@@ -109,6 +108,7 @@ bricks.WidgetRecorder = class extends bricks.MediaRecorder {
 			throw 'Error, not a media element';
 		}
 		this.stream = source.captureStream();
+		this.toggle_record.disabled(false);
 	}
 }
 bricks.SysAudioRecorder = class extends bricks.MediaRecorder {
@@ -137,6 +137,7 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 		this.imgw = new bricks.Image({width: '100%'});
 		this.preview.add_widget(this.imgw);
 		this.task = schedule_once(this.show_picture.bind(this), this.task_period);
+		this.toggle_record.disabled(false);
 	}
 	async show_picture(){
 		if (this.task_period == 0){
