@@ -3,7 +3,7 @@ var bricks = window.bricks || {};
 bricks.MediaRecorder = class extends bricks.Popup {
 	constructor(opts){
 		super(opts);
-		opts.fps = opts.fps || 60;
+		opts.fps = opts.fps || 30;
 		this.task_period = 1 / this.fps;
 		this.task = null;
 		this.stream = null;
@@ -58,13 +58,15 @@ bricks.MediaRecorder = class extends bricks.Popup {
 								{mimeType: this.mimetype});
 		this.recordedChunks = [];
 		this.mediaRecorder.ondataavailable = (event) => {
+			console.log('ondataavailabe() called', event.data.size);
 			if (event.data.size > 0) {
-				this.recordedChunks.push(event.data);
 				this.time_diff = bricks.timeDiff(this.start_time);
+				this.recordedChunks.push(event.data);
 				this.timepass.set_text(this.time_diff);
 			}
 		};
 		this.mediaRecorder.onstop = async () => {
+			console.log('onstop() called', this.normal_stop);
 			if (!this.normal_stop) return;
 			const blob = new Blob(this.recordedChunks, 
 							{ type: this.mimetype }); 
@@ -75,6 +77,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 						"recorded_video.webm", 
 						{ type: this.mimetype });
 			this.dispatch('record_end', file);
+			console.log('"record_end" fired', file);
 		};
 
 		this.start_time = Date.now();
