@@ -132,13 +132,19 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 		this.preview.add_widget(this.imgw);
 		this.task = schedule_once(this.show_picture.bind(this), this.task_period);
 	}
+	get_camera_size(){
+		const track = stream.getVideoTracks()[0];
+		const settings = track.getSettings();
+		return [settings.width, settings.height]
+	}
 	show_picture(){
 		if (this.task_period == 0){
 			return;
 		}
 		var canvas = document.createElement('canvas');
-        canvas.height = this.video.videoHeight;
-        canvas.width = this.video.videoWidth;
+		var size = this.get_camera_size();
+        canvas.height = size[1];
+        canvas.width = size[0];
 		const context = canvas.getContext('2d');
         context.drawImage(this.video, 0, 0);
 		this.dataurl = canvas.toDataURL('image/jpeg', 0.95);
