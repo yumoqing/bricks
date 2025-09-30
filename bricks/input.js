@@ -686,17 +686,14 @@ bricks.UiVideo =class extends bricks.UiFile {
 			this.preview.add_widget(vw);
 			return;
 		}
-		const reader = new FileReader();
-		reader.onload = (e) => {
-			var imgw = new bricks.VideoPlayer({
-				url:e.target.result,
-				autoplay: true,
-				width:'100%'
-			});
-			console.log('show video', e.target.result);
-			this.preview.add_widget(imgw);
-		};
-		reader.readAsDataURL(file);
+		var url = URL.createObjectURL(file);
+		var imgw = new bricks.VideoPlayer({
+			url:url,
+			autoplay: true,
+			width:'100%'
+		});
+		console.log('show video', e.target.result);
+		this.preview.add_widget(imgw);
 	}
 }
 bricks.UiImage =class extends bricks.UiFile {
