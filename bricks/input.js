@@ -485,17 +485,17 @@ bricks.UiFile = class extends bricks.VBox {
 		this.dom_element.appendChild(this.input);
 	}
 	handleFileSelect(event){
+		var files = [];
+		event.target.files.forEach(f => {
+			if (! this.accept || f.type.startsWith(this.accept)){
+				files.push(f);
+			}
+		});
+		if (files.length == 0) return; 
 		if (this.opts.multiple){
-			files = [];
-			event.target.files.forEach(f => {
-				if (! this.accept || f.type.startsWith(this.accept)){
-					files.push(f);
-				}
-			});
 			this.value = files;
 		} else {
-			const file = event.target.files[0];
-			this.value = file;
+			this.value = files[0];
 		}
 		console.log('"changed" fired', this.value);
 		this.dispatch('changed', this.getValue());

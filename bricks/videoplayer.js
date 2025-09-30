@@ -126,7 +126,9 @@ bricks.VideoPlayer = class extends bricks.VBox {
 
 	bindEvents() {
 		// 播放/暂停
-		this.playPauseBtn.addEventListener('click', () => {
+		this.playPauseBtn.addEventListener('click', (e) => {
+			e.stopPropagation();
+			e.preventDefault();
 			if (this.video.paused) {
 				this.video.play();
 			} else {
@@ -135,7 +137,9 @@ bricks.VideoPlayer = class extends bricks.VBox {
 		});
 
 		// 静音切换
-		this.muteBtn.addEventListener('click', () => {
+		this.muteBtn.addEventListener('click', (e) => {
+			e.stopPropagation();
+			e.preventDefault();
 			this.video.muted = !this.video.muted;
 			this.updateMuteUI();
 		});
