@@ -923,10 +923,12 @@ bricks.UiText =class extends bricks.UiType {
 	constructor(opts){
 		opts.dynsize = opts.dynsize || true;
 		opts.cfontsize = opts.cfontsize || 1;
+		opts.height = '200px';
 		super(opts);
 		this.uitype='text';
 		this.build();
 		this.charsize_sizing();
+		this.set_style('overflow', 'auto');
 		this.bind('keydown', this.key_handle.bind(this))
 	}
 	create(){
