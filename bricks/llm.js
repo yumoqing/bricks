@@ -203,7 +203,6 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			console.log('data_inouted=', data, 'upload_data=', d);
 			var hj = new bricks.HttpJson()
 			var resp = await hj.post(this.opts.url, {params:d});
-			resp.content = bricks.escapeSpecialChars(resp.content)
 			mout.update_data(resp);
 		}
 	}
