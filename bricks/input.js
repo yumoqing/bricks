@@ -49,85 +49,6 @@ bricks.UiType =class extends bricks.Layout {
 	}
 }
 
-bricks.UiAudioRecorder = class extends bricks.AudioRecorder {
-	constructor(opts){
-		super(opts);
-		this.uitype = 'audiorecorder';
-		this.name = this.opts.name;
-		this.required = opts.required || false;
-		this.value = opts.value || opts.defaultvalue||'';
-		this.bind('record_ended', this.getValue.bind(this));
-	}
-
-	getValue(){
-		var o = {}
-		this.value = this.recordData.data;
-		o[this.name] = this.value;
-		return o;
-	}
-	set_formdata(formdata){
-		formdata.append(this.name, this.value, 'record.wav');
-	}
-	resultValue(){
-		return this.value;
-	}
-	focus(){
-		this.dom_element.focus();
-	}
-	reset(){
-	}
-	setValue(v){
-		return;
-	}
-	set_disabled(f){
-		this.dom_element.disabled = f;
-	}
-	set_readonly(f){
-		this.dom_element.readOnly = f;
-	}
-	set_required(f){
-		this.dom_element.required = f;
-		this.required = f;
-	}
-}
-bricks.UiAudioText = class extends bricks.UiType {
-    /*
-    {
-        "upload_url"
-    }
-    */
-    constructor(opts){
-        super(opts);
-		this.uitype = 'audiotext';
-        this.recorder = new bricks.AudioRecorder({
-            icon_rate:2,
-            upload_url:opts.upload_url
-        });
-		this.recorder.bind('record_started', this.clear_text.bind(this));
-        this.add_widget(this.recorder);
-		var opts1 = bricks.extend({}, opts);
-		opts1.width = "97%";
-        this.text_w = new bricks.UiText(opts1);
-        this.add_widget(this.text_w);
-        this.recorder.bind('uploaded', this.set_result_text.bind(this));
-    }
-	clear_text(){
-		this.text_w.setValue('');
-	}
-	resultValue(){
-		this.value = this.text_w.resultValue();
-		return this.value;
-	}
-	setValue(v){
-		this.value = v;
-		this.text_w.setValue(v);
-	}
-    set_result_text(event){
-        var txt = event.params.text;
-        this.text_w.setValue(txt);
-    }
-}
-
 bricks.UiHide = class extends bricks.UiType {
 	constructor(opts){
 		super(opts);
@@ -1249,7 +1170,7 @@ bricks._Input = class {
 }
 
 var Input = new bricks._Input();
-Input.register('UiAudioRecorder', 'audiorecorder', bricks.UiAudioRecorder);
+Input.register('UiAudio', 'audiorecorder', bricks.UiAudio);
 Input.register('UiStr', 'str', bricks.UiStr);
 Input.register('UiHide', 'hide', bricks.UiHide);
 Input.register('UiTel', 'tel', bricks.UiTel);
@@ -1266,5 +1187,5 @@ Input.register('UiText', 'text', bricks.UiText);
 Input.register('UiPassword', 'password', bricks.UiPassword);
 Input.register('UiAudio', 'audio', bricks.UiAudio);
 Input.register('UiVideo', 'video', bricks.UiVideo);
-Input.register('UiAudioText', 'audiotext', bricks.UiAudioText);
+Input.register('UiAudio', 'audiotext', bricks.UiAudio);
 Input.register('UiSearch', 'search', bricks.UiSearch);
