@@ -692,7 +692,7 @@ bricks.UiVideo =class extends bricks.UiFile {
 			autoplay: true,
 			width:'100%'
 		});
-		console.log('show video', e.target.result);
+		console.log('show video', url);
 		this.preview.add_widget(imgw);
 	}
 }
