@@ -49,7 +49,7 @@ bricks.Svg = class extends bricks.VBox {
 	set_colored_svg(color){
 		this.cur_color = color;
 		this.svg_text = bricks.obj_fmtstr({color: color}, this.svgText);
-		this.dom_element.innerHTML = svg_text;
+		this.dom_element.innerHTML = this.svg_text;
 	}
 	_blink(){
 		if (this.blinktime) {
