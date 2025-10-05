@@ -4,9 +4,7 @@ bricks.Svg = class extends bricks.VBox {
 	options:{
 		rate:
 		url:
-		blink:false
 		color:*
-		blinkcolor:*
 		blinktime:*
 	}
 	*/
@@ -19,9 +17,6 @@ bricks.Svg = class extends bricks.VBox {
 		super(opts);
 		if (! this.color) {
 			this.color = bricks.app.get_color();
-		}
-		if (!this.blinkcolor){
-			this.blinkcolor = bricks.app.get_bgcolor()
 		}
 		if (opts.url){
 			this.set_url(opts.url);
@@ -39,7 +34,7 @@ bricks.Svg = class extends bricks.VBox {
 				if (svgText.startsWith("<svg ")){
 					this.svgText = svgText;
 					this.set_colored_svg(this.color);
-					if (this.blink) this.start_blink();
+					if (this.blinktime) this.start_blink();
 				}
 			});
 	}
@@ -51,22 +46,17 @@ bricks.Svg = class extends bricks.VBox {
 		this.color = color;
 		this.set_colored_svg(color);
 	}
-	set_blinkcolor(color){
-		this.blinkcolor = color;
-		this.blinktime = this.blinktime || 0.5;
-	}
 	set_colored_svg(color){
 		this.cur_color = color;
-		var svgText = bricks.obj_fmtstr({color: color}, this.svgText);
-		this.dom_element.innerHTML = svgText;
+		var this.svg_text = bricks.obj_fmtstr({color: color}, this.svgText);
+		this.dom_element.innerHTML = svg_text;
 	}
 	_blink(){
-		if (this.blinktime && this.blinkcolor) {
-			if (this.cur_color == this.color){
-				this.set_colored_svg(this.blinkcolor);
-			} else {
-				this.set_colored_svg(this.color);
-			}
+		if (this.blinktime) {
+			if (this.dom_element.innerHTML == '')
+				this.dom_element.innerHTML = this.svg_text;
+			else
+				this.dom_element.innerHTML = ''
 			this.blink_task = schedule_once(this._blink.bind(this), 
 				this.blinktime);
 		}
@@ -77,6 +67,8 @@ bricks.Svg = class extends bricks.VBox {
 		}
 	}
 	end_blink(){
+		if (this.blink_task)
+			this.blink_task.cancel();
 		this.blink_task = null;
 	}
 }

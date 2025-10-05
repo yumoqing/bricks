@@ -17,9 +17,6 @@ bricks.VideoPlayer = class extends bricks.VBox {
 		this.set_css('video-container');
 		this.dom_element.innerHTML = `<video id="video" class="video-element"></video>
     <div class="controls">
-      <div class="progress-container">
-        <input type="range" class="progress-bar" value="0" step="0.0001" />
-      </div>
       <div class="controls-bottom">
         <button class="play-pause">▶</button>
         <div class="volume-container">
@@ -51,7 +48,6 @@ bricks.VideoPlayer = class extends bricks.VBox {
 		this.playPauseBtn = this.controls.querySelector('.play-pause');
 		this.muteBtn = this.controls.querySelector('.mute');
 		this.volumeInput = this.controls.querySelector('.volume');
-		this.progressBar = this.controls.querySelector('.progress-bar');
 		this.timeDisplay = this.controls.querySelector('.time');
 		this.speedSelect = this.controls.querySelector('.playback-speed');
 		this.audioTrackSelect = this.controls.querySelector('.audio-track-select');
@@ -151,12 +147,6 @@ bricks.VideoPlayer = class extends bricks.VBox {
 			this.updateMuteUI();
 		});
 
-		// 进度条拖动
-		this.progressBar.addEventListener('input', (e) => {
-			const time = e.target.value * this.video.duration;
-			this.video.currentTime = time;
-		});
-
 		// 播放速度
 		this.speedSelect.addEventListener('change', (e) => {
 			this.video.playbackRate = parseFloat(e.target.value);
@@ -212,9 +202,6 @@ bricks.VideoPlayer = class extends bricks.VBox {
 		this.video.addEventListener('loadedmetadata', () => {
 			this.updateAudioTracks();
 		});
-		this.video.addEventListener('seeking', () => {
-			this.progressBar.value = this.video.currentTime / this.video.duration;
-		});
 	}
 
 	updateUI() {
@@ -234,7 +221,6 @@ bricks.VideoPlayer = class extends bricks.VBox {
 
 	updateProgress() {
 		const percent = this.video.duration ? this.video.currentTime / this.video.duration : 0;
-		this.progressBar.value = percent;
 		this.timeDisplay.textContent = `${this.formatTime(this.video.currentTime)} / ${this.formatTime(this.video.duration || 0)}`;
 	}
 
