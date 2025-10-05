@@ -12,7 +12,7 @@ bricks.Svg = class extends bricks.VBox {
 		opts.rate = opts.rate || 1;
 		opts.cwidth = opts.rate;
 		opts.cheight = opts.rate;
-		opts.blinktime = opts.blinktime || 0.5;
+		opts.blinktime = opts.blinktime? opts.blinktime : 0;
 		opts.dynsize = true;
 		super(opts);
 		if (! this.color) {
