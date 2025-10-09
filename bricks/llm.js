@@ -446,6 +446,16 @@ bricks.LlmIO = class extends bricks.VBox {
 	}
 	async setup_kdb(event){
 		var data = this.kdb_setting
+		if (this.kdb_setting.prompt_tmpl){
+			this.kdb_setting.prompt_tmpl = `将下面的提示词按照后面贴出的参考知识改写:
+
+{{prompt}}
+
+{% for i, r in enumerate(records) %}
+参考{{i}}:{{r.content}}
+
+{% endfor %}`;
+		}
 		event.preventDefault();
 		event.stopPropagation();
 		var rect = this.showRectage();

@@ -36,9 +36,9 @@ bricks.UserInputView = class extends bricks.VBox {
 				} else {
 					mdtext += `
 * ${f.label || f.name}
-\`\`\`
+
 ${data[f.name]}
-\`\`\`
+
 `;
 				}
 			}
