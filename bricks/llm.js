@@ -175,9 +175,19 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		if (data instanceof FormData){
 			if( ! this.llmio.model_inputed ) d.append('model', this.opts.model)
 			d.append('llmid', this.opts.llmid)
+			if (this.llmio.enabled_kdb){
+				Object.keys(this.llmio.kdb_setting).forEach(k =>{
+					d.append(k, this.llmio.kdb_setting[k]);
+				});
+			}
 		} else {
 			if (! this.llmio.model_inputed) d.model = this.opts.model;
 			d.llmid = this.opts.llmid;
+			if (this.llmio.enabled_kdb){
+				Object.keys(this.llmio.kdb_setting).forEach(k =>{
+					d[k] = this.llmio.kdb_setting[k];
+				});
+			}
 		}
 		return d;
 	}
@@ -279,6 +289,17 @@ bricks.LlmIO = class extends bricks.VBox {
 				tip:'add new model',
 				css:'clickable'
 		});
+		if (this.enable_kdb){
+			this.kdb_w = new bricks.Svg({
+                rate:2,
+                url:bricks_resource('imgs/input.svg'),
+                margin:'14px',
+                tip:'input data',
+                css:'clickable'
+			});
+			bottom_box.add_widget(this.kdb_w);
+			this.kdb_w.bind('click', this.setup_kdb.bind(this));
+		}
 		this.input_fields.forEach(f => {
 			if (f.name == 'model') this.model_inputed = True;
 		});
@@ -423,13 +444,66 @@ bricks.LlmIO = class extends bricks.VBox {
 		this.models.push(llm);
 		this.show_added_model(llm);
 	}
+	async setup_kdb(event){
+		data = this.kdb_setting
+		event.preventDefault();
+		event.stopPropagation();
+		var rect = this.showRectage();
+		var opts = {
+			title:"choose kdb",
+			icon:bricks_resource('imgs/kdb.svg'),
+			auto_destroy:true,
+			auto_open:true,
+			auto_dismiss:false,
+			movable:true,
+			top:rect.top + 'px',
+			left:rect.left + 'px',
+			width: rect.right - rect.left + 'px',
+			height: rect.bottom - rect.top + 'px'
+		}
+		var w = new bricks.PopupWindow(opts);
+		var fopts = {
+			fields:[
+				{
+					"name": "kdbids",
+					"value":data.kdbids,
+					"uitype":"checkbox",
+					"multicheck": true,
+					"label":"知识库",
+					"dataurl":this.get_kdb_url
+				},
+				{
+					"name":"recall_cnt",
+					"uitype":"int",
+					"value": data.recall_cnt,
+					"label":"召回数量"
+				},
+				{
+					"name":"prompt_format",
+					"value":data.prompt_format,
+					"uitype":"text",
+					"label":"模版"
+				}
+			]
+		}
+		var fw = new bricks.Form(fopts);
+		fw.bind('submit', this.handle_kdb_setup.bind(this));
+		fw.bind('submit', w.destroy.bind(w));
+		w.add_widget(fw);
+		w.open();
+	}
+	async handle_kdb_setup(event){
+		event.preventDefault();
+		event.stopPropagation();
+		this.kdb_setting = event.params;
+	}
 	async open_input_widget(event){
 		event.preventDefault();
 		event.stopPropagation();
 		var rect = this.showRectage();
 		var opts = {
 			title:"input data",
-			icon:bricks_resource('imgs/input.png'),
+			icon:bricks_resource('imgs/input.svg'),
 			auto_destroy:true,
 			auto_open:true,
 			auto_dismiss:false,
