@@ -289,12 +289,12 @@ bricks.LlmIO = class extends bricks.VBox {
 				tip:'add new model',
 				css:'clickable'
 		});
-		if (this.enable_kdb){
+		if (this.enabled_kdb){
 			this.kdb_w = new bricks.Svg({
                 rate:2,
-                url:bricks_resource('imgs/input.svg'),
+                url:bricks_resource('imgs/kdb.svg'),
                 margin:'14px',
-                tip:'input data',
+                tip:'setup kdb config',
                 css:'clickable'
 			});
 			bottom_box.add_widget(this.kdb_w);
@@ -469,7 +469,10 @@ bricks.LlmIO = class extends bricks.VBox {
 					"value":data.kdbids,
 					"uitype":"checkbox",
 					"multicheck": true,
+					required": true,
 					"label":"知识库",
+					"valueField":"id",
+					"textField":"name",
 					"dataurl":this.get_kdb_url
 				},
 				{
@@ -479,9 +482,10 @@ bricks.LlmIO = class extends bricks.VBox {
 					"label":"召回数量"
 				},
 				{
-					"name":"prompt_format",
-					"value":data.prompt_format,
+					"name":"prompt_tmpl",
+					"value":data.prompt_tmpl,
 					"uitype":"text",
+					"required": true,
 					"label":"模版"
 				}
 			]
