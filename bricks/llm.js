@@ -445,7 +445,7 @@ bricks.LlmIO = class extends bricks.VBox {
 		this.show_added_model(llm);
 	}
 	async setup_kdb(event){
-		data = this.kdb_setting
+		var data = this.kdb_setting
 		event.preventDefault();
 		event.stopPropagation();
 		var rect = this.showRectage();
@@ -500,6 +500,7 @@ bricks.LlmIO = class extends bricks.VBox {
 		event.preventDefault();
 		event.stopPropagation();
 		this.kdb_setting = event.params;
+		console.log('kdb_setting=', this.kdb_setting);
 	}
 	async open_input_widget(event){
 		event.preventDefault();
