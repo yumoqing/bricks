@@ -469,7 +469,7 @@ bricks.LlmIO = class extends bricks.VBox {
 					"value":data.kdbids,
 					"uitype":"checkbox",
 					"multicheck": true,
-					required": true,
+					"required": true,
 					"label":"知识库",
 					"valueField":"id",
 					"textField":"name",
