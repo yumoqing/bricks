@@ -451,8 +451,8 @@ bricks.LlmIO = class extends bricks.VBox {
 
 {{prompt}}
 
-{% for i, r in enumerate(records) %}
-参考{{i}}:{{r.content}}
+{% for i, r in records %}
+参考{{loop.index}}:{{r.content}}
 
 {% endfor %}`;
 		}
