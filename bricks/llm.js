@@ -446,7 +446,7 @@ bricks.LlmIO = class extends bricks.VBox {
 	}
 	async setup_kdb(event){
 		var data = this.kdb_setting
-		if (this.kdb_setting.prompt_tmpl){
+		if (! this.kdb_setting.prompt_tmpl){
 			this.kdb_setting.prompt_tmpl = `将下面的提示词按照后面贴出的参考知识改写:
 
 {{prompt}}
@@ -509,7 +509,7 @@ bricks.LlmIO = class extends bricks.VBox {
 	async handle_kdb_setup(event){
 		event.preventDefault();
 		event.stopPropagation();
-		this.kdb_setting = event.params;
+		this.kdb_setting = formdata2object(event.params);
 		console.log('kdb_setting=', this.kdb_setting);
 	}
 	async open_input_widget(event){
