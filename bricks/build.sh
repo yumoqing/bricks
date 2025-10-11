@@ -8,7 +8,7 @@ SOURCES=" page_data_loader.js factory.js uitypesdef.js utils.js uitype.js \
 	paging.js datagrid.js iframe.js cols.js echartsext.js \
 	floaticonbar.js miniform.js wterm.js dynamicaccordion.js \
 	binstreaming.js streaming_audio.js vadtext.js rtc.js docxviewer.js \
-	llm_dialog.js llm.js websocket.js datarow.js tabular.js continueaudio.js \
+	llm.js websocket.js datarow.js tabular.js continueaudio.js \
 	line.js pie.js bar.js gobang.js period.js iconbarpage.js \
 	keypress.js asr.js webspeech.js countdown.js progressbar.js \
 	qaframe.js svg.js videoplayer.js "
