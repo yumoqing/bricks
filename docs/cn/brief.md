@@ -60,4 +60,3 @@ bricks采用控件这一概念来描述web GUI的显示部件，每个控件均�
 ui文件可以直接调试，如在服务器根目录下的test目录下有一个hello.ui文件，
 就可以在浏览器中用url：https://sername/test/hello.ui调试
 
-
