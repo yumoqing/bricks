@@ -84,10 +84,10 @@ bricks.ModelOutput = class extends bricks.VBox {
 			otext:'结果满意吗？',
 			i18n:true,
 		});
-		var likew = new bricks.Svg({rate:2, url:bricks_resource('imgs/like.svg')});
-		var unlikew = new bricks.Svg({rate:2, url:bricks_resource('imgs/dislike.svg')});
-		likew.bind('click', this.estimate_llm.bind(this, 1));
-		unlikew.bind('click', this.estimate_llm.bind(this, -1))
+		var likew = new bricks.Svg({rate:1.5, url:bricks_resource('imgs/like.svg')});
+		var unlikew = new bricks.Svg({rate:1.5, url:bricks_resource('imgs/dislike.svg')});
+		likew.bind('click', this.estimate_llm.bind(this, likew, 1));
+		unlikew.bind('click', this.estimate_llm.bind(this, unlikew, -1))
 		this.estimate_w.add_widget(txtw);
 		this.estimate_w.add_widget(likew);
 		this.estimate_w.add_widget(new bricks.BlankIcon({rate:1, flexShrink:0}));
@@ -97,7 +97,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 		this.add_widget(this.estimate_w);
 		this.estimate_w.hide();
 	}
-	async estimate_llm(val, event){
+	async estimate_llm(icon, val, event){
 		var desc = {
 			"widgettype":"urlwidget",
 			"options":{
@@ -108,7 +108,6 @@ bricks.ModelOutput = class extends bricks.VBox {
 				"url":this.estimate_url
 			}
 		};
-		var icon = event.target.bricks_widget;
 		icon.rate = 2;
 		icon.charsize_sizing();
 		var w = await bricks.widgetBuild(desc, this);
