@@ -84,8 +84,8 @@ bricks.ModelOutput = class extends bricks.VBox {
 			otext:'结果满意吗？',
 			i18n:true,
 		});
-		var likew = new bricks.Svg({rate:1.5, url:bricks_resource('imgs/like.svg')});
-		var unlikew = new bricks.Svg({rate:1.5, url:bricks_resource('imgs/dislike.svg')});
+		var likew = new bricks.Svg({rate:1.5, url:bricks_resource('imgs/praise.svg')});
+		var unlikew = new bricks.Svg({rate:1.5, url:bricks_resource('imgs/criticize.svg')});
 		likew.bind('click', this.estimate_llm.bind(this, likew, 1));
 		unlikew.bind('click', this.estimate_llm.bind(this, unlikew, -1))
 		this.estimate_w.add_widget(txtw);
