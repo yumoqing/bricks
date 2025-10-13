@@ -134,6 +134,8 @@ bricks.LlmOut = class extends bricks.VBox {
 			var txt = bricks.escapeSpecialChars(this.error);
 			this.c_w = new bricks.Text({
 				text: this.error,
+				wrap: true,
+				halign: 'left',
 				css: 'resp-error',
 				width: '100%'
 			});
