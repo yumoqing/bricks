@@ -132,8 +132,8 @@ bricks.LlmOut = class extends bricks.VBox {
 		this.clear_widgets();
 		if (this.error.length) {
 			var txt = bricks.escapeSpecialChars(this.error);
-			this.c_w = new bricks.MdWidget({
-				mdtext: this.error,
+			this.c_w = new bricks.Text({
+				text: this.error,
 				css: 'resp-error',
 				width: '100%'
 			});
