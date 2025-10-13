@@ -215,6 +215,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			var resp = await hj.post(this.opts.url, {params:d});
 			mout.update_data(resp);
 		}
+		this.estimate_w.show();
 	}
 	is_accept_source(source){
 		if (this.opts.input_from == source){
