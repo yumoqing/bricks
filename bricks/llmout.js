@@ -133,13 +133,11 @@ bricks.LlmOut = class extends bricks.VBox {
 		if (this.error.length) {
 			var txt = bricks.escapeSpecialChars(this.error);
 			this.c_w = new bricks.MdWidget({
-				mdtext: this.content,
+				mdtext: this.error,
 				css: 'resp-error',
 				width: '100%'
 			});
 			this.add_widget(this.c_w);
-			this.content = '';
-			this.reasoning_content = '';
 		}
 		if (this.reasoning_content.length) {
 			var txt = bricks.escapeSpecialChars(this.reasoning_content);
