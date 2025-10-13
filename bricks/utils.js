@@ -13,6 +13,19 @@ bricks.timeDiff = function(startTime) {
   return `${hours}:${minutes}:${seconds}.${milliseconds}`;
 }
 
+bricks.escapeSpecialChars = function(s){
+  return s
+    .replace(/\\/g, '\\\\')  // escape backslashes
+    .replace(/"/g, '\\"')   // escape double quotes
+    // .replace(/'/g, '\\\'')   // escape single quotes
+    .replace(/\n/g, '\\n')   // escape newlines
+    .replace(/\r/g, '\\r')   // escape carriage returns
+    .replace(/\t/g, '\\t')   // escape tabs
+    .replace(/\f/g, '\\f')   // escape form feeds
+    .replace(/\v/g, '\\v')   // escape vertical tabs
+    .replace(/\0/g, '\\0');  // escape null bytes
+}
+
 /* 
 We use ResizeObserver to implements dom object resize event
 */
