@@ -25,8 +25,10 @@ bricks.IconBar = class extends bricks.HBox {
 		}
 		super(opts);
 		this.set_css('childrensize');
+		this.select_name = null;
 		this.height_int = 0;
 		var tools = this.opts.tools;
+		this.toolws = {};
 		for (var i=0;i<tools.length;i++){
 			var opts_i = bricks.extend({}, tools[i]);
 			if (!opts_i.rate){
@@ -43,6 +45,7 @@ bricks.IconBar = class extends bricks.HBox {
 			}
 			w.set_style('cursor', 'pointer');
 			this.add_widget(w);
+			this.toolws[tools[i].name] = w;
 		}
 		this.set_style('alignItems', 'center');
 		// this.set_style('justifyContent', 'center');
@@ -67,8 +70,14 @@ bricks.IconBar = class extends bricks.HBox {
 		return w;
 	}
 	regen_event(desc, event){
+		if (this.selected_name){
+			this.toolws[this.selected_name].set_css('selected', true);
+		}
+		this.selected_name = desc.name;
 		this.dispatch(desc.name, desc);
 		this.dispatch('command', desc);
+		this.toolws[this.selected_name].set_css('selected');
+
 		event.preventDefault();
 		event.stopPropagation();
 	}
