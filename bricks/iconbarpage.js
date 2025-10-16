@@ -20,7 +20,7 @@ bricks.IconbarPage = class extends bricks.VBox {
 		tip,
 		dynsize
 		rate:
-		context:
+		content:
 	}
 	*/
 	
@@ -47,6 +47,7 @@ bricks.IconbarPage = class extends bricks.VBox {
 	async show_content(tool){
 		var w = await bricks.widgetBuild(tool.content, this);
 		if (w && ! w.parent) {
+			this.content.clear_widgets();
 			this.content.add_widget(w);
 		}
 	}
