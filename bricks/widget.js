@@ -336,18 +336,22 @@ bricks.TextBase = class extends bricks.JsWidget {
 		rate:
 		halign:
 		valign:
-		color:
-		bgtcolor:
 		css
 	}
 	*/
 	constructor(options){
+		options.halign = options.halign || 'center';
+		options.valign = options.valign || 'center';
 		super(options);
 		this.opts = options;
 		this.rate = this.opts.rate || 1;
 		this.specified_fontsize = false;
 		this.set_attrs();
 		this.dom_element.style.fontWeight = 'normal';
+		this.set_style('display', 'flex');
+		this.set_style('justifyContent', options.halign);
+		this.set_style('alignItems', options.valign);
+		this.set_style('flexWrap', options.wrap);
 		if (self.i18n){
 			bricks.app.bind('lang', this.set_i18n_text.bind(this));
 		}
