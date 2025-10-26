@@ -110,18 +110,18 @@ bricks.Menu = class extends bricks.VBox {
 		var w = new bricks.HBox({cheight:this.item_cheight||2});
 		var iw, tw;
 		if (item.icon){
-			iw = new bricks.Icon({url:item.icon, rate:1.3});
+			iw = new bricks.Icon({cwidth: 1.3, cheight:1.3, url:item.icon});
 		} else {
-			iw = new bricks.BlankIcon({rate:1.3});
+			iw = new bricks.BlankIcon({cwidth: 1.3, cheight:1.3});
 		}
 		w.add_widget(iw);
 		tw = new bricks.Text({
+			css: "filler",
 			otext:item.label,
 			i18n:true,
 			wrap:true,
-			haligin:'left'
+			halign:'left'
 		});
-		tw.set_css('filler');
 		w.add_widget(tw);
 		for (var k in item){
 			if (item.hasOwnProperty(k)){
