@@ -349,9 +349,32 @@ bricks.TextBase = class extends bricks.JsWidget {
 		this.set_attrs();
 		this.dom_element.style.fontWeight = 'normal';
 		this.set_style('display', 'flex');
-		this.set_style('justifyContent', options.halign);
-		this.set_style('alignItems', options.valign);
-		this.set_style('flexWrap', options.wrap);
+		switch (options.halign) {
+			case 'left':
+				this.set_style('justifyContent', 'flex-start');
+				break;
+			case 'right':
+				this.set_style('justifyContent', 'flex-end');
+				break;
+			default:
+				this.set_style('justifyContent', 'center');
+				break;
+				
+		}
+		switch (options.valign){
+			case 'top':
+				this.set_style('alignItems', 'flex-start');
+				break;
+			case 'bottom':
+				this.set_style('alignItems', 'flex-end');
+				break;
+			default:
+				this.set_style('alignItems', 'center');
+				break;
+		}
+		if (options.wrap){
+			this.set_style('flexWrap', 'wrap');
+		}
 		if (self.i18n){
 			bricks.app.bind('lang', this.set_i18n_text.bind(this));
 		}
