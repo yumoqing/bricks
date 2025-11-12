@@ -401,7 +401,7 @@ bricks.WindowsPanel = class extends bricks.Popup {
 				"css": "mini-window card"
 			});
 			dc.add_widget(w);
-			w.bind('click', this.reopen_windiw.bind(this, x));
+			w.bind('click', this.reopen_window.bind(this, x));
 			var tw = new bricks.Title6({label:x.title});
 			var iw = new bricks.Svg({url:x.url, rate:1.5});
 			w.add_widget(iw);
@@ -409,7 +409,7 @@ bricks.WindowsPanel = class extends bricks.Popup {
 		});
 	}
 
-	del_window(w){
+	reopen_window(w){
 		var nws = [];
 		var w = bricks.app.mwins[pos];
 		w.open();
