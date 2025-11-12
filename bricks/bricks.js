@@ -599,6 +599,7 @@ bricks.App = class extends bricks.Layout {
 		event.preventDefault();
 		event.stopPropagation()
 		var opts = bricks.get_popup_default_options();
+		opts.auto_open = false;
 		this.wins_panel = new bricks.WindowsPanel(opts);
 		this.wins_panel.open();
 	}
