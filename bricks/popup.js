@@ -392,8 +392,8 @@ bricks.get_popupwindow_default_options = function(){
 	return ret
 }
 bricks.WindowsPanel = class extends bricks.Popup {
-	open(opts){
-		super.open();
+	open(){
+		this.auto_open = false;
 		var dc = new bricks.DynamicColumn({});
 		bricks.app.mwins.forEach(x => {
 			var w = new bricks.VBox({
@@ -407,6 +407,7 @@ bricks.WindowsPanel = class extends bricks.Popup {
 			w.add_widget(tw);
 		});
 		this.add_widget(dc);
+		super.open();
 	}
 
 	reopen_window(w){
