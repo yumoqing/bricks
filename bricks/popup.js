@@ -407,6 +407,7 @@ bricks.WindowsPanel = class extends bricks.Popup {
 			w.add_widget(iw);
 			w.add_widget(tw);
 		});
+		this.add_widget(dc);
 	}
 
 	reopen_window(w){
