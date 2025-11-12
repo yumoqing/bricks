@@ -1,7 +1,7 @@
 var bricks = window.bricks || {};
 
 bricks.get_popup_default_options = function(){
-	return {
+	ret = {
 		timeout:0,
 		archor:'cc',
 		auto_open:true,
@@ -11,6 +11,14 @@ bricks.get_popup_default_options = function(){
 		resizable:false,
 		modal:true
 	}
+	if (bricks.is_mobile()) {
+		ret.width = '100%';
+		ret.height = '100%';
+	} else {
+		ret.width = '70%';
+		ret.height = '70%';
+	}
+	return ret
 }
 bricks.Popup = class extends bricks.VBox {
 	/*
@@ -364,7 +372,7 @@ bricks.Popup = class extends bricks.VBox {
 }
 
 bricks.get_popupwindow_default_options = function(){
-	return {
+	ret = {
 		timeout:0,
 		archor:'cc',
 		auto_open:true,
@@ -374,63 +382,41 @@ bricks.get_popupwindow_default_options = function(){
 		resizable:true,
 		modal:true
 	}
+	if (bricks.is_mobile()) {
+		ret.width = '100%';
+		ret.height = '100%';
+	} else {
+		ret.width = '70%';
+		ret.height = '70%';
+	}
+	return ret
 }
 bricks.WindowsPanel = class extends bricks.Popup {
-	constructor(opts){
-		opts.width = "80%";
-		opts.auto_open = false;
-		opts.auto_dismiss = true;
-		opts.auto_destroy = true;
-		opts.height = "80%";
-		super(opts);
-		this.content = new bricks.Cols({
-			width: "100%",
-			height: "100%",
-			record_view: {
-				widgettype: "VBox",
-				options: {
-					css: "app-icon"
-				},
-				subwidgets: [
-					{
-						widgettype: "Text",
-						options: {
-							otext: "${title}",
-							i18n: true,
-							wrap: true
-						}
-					},
-					{
-						widgettype: "Svg",
-						options: {
-							rate: 2,
-							url: "${url}"
-						}
-					}
-				]
-			}			
-		});
-		this.content.bind('record_click', this.del_window.bind(this));
-		var data = {
-			total: bricks.app.mwins.length,
-			rows:[]
-		};
-		for (var i=0; i< bricks.app.mwins.length; i++){
-			data.rows.push({
-				title: bricks.app.mwins[i].title,
-				url: bricks.app.mwins[i].url,
-				pos: i
+	open(opts){
+		super.open();
+		this.clear_widgets();
+		var dc = new bricks.DynamicColumn({});
+		bricks.app.mwins.forEach(x => {
+			var w = new bricks.VBox({
+				"css": "mini-window card"
 			});
-		}
-		this.content.dataHandle(data);
-		this.add_widget(this.content);
+			dc.add_widget(w);
+			w.bind('click', this.reopen_windiw.bind(this, x));
+			var tw = new bricks.Title6({label:x.title});
+			var iw = new bricks.Svg({url:x.url});
+			w.add_widget(iw);
+			w.add_widget(tw);
+		});
 	}
 
-	del_window(event){
-		var pos = event.params.pos;
+	del_window(w){
+		var nws = [];
 		var w = bricks.app.mwins[pos];
 		w.open();
-		bricks.app.mwins.splice(pos, 1);
+		bricks.app.mwins.forEach(x => {
+			if (x != w) nws.push(x);
+		});
+		bricks.app.mwins = nws;
 		this.dismiss();
 	}
 }
