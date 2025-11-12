@@ -401,7 +401,11 @@ bricks.WindowsPanel = class extends bricks.Popup {
 			});
 			dc.add_widget(w);
 			w.bind('click', this.reopen_window.bind(this, x));
-			var tw = new bricks.Title6({label:x.title});
+			var tw = new bricks.Title6({
+				width:'100%',
+				wrap:true,
+				text:x.title
+			});
 			var iw = new bricks.Svg({url:x.icon, rate:1.5});
 			w.add_widget(iw);
 			w.add_widget(tw);
