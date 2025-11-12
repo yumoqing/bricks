@@ -412,7 +412,6 @@ bricks.WindowsPanel = class extends bricks.Popup {
 
 	reopen_window(w){
 		var nws = [];
-		var w = bricks.app.mwins[pos];
 		w.open();
 		bricks.app.mwins.forEach(x => {
 			if (x != w) nws.push(x);
