@@ -605,3 +605,9 @@ hr {
 	color: #00aaff;
 	background: #f0faff;
 }
+
+.mini-window {
+	width: 50px;
+	height: 50px;
+}
+

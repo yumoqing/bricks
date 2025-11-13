@@ -598,7 +598,10 @@ bricks.App = class extends bricks.Layout {
 		console.log('event=', event);
 		event.preventDefault();
 		event.stopPropagation()
-		this.wins_panel = new bricks.WindowsPanel({})
+		var opts = bricks.get_popup_default_options();
+		opts.auto_open = false;
+		this.wins_panel = new bricks.WindowsPanel(opts);
+		this.wins_panel.open();
 	}
 	get_color(){
 		return getComputedStyle(this.dom_element).color;
