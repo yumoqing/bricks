@@ -30,6 +30,50 @@ bricks采用控件这一概念来描述web GUI的显示部件，每个控件均�
 
 控件的详细介绍请参看[控件说明](widgets.md)
 
+### 控件扩展
+如果现有的控件没法满足系统要求，bricks支持控件扩展，控件扩展需遵守：
+* 控件class继承自某一个控件的class
+
+* 按照需求实现控件逻辑
+
+* 在需要的地方用this.dispatch触发此控件的事件
+
+假设需要扩展一个名字叫ExtContainer的控件
+```
+bricks.ExtContainer = class extends bricks.VBox {
+	constructor(opts){
+		super(opts);
+		/* 新控件的创建代码 */
+	}
+	......
+	/* 对象的其他方法，在需要的时候，在某个方法中，使用this.dispatch('new_event', data)方法引发事件 */
+}
+bricks.register('ExtContainer', bricks.ExtContainer); /* 注册新控件 */
+```
+新控件的使用，example.ui
+```
+{
+	"widgettype":"ExtContainer",
+	"options":{
+		....
+	},
+	"subwidgets":[
+		...
+	],
+	"binds":[
+		{
+			"wid":"self",
+			"event":"new_event",
+			"actiontype":"urlwidget",
+			"target":"some_container",
+			"options":{
+				"url":"{{entire_url('./some_ui.ui')}}"
+			}
+		}
+	]
+}
+```
+
 ### 事件以及事件处理
 每个控件都能触发所映射dom元素的事件，以及控件js类的成员函数以及祖先类的
 成员函数中dispatch出的事件
