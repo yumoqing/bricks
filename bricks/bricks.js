@@ -576,7 +576,8 @@ bricks.App = class extends bricks.Layout {
 		this.textList = [];
 		this.i18n = new bricks.I18n(objget(opts, 'i18n', {}));
 		this.session_id = null;
-		this.tooltip = new bricks.Tooltip({otext:'test',i18n:true, wrap:true});
+		this.tooltip = new bricks.Tooltip({otext:'',i18n:true, wrap:true});
+		this.tooltip.hide();
 		this.add_widget(this.tooltip);
 		this._Width = this.dom_element.offsetWidth;
 		this._Height = this.dom_element.offsetHeight;
