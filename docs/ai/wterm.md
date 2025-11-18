@@ -1,4 +1,3 @@
-```markdown
 # Wterm
 
 控件功能：基于 xterm.js 实现的 Web 终端控件，用于在浏览器中嵌入一个可通过 WebSocket 与后端交互的终端界面。支持终端尺寸自适应、心跳保活、输入输出数据传输等功能。  
@@ -40,4 +39,3 @@
 
 - `websocket_open/close/error`  
   WebSocket 生命周期事件，分别处理连接建立、关闭和错误情况，确保资源正确释放。
-```

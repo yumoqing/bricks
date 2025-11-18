@@ -1,4 +1,3 @@
-```markdown
 # Splitter
 
 控件功能：用于在页面中创建一个分隔线（horizontal rule），常用于视觉上分割不同区域的内容。  
@@ -12,4 +11,3 @@
 ## 主要事件
 
 - **create**：控件创建时触发，内部调用 `_create('hr')` 方法生成 `<hr>` DOM 元素并赋值给 `this.dom_element`，作为该控件的根元素。
-```

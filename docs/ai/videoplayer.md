@@ -1,7 +1,3 @@
-以下是根据你提供的源码中定义的两个控件 `VideoPlayer` 和 `Iptv`，按照要求编写的 **Markdown 格式控件文档**：
-
----
-
 # VideoPlayer
 
 **控件功能**：一个支持多种视频格式（MP4、HLS `.m3u8`、DASH `.mpd`）的视频播放器控件，内置播放控制条，支持播放/暂停、音量调节、倍速播放、音轨切换和全屏功能。  
@@ -82,9 +78,3 @@
     });
     ```
 
---- 
-
-> ✅ **备注**：  
-> - `VideoPlayer` 使用 [hls.js](https://github.com/video-dev/hls.js) 支持 HLS 流，需引入对应库；使用 [dash.js](https://github.com/Dash-Industry-Forum/dash.js) 支持 DASH 流。  
-> - `Iptv` 控件依赖 `HttpJson` 和 `HttpText` 发起网络请求，请确保相关模块已注册可用。  
-> - 所有控件均通过 `bricks.Factory.register` 注册，可在配置系统中以字符串形式创建。

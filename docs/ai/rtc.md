@@ -1,15 +1,3 @@
-根据你提供的源码，其中包含多个控件（类）的定义。我们从中识别出以下三个注册的控件：
-
-1. `bricks.VideoBox` —— 视频播放控件  
-2. `bricks.Signaling` —— 信令管理类（非 UI 控件，但作为功能模块）  
-3. `bricks.RTCP2PConnect` —— WebRTC 点对点连接管理类  
-
-按照你的要求：**每个控件需以 Markdown 格式编写文档，一级标题为控件名称，包含“控件功能、类型、父类”，二级标题为“初始化参数”和“主要事件”**。
-
-> ⚠️ 注意：`Signaling` 和 `RTCP2PConnect` 是普通 JS 类，并非 UI 控件或继承自 `JsWidget`，因此归类为“普通控件”；而 `VideoBox` 继承自 `JsWidget`，属于 UI 控件。
-
----
-
 # VideoBox
 
 **控件功能**：用于在页面中创建并管理 `<video>` 元素，支持设置音视频流（MediaStream），常用于本地或远程视频渲染。  
