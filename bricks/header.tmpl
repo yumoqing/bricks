@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="stylesheet" href="{{entire_url('/bricks/3parties/xterm.css')}}" />
 <link rel="stylesheet" href="{{entire_url('/bricks/css/bricks.css')}}">
-{% for mycss in get_css_files() %}
+{% for mycss in cssfiles() %}
 <link rel="stylesheet" href="{{entire_url(mycss)}}">
 {% endfor %}
 </head>
@@ -34,7 +34,7 @@
   <script src="https://sage.opencomputing.cn/bricks/3parties/hls.js"></script>
   <script src="https://sage.opencomputing.cn/bricks/3parties/dash.all.min.js"></script>
   <script src="{{entire_url('/bricks/bricks.js')}}"></script>
-{% for myjs in get_js_files() %}
+{% for myjs in jsfiles() %}
   <script src="{{entire_url(myjs)}}"></script>
 {% endfor %}
 	<script>
