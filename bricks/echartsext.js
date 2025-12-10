@@ -22,6 +22,10 @@ bricks.EchartsExt = class extends bricks.VBox {
 		if(!this.idField) this.idField = 'id';
 		if(!this.nameField) this.nameField = 'name';
 		if(!this.valueFields) this.valueFields = ['value'];
+		// === 新增：处理 refresh_period ===
+		this.refresh_period = opts.refresh_period; // 单位：秒
+		this._refresh_timer = null;
+
 		this.build_title_widget();
 		this.build_description_widget();
 		this.holder = new bricks.Filler({});
@@ -33,7 +37,49 @@ bricks.EchartsExt = class extends bricks.VBox {
 			schedule_once(this.render_urldata.bind(this), 0.1);
 		}
 		this.bind('element_resize', this.chart.resize.bind(this.chart));
+		// === 启动定时刷新（如果配置了 refresh_period）===
+		if (this.refresh_period && this.data_url) {
+			this.start_auto_refresh();
+		}
 	}
+    // === 启动自动刷新任务 ===
+    start_auto_refresh() {
+		if (this._refresh_timer) return; // 防止重复启动
+
+		const doRefresh = () => {
+			this.render_urldata().then(() => {
+				// 继续下一轮
+				if (this._refresh_timer) { // 检查是否已被取消
+					this._refresh_timer = setTimeout(doRefresh, this.refresh_period * 1000);
+				}
+			}).catch(err => {
+				console.error('Auto-refresh failed:', err);
+				this._refresh_timer = setTimeout(doRefresh, this.refresh_period * 1000); // 失败也重试
+			});
+		};
+
+		// 初始延迟后开始第一轮，之后循环
+		this._refresh_timer = setTimeout(doRefresh, this.refresh_period * 1000);
+	}
+
+	// === 停止自动刷新 ===
+	stop_auto_refresh() {
+		if (this._refresh_timer) {
+			clearTimeout(this._refresh_timer);
+			this._refresh_timer = null;
+		}
+	}
+
+	// === 覆盖 destroy 方法，清理定时器 ===
+	destroy() {
+		this.stop_auto_refresh(); // 清理资源
+		if (this.chart) {
+			this.chart.dispose();
+			this.chart = null;
+		}
+		super.destroy();
+	}
+
 	pivotify(data){
 		var series = [];
 		data.forEach(x => {
@@ -83,7 +129,6 @@ bricks.EchartsExt = class extends bricks.VBox {
 			this.valueFields = this.get_series(data);
 			data = this.pivotify(data);
 		}
-		this.chart = echarts.init(this.holder.dom_element);
 		var opts = this.setup_options(data);
 		opts.grid = {
 			left: '3%',
