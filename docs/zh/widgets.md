@@ -3,7 +3,7 @@ bricks内置许多的显示控件，所有显示控件都继承自JsWidget，容
 
 ## 基础控件 
 * [Form](form.md)：输入表单控件
-自动根据options中的fields输入字段的uitype值构造表单输入项，目前uitype属性支持的数据类型有：
+自动根据options中的fields数组下的每个field的uitype属性值构造表单输入项，目前uitype属性支持的数据类型有：
 ** 'str' 对应的控件为： bricks.UiStr
 ** 'hide' 对应的控件为： bricks.UiHide
 ** 'tel' 对应的控件为： bricks.UiTel
