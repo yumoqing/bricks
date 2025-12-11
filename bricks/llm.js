@@ -208,6 +208,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			var d = this.inputdata2uploaddata(data);
 			var hr = new bricks.HttpResponseStream();
 			var resp = await hr.post(this.opts.url, {params:d});
+			if (! resp) return;
 			await hr.handle_chunk(resp, this.chunk_response.bind(this, mout));
 			this.chunk_ended();
 		} else {
@@ -215,6 +216,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			console.log('data_inouted=', data, 'upload_data=', d);
 			var hj = new bricks.HttpJson()
 			var resp = await hj.post(this.opts.url, {params:d});
+			if (! resp) return;
 			mout.update_data(resp);
 		}
 		mout.estimate_w.show();
