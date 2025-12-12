@@ -7,6 +7,8 @@ bricks.BaseRunning = class extends bricks.FHBox {
 	}
 	*/
 	constructor(opts){
+		if (! opts.cwidth) opts.cwidth = 2;
+		if (! opts.cheight) opts.cheight = 2;
 		super(opts);
 		this.icon_w = new bricks.Icon({
 			rate: opts.rate|| 2,
