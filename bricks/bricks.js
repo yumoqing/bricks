@@ -325,7 +325,9 @@ var _buildWidget = async function(from_widget, target, mode, options, desc){
 		bricks.debug('options=', options, 'widgetBuild() failed');
 		return;
 	}
-
+	if (w instanceof bricks.Popup) {
+		return
+	}
 	if (w.parent) {
 		if (target instanceof bricks.Popup || target instanceof bricks.PopupWindow){
 			target.destroy();
