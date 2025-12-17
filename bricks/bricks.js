@@ -1,4 +1,13 @@
 var bricks = window.bricks || {};
+bricks.get_current_language=function(){
+	var lang = navigator.language.substring(0, 2);
+	if (bricks.app){
+		if (bricks.app.lang) return bricks.app.lang;
+		bricks.app.lang = lang;
+		return lang;
+	}
+	return;
+}
 bricks.app = null;
 /*
 all type of bind action's desc has the following attributes:
@@ -571,7 +580,7 @@ bricks.App = class extends bricks.Layout {
 			this.lang = this.opts.language;
 		}
 		else {
-			this.lang = navigator.language;
+			this.lang = navigator.language.substring(0,2);
 		}
 		this.lang_x = this.observable('lang', this.lang);
 		this.zindex = 10000;
@@ -719,7 +728,7 @@ bricks.App = class extends bricks.Layout {
 		return w;
 	}
 	async run(){
-		await (this.change_language(this));
+		await (this.change_language(this.lang));
 		var w = await this.build();
 		this.root = w;
 		if (!w){

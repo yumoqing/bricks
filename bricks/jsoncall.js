@@ -52,7 +52,6 @@ bricks.HttpText = class {
 			width = bricks.app.screenWidth();
 			height = bricks.app.screenHeight();
 		}
-
 		this.params = {
 			"_webbricks_":1,
 			"_width":width,
@@ -90,6 +89,10 @@ bricks.HttpText = class {
 		if (! params) 
 			params = {};
 		var p = bricks.extend({}, this.params);
+		var lang = bricks.get_current_language()
+		if (lang){
+			p._lang = lang;
+		}
 		p = bricks.extend(p, params);
 		if (session){
 			bricks.extend(p,{session:session});
