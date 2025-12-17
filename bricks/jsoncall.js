@@ -57,6 +57,7 @@ bricks.HttpText = class {
 			"_webbricks_":1,
 			"_width":width,
 			"_height":height,
+			"_lang": bricks.app.lang,
 			"_is_mobile":is_mobile
 		}
 	}
