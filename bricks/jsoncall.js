@@ -55,8 +55,8 @@ bricks.HttpText = class {
 
 		this.params = {
 			"_webbricks_":1,
-			"width":width,
-			"height":height,
+			"_width":width,
+			"_height":height,
 			"_is_mobile":is_mobile
 		}
 	}
