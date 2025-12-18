@@ -335,23 +335,10 @@ var _buildWidget = async function(from_widget, target, mode, options, desc){
 		return;
 	}
 	if (w instanceof bricks.Popup) {
-		return
-	}
-	if (w.parent) {
-		if (target instanceof bricks.Popup || target instanceof bricks.PopupWindow){
-			target.destroy();
-		}
 		return;
 	}
-	if (target instanceof bricks.Popup || target instanceof bricks.PopupWindow) {
-		if (! target.parent){
-			bricks.app.add_widget(target);
-		}
-		if (desc.popup_options){
-			if (desc.popup_options.eventpos){
-				target.bind('opened', bricks.relocate_by_eventpos.bind(null, desc.event, target));
-			}
-		}
+	if (w instanceof bricks.NewWindow) {
+		return;
 	}
 	if (mode == 'replace'){
 		target.clear_widgets();
