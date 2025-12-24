@@ -23,8 +23,9 @@ bricks.FieldGroup = class {
 				parent.add_widget(dc);
 				dc = new bricks.DynamicColumn({mobile_cols:2});
 				dc.set_id(fields[i].name+'_box');
-				if (fields[i].disabled))
+				if (fields[i].nonuse))
 					dc.disabled(true);
+					dc.nonuse = true;
 				}
 			} else {
 				var box;
@@ -47,8 +48,9 @@ bricks.FieldGroup = class {
 						i18n:true});
 				box.add_widget(txt);
 				box.set_id(fields[i].name + '_box')
-				if (fields[i].disabled))
+				if (fields[i].nonuse))
 					box.disabled(true);
+					box.nonuse = true;
 				}
 				var w = Input.factory(fields[i]);
 				if (w){
@@ -250,15 +252,19 @@ bricks.FormBase = class extends bricks.Layout {
 		var w = bricks.getWidgetById(field_name + '_box', this);
 		if (! w) return;
 		w.disabled(flg);
+		w.nonuse = flg
 		if (flg) return;
 		this.exclusionfields.forEach(arr =>{
-			if （arr.include(field_name)){
+			if (arr.include(field_name)){
 				arr.forEach(x => {
 					if (x!=field_name){
 						var w1 = bricks.getWidgetById(x + '_box', this);
-						if (w1) w1.disabled(! flg);
+						if (w1) {
+							w1.disabled(! flg);
+							w1.nouse = ! flg;
+						}
 					}
-				})
+				});
 			}
 		});
 	}
@@ -276,6 +282,7 @@ bricks.FormBase = class extends bricks.Layout {
 				continue;
 			}
 			var w = this.name_inputs[name];
+			if (w.parent.nonuse) continue;
 			var d = w.getValue();
 			if (w.required && ( d[name] == '' || d[name] === null)){
 				new bricks.Error({title:'Requirement', message:'required field must input"' + w.label + '"'})
