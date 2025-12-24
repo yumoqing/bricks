@@ -23,7 +23,7 @@ bricks.FieldGroup = class {
 				parent.add_widget(dc);
 				dc = new bricks.DynamicColumn({mobile_cols:2});
 				dc.set_id(fields[i].name+'_box');
-				if (fields[i].nonuse))
+				if (fields[i].nonuse){
 					dc.disabled(true);
 					dc.hide();
 				}
@@ -48,7 +48,7 @@ bricks.FieldGroup = class {
 						i18n:true});
 				box.add_widget(txt);
 				box.set_id(fields[i].name + '_box')
-				if (fields[i].nonuse))
+				if (fields[i].nonuse){
 					box.disabled(true);
 					box.hide();
 				}
