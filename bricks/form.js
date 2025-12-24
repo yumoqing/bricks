@@ -25,6 +25,7 @@ bricks.FieldGroup = class {
 				dc.set_id(fields[i].name+'_box');
 				if (fields[i].nonuse))
 					dc.disabled(true);
+					dc.hide();
 				}
 			} else {
 				var box;
@@ -49,6 +50,7 @@ bricks.FieldGroup = class {
 				box.set_id(fields[i].name + '_box')
 				if (fields[i].nonuse))
 					box.disabled(true);
+					box.hide();
 				}
 				var w = Input.factory(fields[i]);
 				if (w){
@@ -250,6 +252,8 @@ bricks.FormBase = class extends bricks.Layout {
 		var w = bricks.getWidgetById(field_name + '_box', this);
 		if (! w) return;
 		w.disabled(flg);
+		if (flg) w.hide();
+		else w.show();
 		if (flg) return;
 		this.exclusionfields.forEach(arr =>{
 			if (arr.include(field_name)){
@@ -257,7 +261,8 @@ bricks.FormBase = class extends bricks.Layout {
 					if (x!=field_name){
 						var w1 = bricks.getWidgetById(x + '_box', this);
 						if (w1) {
-							w1.disabled(! flg);
+							w1.disabled(true);
+							w1.hide();
 						}
 					}
 				});
