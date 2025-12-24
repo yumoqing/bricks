@@ -25,7 +25,6 @@ bricks.FieldGroup = class {
 				dc.set_id(fields[i].name+'_box');
 				if (fields[i].nonuse))
 					dc.disabled(true);
-					dc.nonuse = true;
 				}
 			} else {
 				var box;
@@ -50,7 +49,6 @@ bricks.FieldGroup = class {
 				box.set_id(fields[i].name + '_box')
 				if (fields[i].nonuse))
 					box.disabled(true);
-					box.nonuse = true;
 				}
 				var w = Input.factory(fields[i]);
 				if (w){
@@ -252,7 +250,6 @@ bricks.FormBase = class extends bricks.Layout {
 		var w = bricks.getWidgetById(field_name + '_box', this);
 		if (! w) return;
 		w.disabled(flg);
-		w.nonuse = flg
 		if (flg) return;
 		this.exclusionfields.forEach(arr =>{
 			if (arr.include(field_name)){
@@ -261,7 +258,6 @@ bricks.FormBase = class extends bricks.Layout {
 						var w1 = bricks.getWidgetById(x + '_box', this);
 						if (w1) {
 							w1.disabled(! flg);
-							w1.nouse = ! flg;
 						}
 					}
 				});
@@ -282,7 +278,7 @@ bricks.FormBase = class extends bricks.Layout {
 				continue;
 			}
 			var w = this.name_inputs[name];
-			if (w.parent.nonuse) continue;
+			if (w.parent.is_disabled()) continue;
 			var d = w.getValue();
 			if (w.required && ( d[name] == '' || d[name] === null)){
 				new bricks.Error({title:'Requirement', message:'required field must input"' + w.label + '"'})
@@ -366,7 +362,18 @@ bricks.Form = class extends bricks.FormBase {
 		toolbar:
 		submit_url:
 		method:
+		exclussionfields:[
+			[a,b,c],
+			[x,y]
+		]
 		fields
+	}
+	field {
+		name:
+		label:
+		uitype:
+		nonuse:	# 不使用
+		...
 	}
 	*/
 	constructor(opts){
