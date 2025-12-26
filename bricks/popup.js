@@ -321,7 +321,6 @@ bricks.Popup = class extends bricks.VBox {
 					this.target_w = w;
 				} 
 			}
-			this.positify_tl()
 		}
 		this.no_opened = false;
 		this.set_style('display', 'block');
@@ -333,6 +332,7 @@ bricks.Popup = class extends bricks.VBox {
 			this.target_w.disabled(true);
 		}
 		this.bring_to_top();
+		this.positify_tl();
 	}
 	dismiss(){
 		if (! this.opened) return;
