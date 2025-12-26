@@ -240,19 +240,21 @@ bricks.universal_handler = async function(from_widget, widget, desc, event){
 bricks.default_popup = function(opts){
 	var popts = bricks.get_popup_default_options();
 	bricks.extend(popts, opts);
+	popts.origin_event = event;
 	return new bricks.Popup(popts);
 }
-bricks.default_popupwindow = function(opts){
+bricks.default_popupwindow = function(opts,event){
 	var popts = bricks.get_popupwindow_default_options();
 	bricks.extend(popts, opts);
+	popts.origin_event = event;
 	return new bricks.PopupWindow(popts);
 }
 bricks.buildEventHandler = async function(w, desc, event){
 	var target;
 	if (desc.target == 'Popup'){
-		target = bricks.default_popup(desc.popup_options || {});
+		target = bricks.default_popup(desc.popup_options || {}, event);
 	} else if (desc.target == 'PopupWindow') {
-		target = bricks.default_popupwindow(desc.popup_options || {});
+		target = bricks.default_popupwindow(desc.popup_options || {}, event);
 	} else if ( desc.target instanceof bricks.JsWidget ) {
 		target = desc.target;
 	} else {
