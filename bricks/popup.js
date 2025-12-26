@@ -180,7 +180,7 @@ bricks.Popup = class extends bricks.VBox {
 	positify_tl(){
 		var rect, w, h, t, l;
 		if (this.opts.eventpos && this.opts.origin_event){
-			bricks.relocate_by_eventpos(ithis.opts.origin_event, this);
+			bricks.relocate_by_eventpos(this.opts.origin_event, this);
 			return;
 		}
 		if (this.top && this.left){
