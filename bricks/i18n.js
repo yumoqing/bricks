@@ -75,6 +75,7 @@ bricks.I18n = class {
 			this.setup_dict(d, lang);
 		} catch(e) {
 			console.log('get_lang_dic() error', lang, e);
+			this.setup_dict({}, lang);
 		}
 	
 	}
