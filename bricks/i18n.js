@@ -68,7 +68,7 @@ bricks.I18n = class {
 		};
 		try {
 			var jc = new bricks.HttpJson();
-			d = await jc.httpcall(this.url, {
+			var d = await jc.httpcall(this.url, {
 						"method":this.method || 'GET',
 						params:params
 			});
