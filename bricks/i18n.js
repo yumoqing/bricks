@@ -50,7 +50,7 @@ bricks.I18n = class {
 		return false;
 	}
 	get_uni18n(){
-		return self.lang_msgs[this.lang].unmsgs;
+		return this.lang_msgs[this.lang].unmsgs;
 	}
 	setup_dict(dic, lang){
 		this.lang = lang;
