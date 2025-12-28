@@ -28,9 +28,7 @@ bricks.I18n = class {
 	_(txt, obj){
 		var outt, mt;
 		var msgs = this.lang_msgs[this.lang].msgs;
-		if (msgs.hasOwnProperty(txt)){
-			mt = msgs[txt] || txt;
-		}
+		mt = msgs[txt] || txt;
 		if (obj instanceof Object){
 			outt = obj_fmtstr(obj, mt);
 		} else {
