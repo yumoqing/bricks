@@ -15,8 +15,8 @@ bricks.ProgressBar = class extends bricks.HBox {
 		this.add_widget(this.text_w);
 	}
 	set_value(v){
-		var pzt =  (current / total) * 100;
-		pzt = Math.max(0, Math.min(100, percentage));
+		var pzt =  this.total_value ? (v / this.total_value) * 100 : 0;
+		pzt = Math.max(0, Math.min(100, pzt));
 		this.text_w.set_style('width', pzt + '%')
 	}
 }

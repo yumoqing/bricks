@@ -1,4 +1,13 @@
 var bricks = window.bricks || {};
+bricks.get_current_language=function(){
+	var lang = navigator.language.substring(0, 2);
+	if (bricks.app){
+		if (bricks.app.lang) return bricks.app.lang;
+		bricks.app.lang = lang;
+		return lang;
+	}
+	return;
+}
 bricks.app = null;
 /*
 all type of bind action's desc has the following attributes:
@@ -231,19 +240,21 @@ bricks.universal_handler = async function(from_widget, widget, desc, event){
 bricks.default_popup = function(opts){
 	var popts = bricks.get_popup_default_options();
 	bricks.extend(popts, opts);
+	popts.origin_event = event;
 	return new bricks.Popup(popts);
 }
-bricks.default_popupwindow = function(opts){
+bricks.default_popupwindow = function(opts,event){
 	var popts = bricks.get_popupwindow_default_options();
 	bricks.extend(popts, opts);
+	popts.origin_event = event;
 	return new bricks.PopupWindow(popts);
 }
 bricks.buildEventHandler = async function(w, desc, event){
 	var target;
 	if (desc.target == 'Popup'){
-		target = bricks.default_popup(desc.popup_options || {});
+		target = bricks.default_popup(desc.popup_options || {}, event);
 	} else if (desc.target == 'PopupWindow') {
-		target = bricks.default_popupwindow(desc.popup_options || {});
+		target = bricks.default_popupwindow(desc.popup_options || {}, event);
 	} else if ( desc.target instanceof bricks.JsWidget ) {
 		target = desc.target;
 	} else {
@@ -325,22 +336,11 @@ var _buildWidget = async function(from_widget, target, mode, options, desc){
 		bricks.debug('options=', options, 'widgetBuild() failed');
 		return;
 	}
-
-	if (w.parent) {
-		if (target instanceof bricks.Popup || target instanceof bricks.PopupWindow){
-			target.destroy();
-		}
+	if (w instanceof bricks.Popup) {
 		return;
 	}
-	if (target instanceof bricks.Popup || target instanceof bricks.PopupWindow) {
-		if (! target.parent){
-			bricks.app.add_widget(target);
-		}
-		if (desc.popup_options){
-			if (desc.popup_options.eventpos){
-				target.bind('opened', bricks.relocate_by_eventpos.bind(null, desc.event, target));
-			}
-		}
+	if (w instanceof bricks.NewWindow) {
+		return;
 	}
 	if (mode == 'replace'){
 		target.clear_widgets();
@@ -569,14 +569,15 @@ bricks.App = class extends bricks.Layout {
 			this.lang = this.opts.language;
 		}
 		else {
-			this.lang = navigator.language;
+			this.lang = navigator.language.substring(0,2);
 		}
 		this.lang_x = this.observable('lang', this.lang);
 		this.zindex = 10000;
 		this.textList = [];
 		this.i18n = new bricks.I18n(objget(opts, 'i18n', {}));
 		this.session_id = null;
-		this.tooltip = new bricks.Tooltip({otext:'test',i18n:true, wrap:true});
+		this.tooltip = new bricks.Tooltip({otext:'',i18n:true, wrap:true});
+		this.tooltip.hide();
 		this.add_widget(this.tooltip);
 		this._Width = this.dom_element.offsetWidth;
 		this._Height = this.dom_element.offsetHeight;
@@ -598,7 +599,10 @@ bricks.App = class extends bricks.Layout {
 		console.log('event=', event);
 		event.preventDefault();
 		event.stopPropagation()
-		this.wins_panel = new bricks.WindowsPanel({})
+		var opts = bricks.get_popup_default_options();
+		opts.auto_open = false;
+		this.wins_panel = new bricks.WindowsPanel(opts);
+		this.wins_panel.open();
 	}
 	get_color(){
 		return getComputedStyle(this.dom_element).color;
@@ -716,7 +720,7 @@ bricks.App = class extends bricks.Layout {
 		return w;
 	}
 	async run(){
-		await (this.change_language(this));
+		await (this.change_language(this.lang));
 		var w = await this.build();
 		this.root = w;
 		if (!w){

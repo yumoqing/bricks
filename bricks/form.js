@@ -22,6 +22,11 @@ bricks.FieldGroup = class {
 				this.build_fields(form, dc, fields[i].fields);
 				parent.add_widget(dc);
 				dc = new bricks.DynamicColumn({mobile_cols:2});
+				dc.set_id(fields[i].name+'_box');
+				if (fields[i].nonuse){
+					dc.disabled(true);
+					dc.hide();
+				}
 			} else {
 				var box;
 				if (! form.opts.input_layout || form.opts.input_layout == 'VBox'){
@@ -42,6 +47,11 @@ bricks.FieldGroup = class {
 						height:'auto',
 						i18n:true});
 				box.add_widget(txt);
+				box.set_id(fields[i].name + '_box')
+				if (fields[i].nonuse){
+					box.disabled(true);
+					box.hide();
+				}
 				var w = Input.factory(fields[i]);
 				if (w){
 					box.add_widget(w);
@@ -71,6 +81,10 @@ bricks.FormBody = class extends bricks.VScrollPanel {
 				"content":
 			},
 			...
+		]
+		exclusionfields:[
+			[a,b,c], # a,b,c互斥，a enabled，b,c必须disabled
+			[x,y]		# x,y互斥
 		]
 	}
 	*/
@@ -234,7 +248,33 @@ bricks.FormBase = class extends bricks.Layout {
 		}
 		return this.get_formdata();
 	}
-
+	toggle_disable(field_name, flg){
+		var w = bricks.getWidgetById(field_name + '_box', this);
+		if (! w) return;
+		w.disabled(flg);
+		if (flg) w.hide();
+		else w.show();
+		if (flg) return;
+		this.exclusionfields.forEach(arr =>{
+			if (arr.include(field_name)){
+				arr.forEach(x => {
+					if (x!=field_name){
+						var w1 = bricks.getWidgetById(x + '_box', this);
+						if (w1) {
+							w1.disabled(true);
+							w1.hide();
+						}
+					}
+				});
+			}
+		});
+	}
+	enable_field(field_name){
+		this.toggle_disable(field_name, false);
+	}
+	disable_field(field_name){
+		this.toggle_disable(field_name, true);
+	}
 	get_formdata(){
 		var data = new FormData();
 		var changed = false;
@@ -243,6 +283,7 @@ bricks.FormBase = class extends bricks.Layout {
 				continue;
 			}
 			var w = this.name_inputs[name];
+			if (w.parent.is_disabled()) continue;
 			var d = w.getValue();
 			if (w.required && ( d[name] == '' || d[name] === null)){
 				new bricks.Error({title:'Requirement', message:'required field must input"' + w.label + '"'})
@@ -326,7 +367,18 @@ bricks.Form = class extends bricks.FormBase {
 		toolbar:
 		submit_url:
 		method:
+		exclussionfields:[
+			[a,b,c],
+			[x,y]
+		]
 		fields
+	}
+	field {
+		name:
+		label:
+		uitype:
+		nonuse:	# 不使用
+		...
 	}
 	*/
 	constructor(opts){

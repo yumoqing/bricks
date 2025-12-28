@@ -52,12 +52,16 @@ bricks.HttpText = class {
 			width = bricks.app.screenWidth();
 			height = bricks.app.screenHeight();
 		}
+		console.log('=====bricks.app=', bricks.app);
 
 		this.params = {
 			"_webbricks_":1,
-			"width":width,
-			"height":height,
+			"_width":width,
+			"_height":height,
 			"_is_mobile":is_mobile
+		}
+		if (bricks.app){
+			this.params['_lang'] = bricks.app.lang;
 		}
 	}
 	url_parse(url){
@@ -90,6 +94,7 @@ bricks.HttpText = class {
 		if (! params) 
 			params = {};
 		var p = bricks.extend({}, this.params);
+		var lang = bricks.get_current_language()
 		p = bricks.extend(p, params);
 		if (session){
 			bricks.extend(p,{session:session});

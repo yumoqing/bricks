@@ -1,13 +1,14 @@
 var bricks = window.bricks || {};
 /*
 */
-bricks.Menu = class extends bricks.VBox {
+bricks.Menu = class extends bricks.VScrollPanel {
 	/*
 	{
 		"items":
 	}
 	*/
 	constructor(options){
+		opts.height = '100%';
 		super(options);
 		this.dom_element.style.display = "";
 		this.dom_element.style.backgroundColor = options.bgcolor || "white";

@@ -94,6 +94,9 @@ bricks.JsWidget = class {
 	observable(name, value){
 		return new bricks.Observable(this, name, value);
 	}
+	is_disabled(){
+		return this.dom_element.disabled == true;
+	}
 	disabled(flag){
 		if(flag){
 			this.dom_element.disabled = true;

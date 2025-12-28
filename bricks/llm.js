@@ -67,7 +67,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 		
 		this.content = new bricks.HBox({width:'100%'});
 		this.add_widget(this.content);
-		this.logid = null;
+		this.llmusageid = null;
 		this.run = new bricks.BaseRunning({target:this, cheight:2, cwidth:2});
 		this.content.add_widget(this.run);
 		this.filler = new bricks.LlmOut({width: '100%', css: 'card'});
@@ -102,7 +102,7 @@ bricks.ModelOutput = class extends bricks.VBox {
 			"widgettype":"urlwidget",
 			"options":{
 				"params":{
-					"logid":this.logid,
+					"id":this.llmusageid,
 					"value":val
 				},
 				"url":this.estimate_url
@@ -120,6 +120,9 @@ bricks.ModelOutput = class extends bricks.VBox {
 			this.run = null;
 		}
 		this.filler.update(data);
+		if (data.llmusageid) {
+			this.llmusageid = data.llmusageid
+		}
 		return;
 	}
 	finish(){
@@ -205,6 +208,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			var d = this.inputdata2uploaddata(data);
 			var hr = new bricks.HttpResponseStream();
 			var resp = await hr.post(this.opts.url, {params:d});
+			if (! resp) return;
 			await hr.handle_chunk(resp, this.chunk_response.bind(this, mout));
 			this.chunk_ended();
 		} else {
@@ -212,6 +216,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			console.log('data_inouted=', data, 'upload_data=', d);
 			var hj = new bricks.HttpJson()
 			var resp = await hj.post(this.opts.url, {params:d});
+			if (! resp) return;
 			mout.update_data(resp);
 		}
 		mout.estimate_w.show();
