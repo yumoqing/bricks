@@ -392,10 +392,9 @@ bricks.TextBase = class extends bricks.JsWidget {
 		if (this.opts.hasOwnProperty('i18n')){
 			this.i18n = this.opts.i18n;
 		}
-		this._i18n = new bricks.I18n();
 		this.set_style('flexShrink', '0'); 
 		if (this.i18n && this.otext) {
-			this.text = this._i18n._(this.otext);
+			this.text = bricks.app.i18n._(this.otext);
 		}
 		this.dom_element.innerHTML = this.text;
 	}
@@ -403,7 +402,7 @@ bricks.TextBase = class extends bricks.JsWidget {
 		var text;
 		this.otext = otxt;
 		if (this.i18n) {
-			text = this._i18n._(this.otext);
+			text = bricks.app.i18n._(this.otext);
 		} else {
 			text = this.otext;
 		}

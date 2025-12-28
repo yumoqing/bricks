@@ -706,17 +706,8 @@ bricks.App = class extends bricks.Layout {
 	get_session(){
 		return this.session_id;
 	}
-	async setup_i18n(){
-		let params = {'lang':this.lang};
-		var jc = new bricks.HttpJson();
-		d = await jc.httpcall(desc.url, {
-					"method":desc.method||'GET', 
-					params:params
-					}
-		);
-		this.i18n.setup_dict(d);
-	}
 	async build(){
+		await this.i18n.change_lang(this.lang)
 		var opts = bricks.extend({}, this.opts.widget);
 		var w = await bricks.widgetBuild(opts, bricks.Body);
 		if (!w){
