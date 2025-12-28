@@ -39,7 +39,7 @@ bricks.I18n = class {
 		if (mt == txt) {
 			this.set_uni18n(txt);
 		}
-		return txt;
+		return outt;
 	}
 	set_uni18n(txt){
 		var d = this.lang_msgs[this.lang].unmsgs;
