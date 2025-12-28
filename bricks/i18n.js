@@ -17,7 +17,7 @@ bricks.I18n = class {
 		}
 		*/
 		this.url = opts.url || '/i18n'
-		htis.i18n_path = opts.i18n_path;
+		this.i18n_path = opts.i18n_path;
 		this.lang = opts.lang;
 		this.method = opts.method || 'GET';
 		this.lang_msgs = {};
