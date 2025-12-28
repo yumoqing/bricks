@@ -101,3 +101,20 @@ binds数组定义用户交互行为，每个绑定bind描述符包含以下结�
 | `params`         | Object   | 携带的数据 |
 
 ---
+
+### bricks 控件注册机制
+
+bricks使用控件注册机制来实现识别源码中widgettype的值对应bricks的哪个控件。
+
+注册实现
+bricks.Factory.register(控件名, bricks实现的控件对象)完成注册
+
+### bricks的已实现控件清单
+已实现的[控件清单](widgets.md)
+
+### 控件扩展要求
+
+* javascript class类
+* 继承自JsWidget或其子类
+* 为控件命名，并注册此控件
+

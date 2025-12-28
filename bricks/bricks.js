@@ -701,7 +701,10 @@ bricks.App = class extends bricks.Layout {
 		let params = {'lang':this.lang};
 		var jc = new bricks.HttpJson();
 		d = await jc.httpcall(desc.url, {
-					"method":desc.method||'GET', params:params});
+					"method":desc.method||'GET', 
+					params:params
+					}
+		);
 		this.i18n.setup_dict(d);
 	}
 	async build(){

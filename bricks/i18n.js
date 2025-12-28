@@ -1,53 +1,81 @@
 var bricks = window.bricks || {};
 
 bricks.I18n = class {
-	constructor(url, default_lang){
+	/*
+	opts={
+		i18n
+		lang
+	}
+	*/
+	constructor(opts){
 		/*
 		{
 		 	url:
 			method:
-			default_lang
+			lang:
+			i18n_path:
 		}
 		*/
-		this.url = opts.url;
-		this.default_lang = opts.default_lang||'en';
+		this.url = opts.url || '/i18n'
+		htis.i18n_path = opts.i18n_path;
+		this.lang = opts.lang;
 		this.method = opts.method || 'GET';
 		this.lang_msgs = {};
 		this.msgs = {};
+		this.uni18n = {};
 	}
+
 	_(txt, obj){
-		if (this.msgs.hasOwnProperty(txt)){
-			itxt = this.msgs[txt];
+		var outt, mt;
+		var msgs = this.lang_msgs[this.lang].msgs;
+		if (msgs.hasOwnProperty(txt)){
+			mt = msgs[txt] || txt;
 		}
 		if (obj instanceof Object){
-				return obj_fmtstr(obj, itxt);
+			outt = obj_fmtstr(obj, mt);
+		} else {
+			outt = mt;
+		}
+		if (mt == txt) {
+			this.uni18n(txt);
 		}
 		return txt;
+	}
+	uni18n(txt){
+		var d = this.lang_msgs[this.lang].unmsgs;
+		if (! d[txt]){
+			d[txt] = 1;
+		}
 	}
 	is_loaded(lang){
 		if (objget(this.lang_msgs, lang)) return true;
 		return false;
 	}
 	setup_dict(dic, lang){
-		this.cur_lang = lang;
-		bricks.extend(this.lang_msgs, {lang:dic});
-		this.msgs = dic;
+		this.lang = lang;
+		this.lang_msgs[lang] = {
+			msgs:dic,
+			unmsgs:{}
+		}
+	}
+	async get_lang_dic(lang){
+		let params = {
+			lang:lang,
+			i18n: this.i18n_path
+		};
+		var jc = new bricks.HttpJson();
+        d = await jc.httpcall(this.url, {
+                    "method":this.method || 'GET',
+                    params:params
+        });
+        this.setup_dict(d, lang);
+	
 	}
 	async change_lang(lang){
-		if (objget(this.lang_msgs, lang)){
-			this.msgs = objget(this.lang_msgs, lang);
+		if (this.lang_msgs[lang]){
 			return;
 		}
-		
-		if (! this.url) return;
-
-		let params = {'lang':lang};
-		var jc = new bricks.HttpJson();
-		d = await jc.httpcall(desc.url, {
-					"method":this.method || 'GET', 
-					params:params
-		});
-		this.setup_dict(d, lang);
+		await this.get_lang_dic(lang);
 	}
 }
 

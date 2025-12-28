@@ -40,7 +40,7 @@ bricks.ChartBar = class extends bricks.EchartsExt {
 				trigger:'axis'
 			},
 			legend:{
-				data:n_data
+				data:this.valueFields
 			},
 			xAxis:{
 				type:'category',
