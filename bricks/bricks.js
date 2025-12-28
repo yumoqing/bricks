@@ -574,7 +574,12 @@ bricks.App = class extends bricks.Layout {
 		this.lang_x = this.observable('lang', this.lang);
 		this.zindex = 10000;
 		this.textList = [];
-		this.i18n = new bricks.I18n(objget(opts, 'i18n', {}));
+		var i18n_opts = opts.i18n || {
+				url:'/i18n',
+				i18n_path: 'i18n',
+				lang:this.lang
+		};
+		this.i18n = new bricks.I18n(i18n_opts);
 		this.session_id = null;
 		this.tooltip = new bricks.Tooltip({otext:'',i18n:true, wrap:true});
 		this.tooltip.hide();
