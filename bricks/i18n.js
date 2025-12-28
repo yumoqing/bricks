@@ -37,11 +37,11 @@ bricks.I18n = class {
 			outt = mt;
 		}
 		if (mt == txt) {
-			this.uni18n(txt);
+			this.set_uni18n(txt);
 		}
 		return txt;
 	}
-	uni18n(txt){
+	set_uni18n(txt){
 		var d = this.lang_msgs[this.lang].unmsgs;
 		if (! d[txt]){
 			d[txt] = 1;
@@ -50,6 +50,9 @@ bricks.I18n = class {
 	is_loaded(lang){
 		if (objget(this.lang_msgs, lang)) return true;
 		return false;
+	}
+	get_uni18n(){
+		return self.lang_msgs[this.lang].unmsgs;
 	}
 	setup_dict(dic, lang){
 		this.lang = lang;
@@ -63,12 +66,16 @@ bricks.I18n = class {
 			lang:lang,
 			i18n: this.i18n_path
 		};
-		var jc = new bricks.HttpJson();
-        d = await jc.httpcall(this.url, {
-                    "method":this.method || 'GET',
-                    params:params
-        });
-        this.setup_dict(d, lang);
+		try {
+			var jc = new bricks.HttpJson();
+			d = await jc.httpcall(this.url, {
+						"method":this.method || 'GET',
+						params:params
+			});
+			this.setup_dict(d, lang);
+		} catch(e) {
+			console.log('get_lang_dic() error', lang, e);
+		}
 	
 	}
 	async change_lang(lang){
