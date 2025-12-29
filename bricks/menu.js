@@ -122,6 +122,7 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		var name = x.shift()
 		var container = w.container;
 		var fc;
+		if (! container) return null;
 		containers.children.forEach(c=>{
 			if (c.user_data){
 				if (c.user_data.name == name) fc = c;
@@ -139,12 +140,12 @@ bricks.Menu = class extends bricks.VScrollPanel {
 
 	hide_item(menu_path, event){
 		var w = this.get_container(this, mpath);
-		w.hide();
+		if (w) w.hide();
 		event.stopPropagation();
 	}
 	show_item(menu_path, event){
 		var w = this.get_container(this, mpath);
-		w.show();
+		if (w) w.show();
 		event.stopPropagation();
 	}
 	items_toggle_hide(w, event){
