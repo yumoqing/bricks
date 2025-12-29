@@ -92,6 +92,10 @@ bricks.Menu = class extends bricks.VScrollPanel {
 	}
 	async create_children(w, items){
 		var container = w.container;
+		if (!container){
+			console.log(w, items, 'container is null');
+			return;
+		}
 		if (w == this){
 			console.log('build menu children called');
 		} else {
@@ -103,7 +107,7 @@ bricks.Menu = class extends bricks.VScrollPanel {
 			if (item.submenu){
 				item.items = await this.get_submenu_items(item.submenu);
 			}
-			if (item.hasOwnProperty('items')){
+			if (item.items){
 				var itw = new bricks.VBox({});
 				let w1 = this.create_submenu_container();
 				itw.add_widget(subw);
