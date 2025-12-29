@@ -1,6 +1,9 @@
 var bricks = window.bricks || {};
 /*
 */
+bricks.url_menuitems = {
+}
+
 bricks.Menu = class extends bricks.VScrollPanel {
 	/*
 	{
@@ -19,7 +22,6 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		this.container = new bricks.VBox({});
 		this.container.user_data = opts;
 		this.add_widget(this.container);
-		this.url_items = {};
 		schedule_once(this.create_children.bind(this, this.container, this.opts.items), 0.1);
 	}
 	create_submenu_container(){
@@ -116,13 +118,12 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		}
 	}
 	async get_submenu_items(url){
-		var items = this.url_items[url];
+		var items = bricks.url_menuitems[url];
 		if (items) return items;
-		if this.url_items[url]) returnn
 		var jc = new bricks.HttpJson();
 		var d = await jc.get(url);
 		items =  d.options.items;
-		this.url_items[url] = items;
+		bricks.url_menuitems[url] = items;
 		return items;
 	}
 	get_container(w, mpath){
