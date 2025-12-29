@@ -747,6 +747,7 @@ bricks.App = class extends bricks.Layout {
 		this.lang = lang;
 		await (this.i18n.change_lang(lang));
 		this.lang_x.set(this.lang);
+		this.dispatch('lang');
 	}
 	async key_down_action(event){
 		if (this.keyevent_blocked){
