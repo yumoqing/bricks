@@ -14,12 +14,12 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		this.dom_element.style.backgroundColor = options.bgcolor || "white";
 		this.build_title();
 		this.build_description();
-		// this.create_children(this, this.opts.items);
 		this.user_data = opts;
 		this.bind('item_click', this.menu_clicked.bind(this));
 		this.container = new bricks.VBox({});
 		this.container.user_data = opts;
 		this.add_widget(this.container);
+		this.url_items = {};
 		schedule_once(this.create_children.bind(this, this.container, this.opts.items), 0.1);
 	}
 	create_submenu_container(){
@@ -89,6 +89,9 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		this.dispatch('command', opts);
 	}
 	async create_children(w, items){
+		if (w == this.container){
+			console.log('build menu children called');
+		}
 		for (let i=0;i<items.length;i++){
 			let item = items[i];
 			let subw = this.create_menuitem(item);
@@ -113,9 +116,14 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		}
 	}
 	async get_submenu_items(url){
+		var items = this.url_items[url];
+		if (items) return items;
+		if this.url_items[url]) returnn
 		var jc = new bricks.HttpJson();
 		var d = await jc.get(url);
-		return d.options.items;
+		items =  d.options.items;
+		this.url_items[url] = items;
+		return items;
 	}
 	get_container(w, mpath){
 		var x = mpath.split('/');
