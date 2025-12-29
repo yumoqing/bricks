@@ -78,6 +78,7 @@ bricks.I18n = class {
 	
 	}
 	async change_lang(lang){
+		this.lang = lang;
 		if (this.lang_msgs[lang]){
 			return;
 		}
