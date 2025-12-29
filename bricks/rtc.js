@@ -65,7 +65,7 @@ bricks.Signaling = class {
 	}
 	del_handler(sessionid){
 		var handlers = {};
-		delete self.handlers[sessionid];
+		delete this.handlers[sessionid];
 	}
 	async signaling_recvdata(event){
         var datapkg = JSON.parse(event.data);

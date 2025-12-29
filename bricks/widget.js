@@ -378,7 +378,7 @@ bricks.TextBase = class extends bricks.JsWidget {
 		if (options.wrap){
 			this.set_style('flexWrap', 'wrap');
 		}
-		if (self.i18n){
+		if (this.i18n){
 			bricks.app.bind('lang', this.set_i18n_text.bind(this));
 		}
 	}

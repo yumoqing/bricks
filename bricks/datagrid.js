@@ -160,8 +160,8 @@ bricks.DataGrid = class extends bricks.VBox {
 		}
 		if (this.opts.toolbar) {
 			this.admin_bar.add_widget(new bricks.Filler({}));
-			self.toolbar = new bricks.Toolbar(this.opts.toolbar);
-			self.toolbar.bind('command', this.command_handle.bind(this));
+			this.toolbar = new bricks.Toolbar(this.opts.toolbar);
+			this.toolbar.bind('command', this.command_handle.bind(this));
 			this.admin_bar.add_widget(this.toolbar);
 		}
 		this.create_parts();
