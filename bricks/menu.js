@@ -21,7 +21,7 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		this.bind('item_click', this.menu_clicked.bind(this));
 		this.container = new bricks.VBox({});
 		this.add_widget(this.container);
-		schedule_once(this.create_children.bind(this, this), 0.1);
+		schedule_once(this.create_children.bind(this, this, 0), 0.1);
 	}
 	create_submenu_container(){
 		let cp = new bricks.VBox({});
@@ -89,7 +89,7 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		}
 		this.dispatch('command', opts);
 	}
-	async create_children(w){
+	async create_children(w, cnt){
 		var items = w.user_data.items;
 		if (!items){
 			console.log('items is None', user_data, w);
@@ -119,7 +119,9 @@ bricks.Menu = class extends bricks.VScrollPanel {
 				itw.user_data = item;
 				itw.add_widget(subw);
 				itw.add_widget(w1);
-				this.create_children(itw);
+				if (cnt < 4){
+					this.create_children(itw, cnt+1);
+				}
 				subw.bind('click', this.items_toggle_hide.bind(this, w1));
 				container.add_widget(itw);
 			} else {
