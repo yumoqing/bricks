@@ -14,9 +14,13 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		this.dom_element.style.backgroundColor = options.bgcolor || "white";
 		this.build_title();
 		this.build_description();
-		this.create_children(this, this.opts.items);
+		// this.create_children(this, this.opts.items);
 		this.user_data = opts;
 		this.bind('item_click', this.menu_clicked.bind(this));
+		this.container = new bricks.VBox({});
+		this.container.user_data = opts;
+		this.add_widget(this.container);
+		this.schedule_once(this.create_children.bind(this.container, this.opts.items), 0.1);
 	}
 	create_submenu_container(){
 		let cp = new bricks.VBox({});
@@ -84,7 +88,7 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		}
 		this.dispatch('command', opts);
 	}
-	create_children(w, items){
+	async create_children(w, items){
 		for (let i=0;i<items.length;i++){
 			let item = items[i];
 			let subw = this.create_menuitem(item);
@@ -93,12 +97,13 @@ bricks.Menu = class extends bricks.VScrollPanel {
 			}
 			if (item.hasOwnProperty('items')){
 				var itw = new bricks.VBox({});
-				itw.user_data = item;
 				let w1 = this.create_submenu_container();
 				itw.add_widget(subw);
 				itw.add_widget(w1);
 				this.create_children(w1, item.items);
 				subw.bind('click', this.items_toggle_hide.bind(this, w1));
+				itw.container = w1;
+				itw.user_data = item;
 				w.add_widget(itw);
 			} else {
 				subw.bind('click', this.regen_menuitem_event.bind(this, item))
@@ -115,7 +120,7 @@ bricks.Menu = class extends bricks.VScrollPanel {
 	get_container(w, mpath){
 		var x = mpath.split('/');
 		var name = x.shift()
-		var container = w.children[w.children.length - 1];
+		var container = w.container;
 		var fc;
 		containers.children.forEach(c=>{
 			if (c.user_data){
