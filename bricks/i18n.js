@@ -16,7 +16,7 @@ bricks.I18n = class {
 			i18n_path:
 		}
 		*/
-		this.url = opts.url || '/i18n'
+		this.url = opts.url || '/i18n_getmsgs'
 		this.i18n_path = opts.i18n_path;
 		this.lang = opts.lang;
 		this.method = opts.method || 'GET';

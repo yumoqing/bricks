@@ -575,7 +575,7 @@ bricks.App = class extends bricks.Layout {
 		this.zindex = 10000;
 		this.textList = [];
 		var i18n_opts = opts.i18n || {
-				url:'/i18n',
+				url:'/i18n_getmsgs',
 				i18n_path: 'i18n',
 				lang:this.lang
 		};
