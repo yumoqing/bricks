@@ -118,7 +118,7 @@ bricks.Menu = class extends bricks.VScrollPanel {
 				itw.user_data = item;
 				itw.add_widget(subw);
 				itw.add_widget(w1);
-				this.create_children(w1);
+				this.create_children(itw);
 				subw.bind('click', this.items_toggle_hide.bind(this, w1));
 				container.add_widget(itw);
 			} else {
