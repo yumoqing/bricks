@@ -103,7 +103,8 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		if (w == this){
 			console.log('build menu children called');
 		} else {
-			console.log('ggggggggggggggggggggg');
+			console.log('gggggg', items, w);
+			console.trace('调用栈:');
 		}
 		for (let i=0;i<items.length;i++){
 			let item = items[i];
