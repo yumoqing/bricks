@@ -415,7 +415,7 @@ bricks.TextBase = class extends bricks.JsWidget {
 		if (! this.i18n){
 			return;
 		}
-		this.set_text(this.otext);
+		this.set_otext(this.otext);
 	}
 	set_text(text){
 		this.text = text;
