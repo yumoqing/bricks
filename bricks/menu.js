@@ -91,8 +91,11 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		this.dispatch('command', opts);
 	}
 	async create_children(w, items){
-		if (w == this.container){
+		var container = w.container;
+		if (w == this){
 			console.log('build menu children called');
+		} else {
+			console.log('ggggggggggggggggggggg');
 		}
 		for (let i=0;i<items.length;i++){
 			let item = items[i];
@@ -109,11 +112,11 @@ bricks.Menu = class extends bricks.VScrollPanel {
 				subw.bind('click', this.items_toggle_hide.bind(this, w1));
 				itw.container = w1;
 				itw.user_data = item;
-				w.add_widget(itw);
+				container.add_widget(itw);
 			} else {
 				subw.bind('click', this.regen_menuitem_event.bind(this, item))
 				subw.user_data = item;
-				w.add_widget(subw);
+				container.add_widget(subw);
 			}
 		}
 	}
@@ -131,7 +134,11 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		var name = x.shift()
 		var container = w.container;
 		var fc;
-		if (! container) return null;
+		if (! container) 
+		{
+			console.log(w, mpath, 'get_container() container is null');
+			return null;
+		}
 		containers.children.forEach(c=>{
 			if (c.user_data){
 				if (c.user_data.name == name) fc = c;
@@ -139,8 +146,12 @@ bricks.Menu = class extends bricks.VScrollPanel {
 				throw 'menu data error';
 			}
 		});
-		if (! fc) return null;
+		if (! fc) {
+			console.log(name, 'not found in subitems')
+			return null;
+		}
 		if (x.length == 0){
+			console.log('notmal return');
 			return fc;
 		}
 		mpath = x.join('/')
@@ -178,11 +189,6 @@ bricks.Menu = class extends bricks.VScrollPanel {
 			halign:'left'
 		});
 		w.add_widget(tw);
-		for (var k in item){
-			if (item.hasOwnProperty(k)){
-				w[k] = item[k];
-			}
-		}
 		iw.menuitem = w;
 		tw.menuitem = w;
 		w.set_css(this.menuitem_css || 'menuitem');
