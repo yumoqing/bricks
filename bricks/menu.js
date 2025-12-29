@@ -20,7 +20,7 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		this.container = new bricks.VBox({});
 		this.container.user_data = opts;
 		this.add_widget(this.container);
-		schedule_once(this.create_children.bind(this.container, this.opts.items), 0.1);
+		schedule_once(this.create_children.bind(this, this.container, this.opts.items), 0.1);
 	}
 	create_submenu_container(){
 		let cp = new bricks.VBox({});
