@@ -497,7 +497,10 @@ bricks.PopupWindow = class extends bricks.Popup {
 		this.tb_w.bind('minimize', this.win_minimize.bind(this));
 		this.tb_w.bind('fullscreen', this.content_w.enter_fullscreen.bind(this.content_w));
 		if (this.title){
-			this.title_w = new bricks.Text({text:this.title});
+			this.title_w = new bricks.Text({
+				otext:this.title,
+				i18n:true
+			});
 			this.title_bar.add_widget(this.title_w);
 		}
 	}
