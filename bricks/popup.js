@@ -155,7 +155,7 @@ bricks.Popup = class extends bricks.VBox {
 			return;
 		}
 		e.preventDefault();
-		this.remember_event_pos();
+		this.remember_event_pos(e);
 		this.resize_status = true;
 	}
 	resizing(e){
@@ -170,17 +170,17 @@ bricks.Popup = class extends bricks.VBox {
 		e.preventDefault();
 		if (this.is_resizing) return;
 		if (this.origin_event_x === null || this.origin_event_y === null){
-			this.remember_event_pos(event);
+			this.remember_event_pos(e);
 			return;
 		}
 		this.is_resizing = true;
-		var d = calculate_moving_pos(event);
+		var d = calculate_moving_pos(e);
 		var cx, cy;
 		cx = this.get_width() + d.x;
 		cy = this.get_height() + d.y;
 		this.set_style('width', cx + 'px');
 		this.set_style('height',  cy + 'px');
-		this.remember_event_pos(event);
+		this.remember_event_pos(e);
 		this.is_resizing = false;
 		console.log('============= resizing() called  ================')
 	}
