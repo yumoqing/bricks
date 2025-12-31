@@ -134,8 +134,6 @@ bricks.Popup = class extends bricks.VBox {
 		super.add_widget(this.resizable_w);
 		this.resizable_w.set_css('resizebox');
 		this.resizable_w.bind('mousedown', this.resize_start_pos.bind(this));
-		this.resizable_w.bind('mousemove', this.resizing.bind(this));
-		this.resizable_w.bind('mouseup', this.stop_resizing.bind(this));
 		console.log('============= setup_resizable() finished  ================')
 	}
 	remember_event_pos(event){
@@ -160,7 +158,11 @@ bricks.Popup = class extends bricks.VBox {
 		}
 		e.preventDefault();
 		this.remember_event_pos(e);
+		this.current_width = this.current_width || this.get_width();
+		this.current_height = this.current_height || this.get_height();
 		this.resize_status = true;
+		bricks.app.bind('mousemove', this.resizing.bind(this));
+		bricks.app.bind('mouseup', this.stop_resizeing.bind(this));
 		console.log('= resize_stat_pos()', this.origin_event_x, this.origin_event_y)
 	}
 	resizing(e){
@@ -189,10 +191,10 @@ bricks.Popup = class extends bricks.VBox {
 		this.is_resizing = true;
 		var d = this.calculate_moving_pos(e);
 		var cx, cy;
-		cx = this.get_width() + d.x;
-		cy = this.get_height() + d.y;
-		this.set_style('width', cx + 'px');
-		this.set_style('height',  cy + 'px');
+		this.current_width += d.x;
+		this.current_height += d.y;
+		this.set_style('width', this.current_width + 'px');
+		this.set_style('height',  this.current_height + 'px');
 		this.is_resizing = false;
 		console.log('= resizing()', 
 						this.origin_event_x, 
@@ -207,6 +209,8 @@ bricks.Popup = class extends bricks.VBox {
 		this.resize_status = false;
 		this.is_resizing = false;
 		this.forget_event_pos();
+		bricks.app.unbind('mousemove', this.resizing.bind(this));
+		bricks.app.unbind('mouseup', this.stop_resizeing.bind(this));
 		console.log('= stop_resizing() called ');
 	}
 	
