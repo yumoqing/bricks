@@ -164,8 +164,10 @@ bricks.Popup = class extends bricks.VBox {
 		console.log('= resize_stat_pos()', this.origin_event_x, this.origin_event_y)
 	}
 	resizing(e){
-		if (this.resizable_w.dom_element != e.target){
-			console.log("resizing():",this.resizable_w.dom_element. r.target);
+		var ele;
+		ele = this.resizable_w.dom_element;
+		if (ele != e.target || ! ele.contains(e.target)){	
+			console.log("resizing():", ele, e.target);
 			this.stop_resizing();
 			return;
 		}
