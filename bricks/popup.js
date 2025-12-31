@@ -144,8 +144,8 @@ bricks.Popup = class extends bricks.VBox {
 	}
 	calculate_moving_pos(event){
 		return {
-			x: event.clientX - this.origin_event_x;
-			y: event.clientY - this.origin_event_y;
+			x: event.clientX - this.origin_event_x,
+			y: event.clientY - this.origin_event_y
 		}
 	}
 	resize_start_pos(e){
