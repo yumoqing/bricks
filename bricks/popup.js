@@ -167,7 +167,7 @@ bricks.Popup = class extends bricks.VBox {
 		var ele;
 		ele = this.resizable_w.dom_element;
 		if (ele != e.target && ! ele.contains(e.target)){	
-			console.log("resizing():", ele, e.target);
+			console.log("resizing():on other dom element");
 			this.stop_resizing();
 			return;
 		}
@@ -176,7 +176,6 @@ bricks.Popup = class extends bricks.VBox {
 			this.stop_resizing();
 			return;
 		}
-		e.preventDefault();
 		if (this.is_resizing) {
 			console.log("resizing(): resizing not finished");
 			return;
@@ -186,6 +185,7 @@ bricks.Popup = class extends bricks.VBox {
 			this.remember_event_pos(e);
 			return;
 		}
+		e.preventDefault();
 		this.is_resizing = true;
 		var d = this.calculate_moving_pos(e);
 		var cx, cy;
@@ -193,9 +193,14 @@ bricks.Popup = class extends bricks.VBox {
 		cy = this.get_height() + d.y;
 		this.set_style('width', cx + 'px');
 		this.set_style('height',  cy + 'px');
-		this.remember_event_pos(e);
 		this.is_resizing = false;
-		console.log('= resizing()', this.origin_event_x, this.origin_event_y, e.clientX,e.clientY, e.target)
+		console.log('= resizing()', 
+						this.origin_event_x, 
+						this.origin_event_y, 
+						e.clientX,
+						e.clientY
+		);
+		this.remember_event_pos(e);
 	}
 
 	stop_resizing(e){
