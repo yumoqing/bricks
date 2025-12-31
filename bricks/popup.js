@@ -142,6 +142,10 @@ bricks.Popup = class extends bricks.VBox {
 		this.origin_event_x = event.clientX;
 		this.origin_event_y = event.clientY;
 	}
+	forget_event_pos(){
+		this.origin_event_x = null;
+		this.origin_event_y = null;
+	}
 	calculate_moving_pos(event){
 		return {
 			x: event.clientX - this.origin_event_x,
@@ -157,9 +161,10 @@ bricks.Popup = class extends bricks.VBox {
 		e.preventDefault();
 		this.remember_event_pos(e);
 		this.resize_status = true;
+		console.log('= resize_stat_pos()', this.origin_event_x, this.origin_event_y)
 	}
 	resizing(e){
-		if (! this.resizable_w.dom_element.contains(e.target)){
+		if (this.resizable_w.dom_element.contains != e.target){
 			this.stop_resizing();
 			return;
 		}
@@ -182,15 +187,14 @@ bricks.Popup = class extends bricks.VBox {
 		this.set_style('height',  cy + 'px');
 		this.remember_event_pos(e);
 		this.is_resizing = false;
-		console.log('============= resizing() called  ================')
+		console.log('= resizing()', this.origin_event_x, this.origin_event_y, e.clientX,e.clientY, e.target)
 	}
 
 	stop_resizing(e){
 		this.resize_status = false;
 		this.is_resizing = false;
-		this.origin_event_x = null;
-		this.origin_event_y = null;
-		console.log('========= stop_resizing() called ===========', this.resize_status);
+		this.forget_event_pos();
+		console.log('= stop_resizing() called ');
 	}
 	
 	positify_tl(){
