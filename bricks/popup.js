@@ -43,6 +43,11 @@ bricks.Popup = class extends bricks.VBox {
 		this.opened = false;
 		this.set_css('popup');
 		this.bring_to_top();
+		this.is_resizing = false;
+		this.origin_event_x = null;
+		this.origin_event_y = null;
+		this.resize_status = false;
+		this.is_moving = false
 		this.content_box = new bricks.VBox({height:'100%',width:'100%'});
 		super.add_widget(this.content_box);
 		this.content_w = this.content_box;
@@ -133,47 +138,58 @@ bricks.Popup = class extends bricks.VBox {
 		this.resizable_w.bind('mouseup', this.stop_resizing.bind(this));
 		console.log('============= setup_resizable() finished  ================')
 	}
+	remember_event_pos(event){
+		this.origin_event_x = event.clientX;
+		this.origin_event_y = event.clientY;
+	}
+	calculate_moving_pos(event){
+		return {
+			x: event.clientX - this.origin_event_x;
+			y: event.clientY - this.origin_event_y;
+		}
+	}
 	resize_start_pos(e){
 		if (! this.resizable_w.dom_element.contains(e.target))
 		{
 			console.log('not event target', e.target);
 			return;
 		}
-		var rect = this.showRectage();
-		this.resize_status = true;
-		this.s_offsetX = e.clientX;
-		this.s_offsetY = e.clientY;
-		this.s_width =  rect.width;
-		this.s_height = rect.height;
 		e.preventDefault();
+		this.remember_moving_pos();
 		this.resize_status = true;
-		console.log('============= resize_start_pos() called  ================')
-		// console.log('resize_start_pos():', this.s_width, this.s_height, this.s_offsetX, this.s_offsetY);
 	}
 	resizing(e){
 		if (! this.resizable_w.dom_element.contains(e.target)){
 			this.stop_resizing();
-			// console.log('resizing(): not event target');
 			return;
 		}
 		if (!this.resize_status){
-			console.log('resizing(): not in resize status');
+			this.stop_resizing();
 			return;
 		}
+		e.preventDefault();
+		if (this.is_resizing) return;
+		if (this.origin_event_x === null || this.origin_event_y === null){
+			this.remember_event_pos(event);
+			return;
+		}
+		this.is_resizing = true;
+		var d = calculate_moving_pos(event);
 		var cx, cy;
-		cx = this.s_width + e.clientX - this.s_offsetX;
-		cy = this.s_height + e.clientY - this.s_offsetY;
+		cx = this.get_width() + d.x;
+		cy = this.get_height() + d.y;
 		this.set_style('width', cx + 'px');
 		this.set_style('height',  cy + 'px');
-		// console.log('resizing():', this.resize_status, cx, cy);
-		e.preventDefault();
+		this.remember_event_pos(event);
+		this.is_resizing = false;
 		console.log('============= resizing() called  ================')
 	}
 
 	stop_resizing(e){
 		this.resize_status = false;
-		bricks.Body.unbind('mousemove', this.resizing.bind(this));
-		bricks.Body.unbind('mouseup', this.stop_resizing.bind(this));
+		this.is_resizing = false;
+		this.origin_event_x = null;
+		this.origin_event_y = null;
 		console.log('========= stop_resizing() called ===========', this.resize_status);
 	}
 	
