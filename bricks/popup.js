@@ -155,7 +155,7 @@ bricks.Popup = class extends bricks.VBox {
 			return;
 		}
 		e.preventDefault();
-		this.remember_moving_pos();
+		this.remember_event_pos();
 		this.resize_status = true;
 	}
 	resizing(e){
