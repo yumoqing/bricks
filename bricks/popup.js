@@ -161,8 +161,8 @@ bricks.Popup = class extends bricks.VBox {
 		this.current_width = this.current_width || this.get_width();
 		this.current_height = this.current_height || this.get_height();
 		this.resize_status = true;
-		bricks.app.bind('mousemove', this.resizing.bind(this));
-		bricks.app.bind('mouseup', this.stop_resizing.bind(this));
+		bricks.app.bind('mousemove', this.resizing_bound = this.resizing.bind(this));
+		bricks.app.bind('mouseup', this.stop_resizing_bound = this.stop_resizing.bind(this));
 		console.log('= resize_stat_pos()', this.origin_event_x, this.origin_event_y)
 	}
 	resizing(e){
@@ -209,8 +209,8 @@ bricks.Popup = class extends bricks.VBox {
 		this.resize_status = false;
 		this.is_resizing = false;
 		this.forget_event_pos();
-		bricks.app.unbind('mousemove', this.resizing.bind(this));
-		bricks.app.unbind('mouseup', this.stop_resizing.bind(this));
+		if (this.resizing_bound) bricks.app.unbind('mousemove', this.resizing.bind(this));
+		if (this.stop_resizing_bound) bricks.app.unbind('mouseup', this.stop_resizing.bind(this));
 		console.log('= stop_resizing() called ');
 	}
 	
