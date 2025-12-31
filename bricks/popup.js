@@ -165,17 +165,22 @@ bricks.Popup = class extends bricks.VBox {
 	}
 	resizing(e){
 		if (this.resizable_w.dom_element != e.target){
+			console.log("resizing():",this.resizable_w.dom_element. r.target);
 			this.stop_resizing();
-			console.log(this.resizable_w.dom_element. r.target);
 			return;
 		}
 		if (!this.resize_status){
+			console.log("resizing():this.resize_status=false");
 			this.stop_resizing();
 			return;
 		}
 		e.preventDefault();
-		if (this.is_resizing) return;
+		if (this.is_resizing) {
+			console.log("resizing(): resizing not finished");
+			return;
+		}
 		if (this.origin_event_x === null || this.origin_event_y === null){
+			console.log("resizing():this.origin_event_x or y is null");
 			this.remember_event_pos(e);
 			return;
 		}
