@@ -110,7 +110,7 @@ bricks.LlmOut = class extends bricks.VBox {
 			this.glb_w = new bricks.GlbViewer({
 				url:data.glb,
 				width: '100%'
-			}
+			});
 		}
 		if (data.video){
 			if (!this.v_w){
