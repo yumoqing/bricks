@@ -1,7 +1,7 @@
 SOURCES=" page_data_loader.js factory.js uitypesdef.js utils.js uitype.js \
 	i18n.js widget.js layout.js bricks.js image.js html.js splitter.js \
 	jsoncall.js myoperator.js scroll.js menu.js popup.js recorder.js \
-	modal.js running.js llmout.js \
+	modal.js running.js llmout.js glbviewer.js \
 	markdown_viewer.js audio.js toolbar.js tab.js \
 	input.js registerfunction.js button.js accordion.js dataviewer.js \
 	tree.js multiple_state_image.js dynamiccolumn.js form.js message.js conform.js \
