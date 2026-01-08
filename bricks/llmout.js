@@ -80,6 +80,7 @@ bricks.LlmOut = class extends bricks.VBox {
 		this.v_w = null;
 		this.i_w = null;
 		this.a_w = null;
+		this.glb_w = null;
 		this.images = [];
 		this.reasoning_content = '';
 		this.content = '';
@@ -103,6 +104,12 @@ bricks.LlmOut = class extends bricks.VBox {
 				});
 			} else {
 				this.a_w.add_url(url);
+			}
+		}
+		if (data.glb){
+			this.glb_w = new bricks.GlbViewer({
+				url:data.glb,
+				width: '100%'
 			}
 		}
 		if (data.video){
@@ -165,6 +172,9 @@ bricks.LlmOut = class extends bricks.VBox {
 		}
 		if (this.v_w) {
 			this.add_widget(this.v_w);
+		}
+		if (this.glb_w){
+			this.add_widget(this.glb_w);
 		}
 		if (this.a_w) {
 			this.add_widget(this.a_w);
