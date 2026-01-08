@@ -1,6 +1,6 @@
 bricks = window.bricks || {};
 
-bricks.GlbViewer = class extends class bricks.VBox {
+bricks.GlbViewer = class extends bricks.VBox {
 	constructor(opts){
 		super(opts);
 		this.dom_element.innerHTML=`<model-viewer
