@@ -1114,7 +1114,9 @@ bricks.UiCode =class extends bricks.UiType {
 		for (var i=0; i<data.length; i++){
 			var o = document.createElement('option');
 			o.value = data[i][this.opts.valueField||'value'];
-			o.innerText = bricks.app.i18n._(data[i][this.opts.textField||'text']);
+			var txt = bricks.app.i18n._(data[i][this.opts.textField||'text']);
+			if (!txt) txt = data[i][this.opts.valueField||'value'];
+			o.innerText = txt;
 			this.option_widgets[o.value] = o;
 			if (o.value == v){
 				o.selected = true;
