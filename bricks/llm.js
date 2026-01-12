@@ -306,7 +306,7 @@ bricks.LlmIO = class extends bricks.VBox {
 			this.kdb_w.bind('click', this.setup_kdb.bind(this));
 		}
 		this.input_fields.forEach(f => {
-			if (f.name == 'model') this.model_inputed = True;
+			if (f.name == 'model') this.model_inputed = true;
 		});
 		bottom_box.add_widget(this.i_w);
 		bottom_box.add_widget(this.nm_w);
