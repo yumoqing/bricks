@@ -270,7 +270,7 @@ bricks.FVBox = class extends bricks.VBox {
 	}
 }
 
-bricks.ResponsableBox = class extends bricks.Layout {
+bricks.ResponsiveBox = class extends bricks.Layout {
 	constructor(opts){
 		super(opts);
 		
@@ -302,4 +302,5 @@ bricks.Factory.register('FVBox', bricks.FVBox);
 bricks.Factory.register('Filler', bricks.Filler);
 bricks.Factory.register('HFiller', bricks.Filler);
 bricks.Factory.register('VFiller', bricks.Filler);
-bricks.Factory.register('ResponsableBox', bricks.ResponsableBox);
+bricks.Factory.register('ResponsiveBox', bricks.ResponsiveBox);
+bricks.Factory.register('ResponsableBox', bricks.ResponsiveBox);
