@@ -65,8 +65,8 @@ bricks.Countdown = class extends bricks.VBox {
 				break;
 			case 2:
 				hours = 0;
-				minutes = 0;
-				seconds = parseInt(parts[0])
+				minutes = parseInt(parts[0]);
+				seconds = parseInt(parts[1])
 				break;
 			case 3:
 			default:
