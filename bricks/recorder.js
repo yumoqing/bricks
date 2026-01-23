@@ -32,10 +32,9 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		this.record_status = 'standby';
 		this.toggle_record.bind('click', this.switch_record.bind(this));
 		this.toggle_record.disabled(true);
-		schedule_once(this.open_recorder.bind(this), 0.1);
+		this.task = schedule_interval(this.open_recorder.bind(this), 0.1);
 	}
 	tick_task(){
-		this.task = schedule_once(this.tick_task.bind(this), this.task_period);
 		this.timepass.set_text(bricks.timeDiff(this.start_time));
 	}
 	async switch_record(){
@@ -96,7 +95,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		};
 
 		this.start_time = Date.now();
-		this.task = schedule_once(this.tick_task.bind(this), this.task_period);
+		this.task = schedule_interval(this.tick_task.bind(this), this.task_period);
 		this.mediaRecorder.start();
 		this.dispatch('record_started')
 		console.log("Recording started...");
@@ -116,7 +115,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 
 	close_recorder(){
 		if (this.task){
-			this.task.cancel();
+			clearInterval(this.task);
 			this.task = null;
 		}
 		if (this.stream){
@@ -242,7 +241,7 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 		this.imgw = new bricks.Image({width: '100%'});
 		this.preview.add_widget(this.imgw);
 		this.toggle_record.disabled(false);
-		this.pic_task = schedule_once(this.show_picture.bind(this), this.task_period);
+		this.pic_task = schedule_interval(this.show_picture.bind(this), this.task_period);
 	}
 	async show_picture(){
 		if (this.task_period == 0){
@@ -254,13 +253,11 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
                         'image.jpg',
                         { type: 'image/jpeg' });
 		this.imgw.set_url(this.dataurl);
-		this.pic_task = schedule_once(this.show_picture.bind(this), 
-									this.task_period);
 	}
 	close_recorder(){
 		super.close_recorder();
 		if (this.pic_task){
-			this.pic_task.cancel();
+			clearInterval(this.pic_task);
 			this.pic_task = null;
 		}
 	}
@@ -270,7 +267,7 @@ bricks.SysCamera= class extends bricks.SysVideoRecorder {
 		console.log('shot it ............');
 		event.stopPropagation();
 		if (this.task){
-			task.cancel();
+			clearInterval(this.task);
 			this.task = null;
 		}
 		this.task_period = 0;

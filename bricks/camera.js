@@ -86,7 +86,7 @@ bricks.Camera = class extends bricks.Popup {
 		this.video.srcObject = this.stream;
 		this.video.play();
 		this.show_cnt = 1;
-		this.task = schedule_once(this.show_picture.bind(this), this.task_period);
+		this.task = schedule_interval(this.show_picture.bind(this), this.task_period);
     }
 	show_picture(){
 		if (this.task_period == 0){
@@ -99,7 +99,6 @@ bricks.Camera = class extends bricks.Popup {
         context.drawImage(this.video, 0, 0);
 		this.dataurl = canvas.toDataURL('image/jpeg', 0.95);
 		this.imgw.set_url(this.dataurl);
-		this.task = schedule_once(this.show_picture.bind(this), this.task_period);
 		this.show_cnt += 1;
 	}
 	switch_recording(){
@@ -141,7 +140,7 @@ bricks.Camera = class extends bricks.Popup {
 	take_picture(event){
 		event.stopPropagation();
 		if (this.task){
-			task.cancel();
+			clearInterval(this.task);
 			this.task = null;
 		}
 		this.task_period = 0;

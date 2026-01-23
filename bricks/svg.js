@@ -57,18 +57,17 @@ bricks.Svg = class extends bricks.VBox {
 				this.dom_element.innerHTML = this.svg_text;
 			else
 				this.dom_element.innerHTML = ''
-			this.blink_task = schedule_once(this._blink.bind(this), 
-				this.blinktime);
 		}
 	}
 	start_blink(){
 		if (!this.blink_task){
-			this._blink();
+			this.blink_task = schedule_interval(this._blink.bind(this), 
+				this.blinktime);
 		}
 	}
 	end_blink(){
 		if (this.blink_task)
-			this.blink_task.cancel();
+			clearInterval(this.blink_task);
 		this.blink_task = null;
 	}
 }

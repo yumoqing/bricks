@@ -550,10 +550,10 @@ bricks.Tooltip = class extends bricks.Text {
 	}
 	hide(){
 		try {
-		if (this.auto_task){
-			this.auto_task.cancel();
-			this.auto_task = null;
-		}
+			if (this.auto_task){
+				clearTimeout(this.auto_task);
+				this.auto_task = null;
+			}
 		} catch(e){
 			console.log('Exception:', e);
 		}
