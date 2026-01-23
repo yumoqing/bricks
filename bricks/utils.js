@@ -354,7 +354,7 @@ var schedule_once = function(f, t){
 		t:time in second unit
 	*/
 	t = t * 1000
-	window.setTimeout(f, t);
+	return window.setTimeout(f, t);
 }
 
 var schedule_interval = function(f, t){
