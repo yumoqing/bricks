@@ -30,3 +30,61 @@
 | `command` | 当工具栏按钮被点击时，通过 `toolbar_w` 传递上来的命令事件，由 `command_handle` 转发为 `dispatch(name)` | 命令名称（来自 toolbar 的 `params.name`） |
 
 > 说明：`dispatch('record_click', data)` 会向外广播该事件，供外部监听处理。
+
+## 例子
+```
+{
+    "widgettype":"Cols",
+    "options":{
+        "data_url": "{{entire_url('accdetail.dspy')}}",
+        "data_params":{
+            "accountid":"{{params_kw.accountid}}"
+        },
+        "data_method": "GET"
+        {% if params_kw._is_mobile %}
+        "col_width": "{{params_kw.width / 2 - 5}}px",
+        {% else %}
+        "col_cwidth": 22,
+        {% endif %}
+        "record_view":{
+            "widgettype":"VBox",
+            "options":{
+                "width":"100%"
+            },
+            "subwidgets":[
+                {
+                    "widgettype":"Text",
+                    "options":{
+                        "text":"${acc_date}"
+                    }
+                },
+                {
+                    "widgettype":"Text",
+                    "options":{
+                        "text":"${acc_dir}"
+                    }
+                },
+                {
+                    "widgettype":"Text",
+                    "options":{
+                        "text":"${summary}"
+                    }
+                },
+                {
+                    "widgettype":"Text",
+                    "options":{
+                        "text":"${amount}"
+                    }
+                },
+                {
+                    "widgettype":"Text",
+                    "options":{
+                        "text":"${balance}"
+                    }
+                }
+            ]
+        }
+    }
+}
+```
+

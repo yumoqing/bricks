@@ -23,14 +23,14 @@ bricks.TimePassed = class extends bricks.VBox {
 		this.add_widget(this.text_w);
 	}
 	start(){
-		this.task = schedule_once(this.add_one_second.bind(this));
+		this.task = schedule_once(this.add_one_second.bind(this), 1);
 	}
 		
 	add_one_second(){
 		this.seconds += 1;
 		var t = bricks.formatTime(this.seconds);
 		this.text_w.set_text(t);
-		this.task = schedule_once(this.add_one_second.bind(this));
+		this.task = schedule_once(this.add_one_second.bind(this), 1);
 	}
 	stop(){
 		this.task.cancel();
