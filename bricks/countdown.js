@@ -30,7 +30,6 @@ bricks.TimePassed = class extends bricks.VBox {
 		this.seconds += 1;
 		var t = bricks.formatTime(this.seconds);
 		this.text_w.set_text(t);
-		this.task = schedule_once(this.add_one_second.bind(this), 1);
 	}
 	stop(){
 		clearInterval(this.task);
