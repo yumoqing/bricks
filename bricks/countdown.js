@@ -97,7 +97,7 @@ bricks.Countdown = class extends bricks.VBox {
 		var ts = bricks.formatTime(this.seconds);
 		this.text_w.set_text(ts);
 		if (this.seconds < 1){
-			stop();
+			this.stop();
 			this.dispatch('timeout');
 		}
 	}
