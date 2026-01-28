@@ -500,6 +500,7 @@ bricks.getWidgetById = function(idset, from_widget){
 	};
 	var get_by_typename=function(typename, fromw, downward){
 		if (! fromw) {
+			console.log('get_by_typename() return null,', typename, fromw, downward)
 			return null;
 		}
 		if (downward) {
@@ -508,13 +509,15 @@ bricks.getWidgetById = function(idset, from_widget){
 				var sc = get_by_typename(typename, c, downward);
 				if (sc) return sc;
 			}
+			console.log('get_by_typename() return null,', typename, fromw, downward)
 			return null;
 		}
 		var p = fromw.parent;
 		if (! p) {
+			console.log('get_by_typename() return null,', typename, fromw, downward)
 			return null;
 		}
-		if bricks.Factory.isWidgetType(p, typename)) return p;
+		if (bricks.Factory.isWidgetType(p, typename)) return p;
 		return get_by_typename(p, typename, downward);
 	};
 	if (!idset) return from_widget;
