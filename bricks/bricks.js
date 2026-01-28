@@ -531,12 +531,12 @@ bricks.getWidgetById = function(idset, from_widget){
 	};
 	if (!idset) return from_widget;
 	const parts = idset.split('.', 2);
-	var downward = false;
+	var downward = true;
 	var typename = '';
 	var id = parts[0];
 	var w;
 	if (id.startsWith('-')){
-			downward = true;
+			downward = false;
 			id = id.substring(1);
 	}
 	if (id.startsWith('@')){
