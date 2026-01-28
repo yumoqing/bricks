@@ -358,12 +358,8 @@ var schedule_once = function(f, t){
 }
 
 var schedule_interval = function(f, t){
-	var mf = function(func, t){
-		console.log('arguments:', func, t);
-		func();
-		schedule_once(mf.bind(func, t), t);
-	}
-	schedule_once(mf.bind(f,t), t);
+	t = t * 1000
+	return window.setInterval(f, t);
 }
 
 var debug = function(){

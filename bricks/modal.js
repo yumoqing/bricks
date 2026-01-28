@@ -84,7 +84,7 @@ bricks.BaseModal = class extends bricks.Layout {
 		if (this.parent){
 			this.set_css('display', 'none');
 			if (this.timeout_task){
-				this.timeout_task.cancel();
+				clearTimeout(this.timeout_task);
 				this.timeout_task = null;
 			}
 			try {

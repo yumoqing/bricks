@@ -140,7 +140,6 @@ bricks.Signaling = class {
 		this.send_data(d);
 		if (this.heartbeat_period > 0){
 			console.log('call login again in', this.heartbeat_period, ' seconds');
-			this.hb_task = schedule_once(this.login.bind(this), this.heartbeat_period);
 		}
 	}
 

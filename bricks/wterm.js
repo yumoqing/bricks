@@ -45,10 +45,6 @@ bricks.Wterm = class extends bricks.JsWidget {
 	destroy(){
 		console.debug('------domoff event, destory this widget');
 		try {
-			if (this.heartbeat_task){
-				this.heartbeat_task.cancel();
-				this.heartbeat_task = null;
-			}
 			this.unbind('element_resize', this.term_resize.bind(this))
 		} catch(e) {
 			console.log('error ', e);
@@ -83,16 +79,6 @@ bricks.Wterm = class extends bricks.JsWidget {
 	send_data(d){
 		this.socket.send(JSON.stringify({type: "input", "data":d}));
 	}
-	send_heartbeat(){
-		this.socket.send(JSON.stringify({ type: "heartbeat"  }));
-	
-	}
-	heartbeat(){
-		if (this.socket.readyState != 1) return;
-		this.send_heartbeat();
-		this.heartbeat_task = schedule_once(this.heartbeat.bind(this), 
-								this.ping_timeout);
-	}
 	async open(){
 		var term_options = bricks.extend({width: "100%", height: "100%"}, this.term_options);
 		var term = new Terminal(term_options);
@@ -120,16 +106,10 @@ bricks.Wterm = class extends bricks.JsWidget {
 		};
 		ws.onclose = (event) => {
 			console.log('websocket closed:', event.code, '--', event.reason);
-			if (this.heartbeat_task) {
-				this.heartbeat_task.cancel();
-				this.heartbeat_task = null;
-			}
 		};
 		ws.onopen = () => {
 			this.send_term_size();
 			this.bind('element_resize', this.term_resize.bind(this))
-			this.heartbeat_task = schedule_once(this.heartbeat.bind(this), 
-							this.ping_timeout);
 		};
 		term.onData((key) => {
 			console.log('key=', key);

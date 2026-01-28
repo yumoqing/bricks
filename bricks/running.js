@@ -23,18 +23,17 @@ bricks.BaseRunning = class extends bricks.FHBox {
 		this.time_start = new Date().getTime();
 		this.add_widget(this.icon_w);
 		this.add_widget(this.time_w);
-		this.showtime_task = schedule_once(this.show_timepass.bind(this), 0.05);
+		this.showtime_task = schedule_interval(this.show_timepass.bind(this), 0.05);
 	}
 	
 	show_timepass(){
 		var t = new Date().getTime() - this.time_start;
 		var txt = bricks.formatMs(t, 1);
 		this.time_w.set_text(txt);
-		this.showtime_task = schedule_once(this.show_timepass.bind(this), 0.05);
 	}
 	stop_timepass(){
 		if (this.showtime_task){
-			this.showtime_task.cancel();
+			clearInterval(this.showtime_task);
 			this.showtime_task = null;
 		}
 	}

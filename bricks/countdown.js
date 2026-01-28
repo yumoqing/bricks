@@ -17,23 +17,22 @@ bricks.TimePassed = class extends bricks.VBox {
 		this.seconds = 0;
 		var t = bricks.formatTime(this.seconds);
 		this.text_w = new bricks.Text({
-			text:this.t, 
+			text:t, 
 			rate:this.text_rate
 		});
 		this.add_widget(this.text_w);
 	}
 	start(){
-		this.task = schedule_once(this.add_one_second.bind(this), 1);
+		this.task = schedule_interval(this.add_one_second.bind(this), 1);
 	}
 		
 	add_one_second(){
 		this.seconds += 1;
 		var t = bricks.formatTime(this.seconds);
 		this.text_w.set_text(t);
-		this.task = schedule_once(this.add_one_second.bind(this), 1);
 	}
 	stop(){
-		this.task.cancel();
+		clearInterval(this.task);
 		this.task = null;
 	}
 }
@@ -66,8 +65,8 @@ bricks.Countdown = class extends bricks.VBox {
 				break;
 			case 2:
 				hours = 0;
-				minutes = 0;
-				seconds = parseInt(parts[0])
+				minutes = parseInt(parts[0]);
+				seconds = parseInt(parts[1])
 				break;
 			case 3:
 			default:
@@ -84,18 +83,23 @@ bricks.Countdown = class extends bricks.VBox {
 		this.add_widget(this.text_w);
 	}
 	start(){
-		schedule_once(this.time_down_second.bind(this), 1)
+		this.task = schedule_interval(this.time_down_second.bind(this), 1)
+	}
+	stop(){
+		if (this.task){
+			clearInterval(this.task);
+		}
+		this.task = null;
 	}
 	time_down_second(){
-		if (this.seconds < 1){
-			this.dispatch('timeout');
-			return;
-		}
 		var h, m, s;
 		this.seconds -= 1;
 		var ts = bricks.formatTime(this.seconds);
 		this.text_w.set_text(ts);
-		schedule_once(this.time_down_second.bind(this), 1)
+		if (this.seconds < 1){
+			this.stop();
+			this.dispatch('timeout');
+		}
 	}
 }
 
