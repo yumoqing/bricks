@@ -83,6 +83,8 @@ bricks.Menu = class extends bricks.VScrollPanel {
 					console.log('menu item define error', opts);
 				}
 				f.bind(t, this)(event);
+			} else {
+				console.log('********** menu item configured error *******');
 			}
 		} else {
 			console.log('menu_clicked():', this.target, 'not found')
@@ -99,12 +101,6 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		if (!container){
 			console.log(w, items, 'container is null');
 			return;
-		}
-		if (w == this){
-			console.log('build menu children called');
-		} else {
-			console.log('gggggg', items, w);
-			console.trace('调用栈:');
 		}
 		for (let i=0;i<items.length;i++){
 			let item = items[i];

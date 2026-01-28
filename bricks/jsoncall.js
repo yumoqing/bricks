@@ -52,8 +52,6 @@ bricks.HttpText = class {
 			width = bricks.app.screenWidth();
 			height = bricks.app.screenHeight();
 		}
-		console.log('=====bricks.app=', bricks.app);
-
 		this.params = {
 			"_webbricks_":1,
 			"_width":width,
