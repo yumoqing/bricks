@@ -508,7 +508,7 @@ bricks.getWidgetById = function(idset, from_widget){
 				if (bricks.Factory.isWidgetType(c, typename)) return c;
 				var sc = get_by_typename(typename, c, downward);
 				if (sc) return sc;
-			}
+			});
 			console.log('get_by_typename() return null,', typename, fromw, downward)
 			return null;
 		}
