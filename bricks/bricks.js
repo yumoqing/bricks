@@ -481,6 +481,15 @@ bricks.buildDispatchEventHandler = function(w, target, rtdata, desc){
 
 bricks.getWidgetById = function(idset, from_widget){
 	var get_by_id=function(id, fromw, downward){
+		if (id == 'self'){
+			return fromw;
+		}
+		if (id == 'root'){
+			return bricks.app.root;
+		}
+		if (id == 'app' || id == 'body' || id == 'window'){
+			return bricks.app;
+		}
 		var el = fromw.dom_element;
 		var nel;
 		if(downward ){
