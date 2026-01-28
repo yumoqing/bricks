@@ -7,6 +7,12 @@ class Factory_ {
 	register(name, widget){
 		this.widgets_kv[name] = widget;
 	}
+	isWidgetType(w, typename){
+		var typ = this.get(typename);
+		if (! typ) return false;
+		if (w instanceof typ) return true;
+		return false;
+	}
 	get(name){
 		if (this.widgets_kv.hasOwnProperty(name)){
 			return this.widgets_kv[name];

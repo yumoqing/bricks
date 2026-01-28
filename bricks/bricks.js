@@ -479,7 +479,67 @@ bricks.buildDispatchEventHandler = function(w, target, rtdata, desc){
 	return f.bind(target, desc.dispatch_event, params);
 }
 
-bricks.getWidgetById = function(id, from_widget){
+bricks.getWidgetById = function(idset, from_widget){
+	var get_by_id=function(id, fromw, downward){
+		var el = fromw.dom_element;
+		var nel;
+		if(downward ){
+			nel = el.querySelector('#' + id);
+		} else {
+			nel = el.closest('#' + id);
+		}
+		if (!nel) {
+			console.log('get_by_id() return null',id, fromw, downward);
+			return null;
+		}
+		if (typeof(el.bricks_widget) !== 'undefined'){
+			return el.bricks_widget;
+		}
+		console.log('get_by_id() found dom_ele, but not bricks widget, return null',id, fromw, downward);
+		return null;
+	};
+	var get_by_typename=function(typename, fromw, downward){
+		if (! fromw) {
+			return null;
+		}
+		if (downward) {
+			fromw.children.forEach(c=>{
+				if (bricks.Factory.isWidgetType(c, typename)) return c;
+				var sc = get_by_typename(typename, c, downward);
+				if (sc) return sc;
+			}
+			return null;
+		}
+		var p = fromw.parent;
+		if (! p) {
+			return null;
+		}
+		if bricks.Factory.isWidgetType(p, typename)) return p;
+		return get_by_typename(p, typename, downward);
+	};
+	if (!idset) return from_widget;
+	const parts = idset.split('.', 2);
+	var downward = false;
+	var typename = '';
+	var id = parts[0];
+	var w;
+	if (id.startsWith('-')){
+			downward = true;
+			id = id.substring(1);
+	}
+	if (id.startsWith('@')){
+			typename = id.substring(1);
+	}
+	if (typename != ''){
+			w = get_by_typename(typename, from_widget, downward);
+	} else {
+			w = get_by_id(id, from_widget, downward);
+	}
+	if (!w) return null;
+	return bricks.getWidgetById(parts[1], w);
+}
+
+bricks.getWidgetByIdOld = function(id, from_widget){
 	if (!from_widget){
 		from_widget = bricks.Body;
 	}
