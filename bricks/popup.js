@@ -383,7 +383,7 @@ bricks.Popup = class extends bricks.VBox {
 		}
 		this.opened = false;
 		if (this.auto_task){
-			this.auto_task.cancel();
+			setTimeout(this.auto_task);
 			this.auto_task = null;
 		}
 		this.set_style('display','none');

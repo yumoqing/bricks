@@ -55,7 +55,7 @@ bricks.Signaling = class {
 	reconnect(){
 		console.log('eror happened');
 		if (this.hb_task){
-			this.hb_task.cancel();
+			clearInterval(this.hb_task);
 			this.hb_task = null;
 		}
 		if (this.onclose){
