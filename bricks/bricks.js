@@ -501,8 +501,8 @@ bricks.getWidgetById = function(idset, from_widget){
 			console.log('get_by_id() return null',id, fromw, downward);
 			return null;
 		}
-		if (typeof(el.bricks_widget) !== 'undefined'){
-			return el.bricks_widget;
+		if (typeof(nel.bricks_widget) !== 'undefined'){
+			return nel.bricks_widget;
 		}
 		console.log('get_by_id() found dom_ele, but not bricks widget, return null',id, fromw, downward);
 		return null;
