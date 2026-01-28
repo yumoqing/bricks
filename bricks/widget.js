@@ -543,7 +543,7 @@ bricks.Tooltip = class extends bricks.Text {
 		this.set_style('display', 'block');
 		bricks.relocate_by_eventpos(event, this);
 		if (this.auto_task){
-			this.auto_task.cancel();
+			clearTimeout(this.auto_task);
 			this.auto_task = null;
 		}
 		this.auto_task = schedule_once(this.hide.bind(this), 6);
@@ -551,7 +551,7 @@ bricks.Tooltip = class extends bricks.Text {
 	hide(){
 		try {
 		if (this.auto_task){
-			this.auto_task.cancel();
+			clearTimeout(this.auto_task);
 			this.auto_task = null;
 		}
 		} catch(e){
