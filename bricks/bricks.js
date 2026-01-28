@@ -529,7 +529,9 @@ bricks.getWidgetById = function(idset, from_widget){
 		if (bricks.Factory.isWidgetType(p, typename)) return p;
 		return get_by_typename(p, typename, downward);
 	};
-	if (!idset) return from_widget;
+	if (!idset) {
+		return from_widget;
+	}
 	const parts = idset.split('.', 2);
 	var downward = true;
 	var typename = '';
@@ -548,6 +550,9 @@ bricks.getWidgetById = function(idset, from_widget){
 			w = get_by_id(id, from_widget, downward);
 	}
 	if (!w) return null;
+	if (!parts[1]){
+		console.log('idset=',idset, 'id=', id, w); 
+	}
 	return bricks.getWidgetById(parts[1], w);
 }
 

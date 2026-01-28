@@ -108,7 +108,6 @@ bricks.HttpText = class {
 	async bricks_fetch(url, {method='GET', headers=null, params=null}={}){
 		url = this.url_parse(url);
 		var data = this.add_own_params(params);
-		console.log('bricks_fetch(): data=', data, 'url=', url);
 		var header = this.add_own_headers(headers);
 		var _params = {
 			method:method
