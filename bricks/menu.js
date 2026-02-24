@@ -58,7 +58,7 @@ bricks.Menu = class extends bricks.VScrollPanel {
 					}
 				}
 				var w = await bricks.widgetBuild(desc, this);
-				if (w && ! w.parent){
+				if (w && ! bricks.Factory.isWidgetType(w, 'Popup')){
 					t.clear_widgets();
 					t.add_widget(w);
 				} else {
