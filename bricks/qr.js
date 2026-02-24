@@ -1,5 +1,14 @@
 var bricks = window.bricks || {};
 bricks.QRCodeScan = class extends bricks.VBox {
+	/*
+	event: 
+		recognized
+			识别到二维码
+			参数为识别到的正文
+		stopped
+			扫码已停止
+			无参数
+	*/
 	constructor(opts){
 		opts.width = '300px';
 		opts.height = '300px';
@@ -16,7 +25,7 @@ bricks.QRCodeScan = class extends bricks.VBox {
 	get_qr_result(decodedText, decodedResult){
 		this.dispatch('recognized', decodedText)
 		console.log('decodeText=', decodedText)
-		this.stop()
+		this.scanner.stop()
 	}
 	errorhandle(msg){
 		console.log("识别失败:", msg);
@@ -35,6 +44,7 @@ bricks.QRCodeScan = class extends bricks.VBox {
 	stop(){
 		if this.scanner && this.scanner.getState() !== Html5QrcodeScannerState.NOT_STARTED) {
 			this.scanner.stop()
+			this.dispatch('stopped', decodedText)
 		}
 	}
 }
