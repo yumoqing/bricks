@@ -24,7 +24,7 @@ bricks.QRCodeScan = class extends bricks.VBox {
 	}
 	get_qr_result(decodedText, decodedResult){
 		this.dispatch('recognized', decodedText)
-		console.log('decodeText=', decodedText)
+		console.log('decodeText=', {text: decodedText})
 		this.scanner.stop()
 	}
 	errorhandle(msg){
@@ -42,7 +42,7 @@ bricks.QRCodeScan = class extends bricks.VBox {
 
 	}
 	stop(){
-		if this.scanner && this.scanner.getState() !== Html5QrcodeScannerState.NOT_STARTED) {
+		if (this.scanner && this.scanner.getState() !== Html5QrcodeScannerState.NOT_STARTED) {
 			this.scanner.stop()
 			this.dispatch('stopped', decodedText)
 		}
