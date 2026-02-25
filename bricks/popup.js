@@ -85,7 +85,7 @@ bricks.Popup = class extends bricks.VBox {
 	set_dismiss_events(w){
 		if (!this.dismiss_events) return;
 		this.dismiss_events.forEach(ename => {
-			w.bind(ename, this.destroy.bind(this));
+			w.bind(ename, this.dismiss.bind(this));
 		});
 	}
 	bring_to_top(){
