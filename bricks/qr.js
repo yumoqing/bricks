@@ -23,7 +23,7 @@ bricks.QRCodeScan = class extends bricks.VBox {
 		schedule_once(this.start.bind(this), 0.5)
 	}
 	get_qr_result(decodedText, decodedResult){
-		this.dispatch('recognized', decodedText)
+		this.dispatch('recognized', {text: decodedText})
 		console.log('decodeText=', {text: decodedText})
 		this.scanner.stop()
 	}
