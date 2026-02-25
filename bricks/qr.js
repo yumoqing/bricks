@@ -43,8 +43,8 @@ bricks.QRCodeScan = class extends bricks.VBox {
 	}
 	stop(){
 		if (this.scanner && this.scanner.getState() !== Html5QrcodeScannerState.NOT_STARTED) {
-			this.scanner.stop()
-			this.dispatch('stopped', decodedText)
+			this.scanner.stop();
+			this.dispatch('stopped');
 		}
 	}
 }
