@@ -31,7 +31,7 @@ bricks.QRCodeScan = class extends bricks.VBox {
 		console.log("识别失败:", msg);
 	}
 	start(){
-		this.scanner = new Html5Qrcode(this.widget_id);
+		this.scanner = new Html5Qrcode(this.id);
 		this.scanner.start({ facingMode: "environment" },
 			this.scan_config,
 			this.get_qr_result.bind(this),
