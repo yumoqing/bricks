@@ -239,7 +239,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			return
 		}
 		if (this.opts.response_mode == 'async'){
-			if(d.status != 'SUCCEEDED' and d.status != 'FAILED' ){
+			if(d.status != 'SUCCEEDED' && d.status != 'FAILED' ){
 				console.log('filter all message not successed or failed', d);
 				return;
 			}
