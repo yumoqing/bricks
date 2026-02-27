@@ -244,12 +244,16 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 		this.fps_task = schedule_interval(this.show_picture.bind(this), this.fps_period);
 	}
 	async show_picture(){
-		var blob = await this.imageCapture.takePhoto();
-		this.dataurl = URL.createObjectURL(blob);
-		this.imgfile = new File([blob],
-                        'image.jpg',
-                        { type: 'image/jpeg' });
-		this.imgw.set_url(this.dataurl);
+		try {
+			var blob = await this.imageCapture.takePhoto();
+			this.dataurl = URL.createObjectURL(blob);
+			this.imgfile = new File([blob],
+							'image.jpg',
+							{ type: 'image/jpeg' });
+			this.imgw.set_url(this.dataurl);
+		} catch(e){
+			console.error(e);
+		}
 	}
 	close_recorder(){
 		super.close_recorder();
