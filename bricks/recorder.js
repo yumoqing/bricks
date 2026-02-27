@@ -32,9 +32,9 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		this.record_status = 'standby';
 		this.toggle_record.bind('click', this.switch_record.bind(this));
 		this.toggle_record.disabled(true);
-		this.task = schedule_interval(this.open_recorder.bind(this), 0.1);
+		schedule_once(this.open_recorder.bind(this), 0.1);
 	}
-	tick_task(){
+	async tick_task(){
 		this.timepass.set_text(bricks.timeDiff(this.start_time));
 	}
 	async switch_record(){
@@ -104,6 +104,10 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		return blob;
 	}
 	stop_recorder(){
+		if (this.task){
+			clearInterval(this.task);
+			this.task = null;
+		}
 		this.normal_stop = true;
 		this.time_diff = bricks.timeDiff(this.start_time);
 		this.timepass.set_text(this.time_diff);
@@ -114,10 +118,6 @@ bricks.MediaRecorder = class extends bricks.Popup {
 	}
 
 	close_recorder(){
-		if (this.task){
-			clearInterval(this.task);
-			this.task = null;
-		}
 		if (this.stream){
 			if (this.mediaRecorder){
 				this.mediaRecorder.stop();
@@ -241,7 +241,10 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 		this.imgw = new bricks.Image({width: '100%'});
 		this.preview.add_widget(this.imgw);
 		this.toggle_record.disabled(false);
-		this.pic_task = schedule_interval(this.show_picture.bind(this), this.task_period);
+	}
+	async tick_task(){
+		await super.tick_task();
+		await this.show_picture();
 	}
 	async show_picture(){
 		if (this.task_period == 0){
@@ -254,24 +257,11 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
                         { type: 'image/jpeg' });
 		this.imgw.set_url(this.dataurl);
 	}
-	close_recorder(){
-		super.close_recorder();
-		if (this.pic_task){
-			clearInterval(this.pic_task);
-			this.pic_task = null;
-		}
-	}
 }
 bricks.SysCamera= class extends bricks.SysVideoRecorder {
 	switch_record(){
 		console.log('shot it ............');
 		event.stopPropagation();
-		if (this.task){
-			clearInterval(this.task);
-			this.task = null;
-		}
-		this.task_period = 0;
-		this.task = null;
 		this.dispatch('shot', {url: this.dataurl, file:this.imgfile});
 		this.close_recorder();
 	}
