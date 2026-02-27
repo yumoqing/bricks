@@ -258,7 +258,7 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 	close_recorder(){
 		super.close_recorder();
 		if (this.fps_task){
-			stopInterval(this.fps_task);
+			clearInterval(this.fps_task);
 			this.fps_task = null;
 		}
 	}
