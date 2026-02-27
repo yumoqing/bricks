@@ -4,7 +4,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 	constructor(opts){
 		super(opts);
 		opts.fps = opts.fps || 30;
-		this.task_period = 1 / this.fps;
+		this.fps_period = 1 / this.fps;
 		this.task = null;
 		this.stream = null;
 		this.normal_stop = false;
@@ -40,11 +40,11 @@ bricks.MediaRecorder = class extends bricks.Popup {
 	async switch_record(){
 		console.log('toggle_record called');
 		if (this.record_status == 'standby'){
-			this.start_recorder();
+			this.start_record();
 			this.toggle_record.set_url(bricks_resource('imgs/stop_recording.svg'));
 			this.record_status = 'recording';
 		} else {
-			this.stop_recorder();
+			this.stop_record();
 			this.toggle_record.set_url(bricks_resource('imgs/start_recording.svg'));
 			this.record_status = 'standby';
 		}
@@ -55,7 +55,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 	async open_recorder(){
 		console.debug('open recorder for record');
 	}
-	async start_recorder(){
+	async start_record(){
 		this.normal_stop = false;
 		this.mediaRecorder = new MediaRecorder(this.stream, 
 								{mimeType: this.mimetype});
@@ -95,7 +95,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		};
 
 		this.start_time = Date.now();
-		this.task = schedule_interval(this.tick_task.bind(this), this.task_period);
+		this.task = schedule_interval(this.tick_task.bind(this), 0.5);
 		this.mediaRecorder.start();
 		this.dispatch('record_started')
 		console.log("Recording started...");
@@ -103,7 +103,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 	async blob_convert(blob){
 		return blob;
 	}
-	stop_recorder(){
+	stop_record(){
 		if (this.task){
 			clearInterval(this.task);
 			this.task = null;
@@ -241,21 +241,22 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 		this.imgw = new bricks.Image({width: '100%'});
 		this.preview.add_widget(this.imgw);
 		this.toggle_record.disabled(false);
-	}
-	async tick_task(){
-		await super.tick_task();
-		await this.show_picture();
+		this.fps_task = schedule_interval(this.show_picture.bind(this), this.fps_period);
 	}
 	async show_picture(){
-		if (this.task_period == 0){
-			return;
-		}
 		var blob = await this.imageCapture.takePhoto();
 		this.dataurl = URL.createObjectURL(blob);
 		this.imgfile = new File([blob],
                         'image.jpg',
                         { type: 'image/jpeg' });
 		this.imgw.set_url(this.dataurl);
+	}
+	close_recorder(){
+		super.close_recorder();
+		if (this.fps_task){
+			stopInterval(this.fps_task);
+			this.fps_task = null;
+		}
 	}
 }
 bricks.SysCamera= class extends bricks.SysVideoRecorder {
