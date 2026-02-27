@@ -252,7 +252,7 @@ bricks.SysVideoRecorder = class extends bricks.MediaRecorder {
 							{ type: 'image/jpeg' });
 			this.imgw.set_url(this.dataurl);
 		} catch(e){
-			console.error(e);
+			;
 		}
 	}
 	close_recorder(){
