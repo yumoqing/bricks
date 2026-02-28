@@ -914,8 +914,6 @@ bricks.UiText =class extends bricks.UiType {
 		value:
 		defaultValue:
 		tip:
-		rows:
-		cols:
 		readonly:
 		required:
 	}
@@ -932,8 +930,7 @@ bricks.UiText =class extends bricks.UiType {
 		this.uitype='text';
 		this.build();
 		this.charsize_sizing();
-		this.set_style('overflow', 'auto');
-		this.bind('oninput', this.handleInput.bind(this));
+		this.bind('input', this.handleInput.bind(this));
 		this.bind('keydown', this.key_handle.bind(this));
 	}
 	handleInput() {
@@ -962,8 +959,6 @@ bricks.UiText =class extends bricks.UiType {
 	build(){
 		var e = this.dom_element;
 		e.id = e.name = this.opts.name;
-		e.rows = this.opts.rows || 5;
-		e.cols = this.opts.cols || 40;
 		this.reset();
 		this.bind('input', this.set_value_from_input.bind(this))
 	}
