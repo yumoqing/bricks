@@ -923,13 +923,38 @@ bricks.UiText =class extends bricks.UiType {
 	constructor(opts){
 		opts.dynsize = opts.dynsize || true;
 		opts.cfontsize = opts.cfontsize || 1;
-		opts.height = '200px';
+		if (opts.css){
+			opts.css += 'auto-textarea';
+		} else {
+			opts.css = 'auto-textarea';
+		}
 		super(opts);
 		this.uitype='text';
 		this.build();
 		this.charsize_sizing();
 		this.set_style('overflow', 'auto');
-		this.bind('keydown', this.key_handle.bind(this))
+		this.bind('oninput', this.handleInput.bind(this));
+		this.bind('keydown', this.key_handle.bind(this));
+	}
+	handleInput() {
+		// 1. 重置高度为 auto，以便能够正确计算缩减后的 scrollHeight
+		var el = this.dom_element;
+		el.style.height = 'auto';
+
+		// 2. 获取当前的滚动高度
+		const scrollHeight = el.scrollHeight;
+		// 3. 获取 CSS 中定义的 max-height (150px)
+		const maxHeight = parseInt(window.getComputedStyle(el).maxHeight);
+
+		if (scrollHeight >= maxHeight) {
+			// 4. 如果内容高度超过最大高度，固定为最大高度并显示滚动条
+			el.style.height = maxHeight + 'px';
+			el.style.overflowY = 'auto';
+		} else {
+			// 5. 否则持续自适应高度，并隐藏滚动条
+			el.style.height = scrollHeight + 'px';
+			el.style.overflowY = 'hidden';
+		}
 	}
 	create(){
 		this.dom_element = this._create('textarea');

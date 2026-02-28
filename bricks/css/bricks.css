@@ -611,3 +611,21 @@ hr {
 	height: 50px;
 }
 
+.auto-textarea {
+	width: 100%;
+	min-height: 40px;      /* 初始高度 */
+	max-height: 150px;     /* 最大高度：超过此高度将滚动 */
+	line-height: 1.5;
+	padding: 10px;
+	box-sizing: border-box;
+	resize: none;          /* 禁用右下角手动拉伸 */
+	overflow-y: hidden;    /* 初始隐藏滚动条 */
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	outline: none;
+	transition: border-color 0.2s;
+}
+
+.inputbox:focus {
+	border-color: #007bff;
+}
