@@ -16,7 +16,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 			tip: 'start or stop record',
 			rate: 2
 		});
-		this.timepass = new bricks.Text({text:'00:00:00', cheight: 10});
+		this.timepass = new bricks.Text({text:'00:00:00', cheight: 1.2});
 		var filler = new bricks.Filler({});
 		var cancel = new bricks.Svg({
 						url: bricks_resource('imgs/delete.svg'), 
