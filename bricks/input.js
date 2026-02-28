@@ -934,26 +934,35 @@ bricks.UiText =class extends bricks.UiType {
 		this.bind('keydown', this.key_handle.bind(this));
 	}
 	handleInput() {
-		// 1. 重置高度为 auto，以便能够正确计算缩减后的 scrollHeight
+		// 1. 记录原始滚动位置（防止光标跳动）
 		var el = this.dom_element;
-		el.style.height = 'auto';
+		const scrollTop = el.scrollTop;
 
-		// 2. 获取当前的滚动高度
-		const scrollHeight = el.scrollHeight;
-		// 3. 获取 CSS 中定义的 max-height (150px)
-		const maxHeight = parseInt(window.getComputedStyle(el).maxHeight);
-		const paddingTop = parseInt(el.style.paddingTop);
-		const paddingBottom = parseInt(el.style.paddingBottom);
+		// 2. 核心：先设为固定高度而非 auto，
+		// 避免某些浏览器（如 Safari）在 auto 切换时丢失滚动焦点
+		el.style.height = '0px';
 
-		if (scrollHeight >= maxHeight) {
-			// 4. 如果内容高度超过最大高度，固定为最大高度并显示滚动条
+		// 3. 获取实时计算样式
+		const style = window.getComputedStyle(el);
+		const maxHeight = parseInt(style.maxHeight) || Infinity;
+		const minHeight = parseInt(style.minHeight) || 40;
+
+		// 4. 计算目标高度
+		// scrollHeight 在所有现代浏览器中都包含 padding
+		const targetHeight = el.scrollHeight;
+
+		if (targetHeight >= maxHeight) {
+			// 达到或超过最大高度
 			el.style.height = maxHeight + 'px';
 			el.style.overflowY = 'auto';
 		} else {
-			// 5. 否则持续自适应高度，并隐藏滚动条
-			el.style.height = scrollHeight + 'px';
+			// 低于最大高度
+			el.style.height = Math.max(targetHeight, minHeight) + 'px';
 			el.style.overflowY = 'hidden';
 		}
+
+		// 5. 恢复滚动（解决 Chrome/Safari 偶尔的置顶 Bug）
+		el.scrollTop = scrollTop;
 	}
 	create(){
 		this.dom_element = this._create('textarea');
