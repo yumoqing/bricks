@@ -612,6 +612,12 @@ hr {
 }
 
 .auto-textarea {
+	/* 1. 确保计算模型一致 */
+	box-sizing: border-box;
+	/* 2. 允许元素内部处理滚动事件，不传递给父层 */
+	touch-action: pan-y;
+	/* 3. 极其重要：有些 H5 框架会禁用默认滚动，这里强制开启 */
+	pointer-events: auto !important;
 	width: 100%;
 	min-height: 40px;      /* 初始高度 */
 	max-height: 150px;     /* 最大高度：超过此高度将滚动 */
