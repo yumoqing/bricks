@@ -942,8 +942,8 @@ bricks.UiText =class extends bricks.UiType {
 		const scrollHeight = el.scrollHeight;
 		// 3. 获取 CSS 中定义的 max-height (150px)
 		const maxHeight = parseInt(window.getComputedStyle(el).maxHeight);
-		const paddingTop = parseInt(style.paddingTop);
-		const paddingBottom = parseInt(style.paddingBottom);
+		const paddingTop = parseInt(el.style.paddingTop);
+		const paddingBottom = parseInt(el.style.paddingBottom);
 
 		if (scrollHeight >= maxHeight) {
 			// 4. 如果内容高度超过最大高度，固定为最大高度并显示滚动条
