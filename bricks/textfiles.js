@@ -10,7 +10,7 @@ bricks.DeletableLabel = class extends bricks.HBox {
 		opts.cheight = 1;
 		opts.width = '100%';
 		super(opts);
-		this.rate = opts.rate or 0.6;
+		this.rate = opts.rate || 0.6;
 		var lopts = {
 			rate: this.rate
 		}
