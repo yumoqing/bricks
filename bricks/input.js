@@ -986,6 +986,7 @@ bricks.UiText =class extends bricks.UiType {
 		this.value = v;
 		this.dom_element.value = v;
 		debug('UiText: v=', v);
+		this.handleInput();
 	}
 	reset(){
 		var v = this.opts.value || this.opts.defaultvalue||'';
