@@ -321,7 +321,6 @@ bricks.AgentModel = class extends bricks.JsWidget {
 		}
 		await hr.handle_chunk(resp, this.chunk_response.bind(this, mout));
 		this.chunk_ended();
-		mout.estimate_w.show();
 	}
 	chunk_response(mout, l){
 		l = l.trim();
