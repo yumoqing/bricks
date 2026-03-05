@@ -41,6 +41,125 @@ bricks.LlmMsgAudio = class extends bricks.UpStreaming {
 		return resp;
 	}
 }
+bricks.AgentOut = class extends bricks.VBox {
+    constructor(opts){
+        super(opts);
+        this.rc_w = null;
+        this.c_w = null;
+        this.v_w = null;
+        this.i_w = null;
+        this.a_w = null;
+        this.glb_w = null;
+        this.images = [];
+        this.reasoning_content = '';
+        this.content = '';
+        this.error = '';
+    }
+
+    update(data){
+        if (data.audio){
+            var url = data.audio;
+            if (! data.audio.startsWith('http')){
+                if (! data.audio.startsWith('data:audio/')){
+                    url = 'data:audio/wav;base64,' + url;
+                }
+            }
+            if (!this.a_w) {
+                this.a_w = new bricks.AudioPlayer({
+                    width: '100%',
+                    autoplay: true,
+                    url: url,
+                    cheight:2
+                });
+            } else {
+                this.a_w.add_url(url);
+            }
+        }
+        if (data.glb){
+            this.glb_w = new bricks.GlbViewer({
+                url:data.glb,
+                width: '100%'
+            });
+        }
+        if (data.video){
+            if (!this.v_w){
+                this.v_w = new bricks.VideoPlayer({
+                    width: '100%',
+                    url: data.video,
+                    autoplay: true
+                });
+            } else {
+                this.v_w.add_url(data.video);
+            }
+        }
+        if (data.error){
+            this.error += data.error;
+        }
+        if (data.reasoning_content){
+            this.reasoning_content += data.reasoning_content;
+        }
+        if (data.content){
+            this.content += data.content;
+        }
+        if (data.image){
+            if (Array.isArray(data.image)){
+                this.images.concat(data.image);
+            } else {
+                this.images.push(data.image);
+            }
+        }
+        this.clear_widgets();
+        if (this.error.length) {
+            var txt = bricks.escapeSpecialChars(this.error);
+            this.c_w = new bricks.Text({
+                text: this.error,
+                wrap: true,
+                halign: 'left',
+                css: 'resp-error',
+                width: '100%'
+            });
+            this.add_widget(this.c_w);
+        }
+        if (this.reasoning_content.length) {
+            var txt = bricks.escapeSpecialChars(this.reasoning_content);
+            this.rc_w = new bricks.MdWidget({
+                mdtext: this.reasoning_content,
+                css: 'thinking-content',
+                bgcolor: '#f0d0d0',
+                width: '100%'
+            });
+            this.add_widget(this.rc_w);
+        }
+        if (this.content.length) {
+            var txt = bricks.escapeSpecialChars(this.content);
+            this.c_w = new bricks.MdWidget({
+                mdtext: this.content,
+                css: 'resp-content',
+                width: '100%'
+            });
+            this.add_widget(this.c_w);
+        }
+        if (this.v_w) {
+            this.add_widget(this.v_w);
+        }
+        if (this.glb_w){
+            this.add_widget(this.glb_w);
+        }
+        if (this.a_w) {
+            this.add_widget(this.a_w);
+        }
+        if (this.images.length){
+            this.images.forEach( i => {
+                var w = new bricks.Image({
+                    width: '100%',
+                    url: i
+                });
+                this.add_widget(w)
+            });
+        }
+    }
+}
+
 bricks.AgentOutput = class extends bricks.VBox {
 	/* {
 		icon:
@@ -68,7 +187,7 @@ bricks.AgentOutput = class extends bricks.VBox {
 		this.add_widget(this.content);
 		this.run = new bricks.BaseRunning({target:this, cheight:2, cwidth:2});
 		this.content.add_widget(this.run);
-		this.filler = new bricks.LlmOut({width: '100%', css: 'card'});
+		this.filler = new bricks.AgentOut({width: '100%', css: 'card'});
 		this.filler.set_css('filler');
 		this.content.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
 		this.content.add_widget(this.filler);
@@ -102,7 +221,7 @@ bricks.AgentInputView = class extends bricks.VBox {
         this.show_input(this.data);
     }
     show_input(data){
-        var mdtext = data.prompt + '\n';
+        var mdtext = bricks.escapeSpecialChars(data.prompt) + '\n';
         data.add_files.forEach(f =>{
 			if (f.type.startsWith('video/')) {
 				var url = URL.createObjectURL(f);
@@ -148,6 +267,7 @@ bricks.AgentModel = class extends bricks.JsWidget {
 			icon:
 			url:
 			params:
+			method:
 			reply_url:
 		}
 	*/
@@ -155,8 +275,9 @@ bricks.AgentModel = class extends bricks.JsWidget {
 		super(opts);
 		this.llmio = llmio;
 	}
-	async model_inputed(data){
+	async set_inputed(data){
 		var mout = new bricks.AgentOutput({
+						reply_url: this.opts.reply_url
 					});
 		this.llmio.o_w.add_widget(mout);
 		var d = data;
@@ -209,8 +330,13 @@ bricks.AgentIO = class extends bricks.VBox {
 	}
 	user_inputed(e){
 		this.show_input(e.params);
-		new llmmodel = new bricks.LlmModel();
-		llmmodel.model_inputed(e.params);
+		var agent = new bricks.AgentModel({
+			url:this.opts.url,
+			params: this.opts.params,
+			method: this.opts.method || 'POST',
+			reply_url: this.opts.reply_url
+		});
+		agent.set_inputed(e.params);
 	}
     async show_input(params){
         var box = new bricks.HBox({width:'100%'});
