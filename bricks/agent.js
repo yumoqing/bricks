@@ -319,6 +319,7 @@ bricks.AgentIO = class extends bricks.VBox {
 	}
 	*/
 	constructor(opts){
+		if (!opts.height) opts.height = '100%';
 		super(opts);
 		this.llmmodels = [];
 		this.msg_box = new bricks.VScrollPanel({
