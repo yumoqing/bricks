@@ -281,7 +281,7 @@ bricks.AgentModel = class extends bricks.JsWidget {
 		var mout = new bricks.AgentOutput({
 						reply_url: this.opts.reply_url
 					});
-		this.llmio.o_w.add_widget(mout);
+		this.llmio.msg_box.add_widget(mout);
 		var d = data;
 		var hr = new bricks.HttpResponseStream();
 		var resp = await hr.post(this.opts.url, {params:d});
