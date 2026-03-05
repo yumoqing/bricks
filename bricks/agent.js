@@ -363,7 +363,7 @@ bricks.AgentIO = class extends bricks.VBox {
 	}
 	user_inputed(e){
 		this.show_input(e.params);
-		var agent = new bricks.AgentModel({
+		var agent = new bricks.AgentModel(this, {
 			url:this.opts.url,
 			params: this.opts.params,
 			method: this.opts.method || 'POST',
