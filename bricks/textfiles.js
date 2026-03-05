@@ -70,7 +70,7 @@ bricks.TextFiles = class extends bricks.VBox {
 		this.add_widget(hbox);
 		hbox.add_widget(addfilew);
 		hbox.add_widget(new bricks.VBox({css:'filler'}));
-		hbox.add_widget(new inputw);
+		hbox.add_widget(inputw);
 		this.filesbar.hide();
 		this.inputfilew.hide();
 		this.inputfilew.bind('changed', this.file_added.bind(this));
