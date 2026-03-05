@@ -354,7 +354,7 @@ bricks.AgentIO = class extends bricks.VBox {
         // box.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
         box.add_widget(w);
         box.add_widget(img);
-        this.o_w.add_widget(box);
+        this.msg_box.add_widget(box);
     }   
 }
 
