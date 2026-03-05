@@ -82,7 +82,7 @@ bricks.TextFiles = class extends bricks.VBox {
 		}
 		var d = {
 			add_files: self.add_files,
-			prompt: prompt
+			prompt: txt.prompt
 		}
 		this.dispatch('inputed', d);
 	}
