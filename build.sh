@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-bash <EOF
+bash <!EOF
 cd bricks
 ./build.sh
 EOF
