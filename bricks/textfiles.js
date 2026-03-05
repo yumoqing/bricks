@@ -81,7 +81,7 @@ bricks.TextFiles = class extends bricks.VBox {
 			return;
 		}
 		var d = {
-			add_files: self.add_files,
+			add_files: this.add_files,
 			prompt: txt.prompt
 		}
 		this.dispatch('inputed', d);
@@ -90,17 +90,17 @@ bricks.TextFiles = class extends bricks.VBox {
 		this.inputfilew.hide();
 		var file = this.inputfilew.getValue().add_file;
 		this.inputfilew.reset();
-		self.add_files.push(file);
+		this.add_files.push(file);
 		var w = new bricks.DeletableLabel({label: file.name})
 		this.filesbar.add_widget(w);
 		this.filesbar.show();
 		w.bind('deleted', this.deleted_file.bind(this, file));
 	}
 	deleted_file(file){
-		files = self.add_files.filter(i => i !== file);
-		self.add_files = files;
-		if (self.add_files.length ==0){
-			self.filesbar.hide();
+		files = this.add_files.filter(i => i !== file);
+		this.add_files = files;
+		if (this.add_files.length ==0){
+			this.filesbar.hide();
 		}
 	}
 	add_file(){
