@@ -50,7 +50,7 @@ bricks.TextFiles = class extends bricks.VBox {
 		this.inputfilew = new bricks.UiFile({name:add_file});
 		this.filesbar = new bricks.DynamicColumn({});
 		this.add_files = [];
-		this.textw = new bricks.UiText({});
+		this.textw = new bricks.UiText({name: 'prompt'});
 		addfilew = new bricks.Svg({
 			cwidth: 1.5,
 			cheight: 1.5,
@@ -76,7 +76,15 @@ bricks.TextFiles = class extends bricks.VBox {
 		this.inputfilew.bind('changed', this.file_added.bind(this));
 	}
 	input_finished(){
-		
+		var txt = this.textw.getValue();
+		if (txt.prompt || txt.prompt.length<1){
+			return;
+		}
+		var d = {
+			add_files: self.add_files,
+			prompt: prompt
+		}
+		this.dispatch('inputed', d);
 	}
 	file_added(e){
 		input_finished.hide();
