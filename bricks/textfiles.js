@@ -77,7 +77,7 @@ bricks.TextFiles = class extends bricks.VBox {
 	}
 	input_finished(){
 		var txt = this.textw.getValue();
-		if (txt.prompt || txt.prompt.length<1){
+		if (! txt.prompt || txt.prompt.length<1){
 			return;
 		}
 		var d = {
