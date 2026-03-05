@@ -341,10 +341,9 @@ bricks.AgentIO = class extends bricks.VBox {
 	/*
 	options:
 	{
-		user_icon:
-		agent_icon:
-		agent_url:
-		params:
+		agent_using_llmid: #agent使用的大模型id
+		reply_url：			# 补充问题url
+		url:				# agent接受问题的url
 	}
 	*/
 	constructor(opts){
@@ -362,13 +361,15 @@ bricks.AgentIO = class extends bricks.VBox {
 	}
 	user_inputed(e){
 		this.show_input(e.params);
+		var params = e.params;
+		params.llmid = this.agent_using_llmid;
 		var agent = new bricks.AgentModel(this, {
 			url:this.opts.url,
-			params: this.opts.params,
+			params: params,
 			method: this.opts.method || 'POST',
 			reply_url: this.opts.reply_url
 		});
-		agent.set_inputed(e.params);
+		agent.set_inputed(params);
 	}
     async show_input(params){
         var box = new bricks.HBox({width:'100%'});
