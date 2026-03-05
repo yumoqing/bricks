@@ -60,7 +60,7 @@ bricks.TextFiles = class extends bricks.VBox {
 		var inputw = new bricks.Svg({
 			cwidth: 1.5,
             cheight: 1.5,
-            url: opts.url || bricks_resource('imgs/send.svg')
+            url: opts.url || bricks_resource('imgs/submit.svg')
         });
 		inputw.bind('click', this.input_finished.bind(this));
 		var hbox = new bricks.HBox({cheight: 1.5});
@@ -87,8 +87,9 @@ bricks.TextFiles = class extends bricks.VBox {
 		this.dispatch('inputed', d);
 	}
 	file_added(e){
-		input_finished.hide();
+		this.inputfilew.hide();
 		var file = this.inputfilew.getValue().add_file;
+		this.inputfilew.reset();
 		self.add_files.push(file);
 		var w = new bricks.DeletableLabel({label: file.name})
 		this.filesbar.add_widget(w);
