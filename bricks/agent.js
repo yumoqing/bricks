@@ -222,6 +222,7 @@ bricks.AgentInputView = class extends bricks.VBox {
     }
     show_input(data){
         var mdtext = bricks.escapeSpecialChars(data.prompt) + '\n';
+		if (data.add_files){
         data.add_files.forEach(f =>{
 			if (f.type.startsWith('video/')) {
 				var url = URL.createObjectURL(f);
@@ -245,6 +246,7 @@ bricks.AgentInputView = class extends bricks.VBox {
 				mdtext += `[${f.name}](${url})`;
 			}
         });
+		}
         this.clear_widgets();
         var w = new bricks.MdWidget({
             width: '100%',
