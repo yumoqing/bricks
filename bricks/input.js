@@ -407,7 +407,7 @@ bricks.UiFile = class extends bricks.VBox {
 	}
 	handleFileSelect(event){
 		var files = [];
-		event.target.files.forEach(f => {
+		Array.from(event.target.files).forEach(f => {
 			if (! this.accept || f.type.startsWith(this.accept)){
 				files.push(f);
 			}
