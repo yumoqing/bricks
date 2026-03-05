@@ -405,6 +405,10 @@ bricks.UiFile = class extends bricks.VBox {
 		this.add_widget(new bricks.Text({text:'drop in or click to choose file'}));
 		this.dom_element.appendChild(this.input);
 	}
+    reset(){
+        var v = this.opts.value || this.opts.defaultvalue||'';
+        this.setValue(v);
+    }
 	handleFileSelect(event){
 		var files = [];
 		Array.from(event.target.files).forEach(f => {
