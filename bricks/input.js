@@ -407,7 +407,8 @@ bricks.UiFile = class extends bricks.VBox {
 	}
     reset(){
         var v = this.opts.value || this.opts.defaultvalue||'';
-        this.setValue(v);
+		this.value = '';
+        this.input.value = '';
     }
 	handleFileSelect(event){
 		var files = [];
