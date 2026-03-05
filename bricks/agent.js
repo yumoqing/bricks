@@ -215,7 +215,9 @@ bricks.AgentOutput = class extends bricks.VBox {
 		this.add_widget(this.content);
 		this.run = new bricks.BaseRunning({target:this, cheight:2, cwidth:2});
 		this.content.add_widget(this.run);
-		this.filler = new bricks.AgentOut({width: '100%', css: 'card', this.reply_url});
+		this.filler = new bricks.AgentOut({width: '100%', 
+			css: 'card', 
+			reply_url: this.reply_url});
 		this.filler.set_css('filler');
 		this.content.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
 		this.content.add_widget(this.filler);
