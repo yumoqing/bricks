@@ -51,13 +51,13 @@ bricks.TextFiles = class extends bricks.VBox {
 		this.filesbar = new bricks.DynamicColumn({});
 		this.add_files = [];
 		this.textw = new bricks.UiText({name: 'prompt'});
-		addfilew = new bricks.Svg({
+		var addfilew = new bricks.Svg({
 			cwidth: 1.5,
 			cheight: 1.5,
 			url: bricks_resource('imgs/add.svg')
 		});
 		addfilew.bind('click', this.add_file.bind(this));
-		inputw = new bricks.Svg({
+		var inputw = new bricks.Svg({
 			cwidth: 1.5,
             cheight: 1.5,
             url: opts.url || bricks_resource('imgs/send.svg')
