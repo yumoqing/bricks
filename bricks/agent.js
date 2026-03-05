@@ -54,6 +54,7 @@ bricks.AgentOut = class extends bricks.VBox {
         this.reasoning_content = '';
         this.content = '';
         this.error = '';
+		this.qa_w  = null;
     }
 
     update(data){
@@ -108,6 +109,33 @@ bricks.AgentOut = class extends bricks.VBox {
                 this.images.push(data.image);
             }
         }
+		if (data.reply){
+			var opts = {
+				dimiss_events: [ 'submit' ],
+				auto_open: true,
+				content: {
+					widgettype: "Form",
+					options: {
+						submit_url: this.rply_url,
+						title: "补充信息",
+						description: data.reply.question,
+						fields:[
+							{
+								name: 'questionkey',
+								uitype: 'hide',
+								value: data.reply.questionkey
+							},
+							{
+								name: ' answer',
+								uitype: 'text',
+								required: true
+							}
+						]
+					}
+				}
+			};
+			var win = new bricks.PopupWindow(opts);
+		}
         this.clear_widgets();
         if (this.error.length) {
             var txt = bricks.escapeSpecialChars(this.error);
@@ -187,7 +215,7 @@ bricks.AgentOutput = class extends bricks.VBox {
 		this.add_widget(this.content);
 		this.run = new bricks.BaseRunning({target:this, cheight:2, cwidth:2});
 		this.content.add_widget(this.run);
-		this.filler = new bricks.AgentOut({width: '100%', css: 'card'});
+		this.filler = new bricks.AgentOut({width: '100%', css: 'card', this.reply_url});
 		this.filler.set_css('filler');
 		this.content.add_widget(new bricks.BlankIcon({rate:2, flexShrink:0}));
 		this.content.add_widget(this.filler);
