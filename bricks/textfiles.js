@@ -48,7 +48,7 @@ bricks.TextFiles = class extends bricks.VBox {
 		opts.width = '100%';
 		super(opts);
 		this.inputfilew = new bricks.UiFile({name:'add_file'});
-		this.filesbar = new bricks.DynamicColumn({});
+		this.filesbar = new bricks.DynamicColumn({col_cwidth:10});
 		this.add_files = [];
 		this.textw = new bricks.UiText({name: 'prompt'});
 		var addfilew = new bricks.Svg({
