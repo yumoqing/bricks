@@ -85,6 +85,8 @@ bricks.TextFiles = class extends bricks.VBox {
 			prompt: txt.prompt
 		}
 		this.dispatch('inputed', d);
+		this.textw.setValue('');
+		this.add_files = [];
 	}
 	file_added(e){
 		this.inputfilew.hide();
@@ -94,6 +96,7 @@ bricks.TextFiles = class extends bricks.VBox {
 		var w = new bricks.DeletableLabel({label: file.name})
 		this.filesbar.add_widget(w);
 		this.filesbar.show();
+		this.filesbar.clear_widgets();
 		w.bind('deleted', this.deleted_file.bind(this, file));
 	}
 	deleted_file(file){
