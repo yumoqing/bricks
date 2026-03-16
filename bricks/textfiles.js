@@ -40,7 +40,7 @@ bricks.TextFiles = class extends bricks.VBox {
 	输入长文本和一到多个文件，高度随着输入文本的多少以及添加的文件数量变化，添加的文件有一个删除按钮可以删除掉
 	有一个按钮提交数据，点击后触发“inputed”事件
 	{
-		"inputed_icon":
+		"params": 参数
 	}
 	*/
 	constructor(opts){
@@ -80,10 +80,11 @@ bricks.TextFiles = class extends bricks.VBox {
 		if (! txt.prompt || txt.prompt.length<1){
 			return;
 		}
-		var d = {
+		var p = this.params || {};
+		var d = Object.assign({}, p, {
 			add_files: this.add_files,
 			prompt: txt.prompt
-		}
+		});
 		this.dispatch('inputed', d);
 		this.textw.setValue('');
 		this.add_files = [];
