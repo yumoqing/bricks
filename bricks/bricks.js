@@ -288,6 +288,9 @@ bricks.buildEventHandler = async function(w, desc, event){
 		case 'urlwidget':
 			return bricks.buildUrlwidgetHandler(w, target, rtdata, desc);
 			break;
+		case 'urldata':
+			return bricks.buildUrldataHandler(w, target, rtdata, desc);
+			break;
 		case 'bricks':
 			return bricks.buildBricksHandler(w, target, rtdata, desc);
 			break;
@@ -380,28 +383,80 @@ bricks.buildNewWindowHandler = function(w, target, rtdata, desc){
 	}
 	return _buildWidget.bind(null, w, target, desc.mode || 'replace', opts, desc);
 }
+var _add_event_data = function(params, event_data, rtdata, params_mapping){
+	if (event_data instanceof FormData){
+		var p = event_data;
+		for ( const [key, value] of Object.entries(rtdata)){
+			p.append(key, value);
+		}
+		for ( const [key, value] of Object.entries(params||{})){
+			p.append(key, value);
+		}
+		return p;
+	} else {
+		var p = bricks.extend(rtdata, event_data);
+		if (params_mapping){
+			p = bricks.map(p, params_mapping.mapping, params_mapping.need_others);
+		}
+		p = bricks.extend(p, rtdata);
+		return p;
+	}
+
+}
+
+_buildDataHandler = async function(obj, from_widget, target, options, desc){
+	var jc = new bricks.HttpJson();
+	var method = options.method or 'GET';
+	if (options.params instanceof FormData) {
+		method = 'POST';
+	var data = await jc.httpcall(url, { 
+		method: method, 
+		params: options.params
+	});
+
+	var newdesc = desc.status_of[data.status];
+	var w = await widgetBuild(from_widget, newdesc, data.data)
+	if (!w){
+		console.log('build error,newdesc=', newdesc, 'data=', data.data);
+		return;
+	}
+	if (w instanceof bricks.Popup) {
+		return;
+	}
+	if (w instanceof bricks.NewWindow) {
+		return;
+	}
+	if (desc.mode == 'replace'){
+		target.clear_widgets();
+		target.add_widget(w);
+	} else if (desc.mode == 'insert'){
+		target.add_widget(w, 0);
+	} else {
+		target.add_widget(w);
+	}
+	if (target instanceof bricks.Popup || target instanceof bricks.PopupWindow) {
+		target.open();
+	}
+}
+
+bricks.buildUrldataHandler = function(w, target, rtdata, desc){
+	var options = objcopy(desc.options||{});
+	var params = _add_event_data(options.params || {},
+		desc.event_params,
+		rtdata,desc.params_mapping);
+	options.params = params;
+	var opts = {
+		"widgettype":"urlwidget",
+		"options":options
+	}
+	return _buildDataHandler.bind(null, w, target, options, desc);
+}
 bricks.buildUrlwidgetHandler = function(w, target, rtdata, desc){
 	var options = objcopy(desc.options||{});
-	var params = options.params || {};
-	if (desc.event_params instanceof FormData){
-		var params = desc.event_params;
-		for ( const [key, value] of Object.entries(rtdata)){
-			params.append(key, value);
-		}
-		options = bricks.apply_data(options, rtdata);
-		for ( const [key, value] of Object.entries(options.params||{})){
-			params.append(key, value);
-		}
-		options.params = params;
-		options.method = "POST";
-	} else {
-		rtdata = bricks.extend(rtdata, desc.event_params);
-		options = bricks.apply_data(options, rtdata);
-		if (desc.params_mapping){
-			rtdata = bricks.map(rtdata, desc.params_mapping.mapping, desc.params_mapping.need_others);
-		}
-		options.params = bricks.extend(params, rtdata);
-	}
+	var params = _add_event_data(options.params || {},
+		desc.event_params,
+		rtdata,desc.params_mapping);
+	options.params = params;
 	var opts = {
 		"widgettype":"urlwidget",
 		"options":options
