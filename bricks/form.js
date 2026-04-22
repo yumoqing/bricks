@@ -202,7 +202,7 @@ bricks.FormBase = class extends bricks.Layout {
 			this.reset_data();
 		} else {
 			if (params.action){
-				f = bricks.buildEventHandler(this, params);
+				var f = bricks.buildEventHandler(this, params);
 				if (f) f(event);
 			} else {
 				this.dispatch(params.name);
