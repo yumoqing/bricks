@@ -406,7 +406,7 @@ var _add_event_data = function(params, event_data, rtdata, params_mapping){
 
 _buildDataHandler = async function(obj, from_widget, target, options, desc){
 	var jc = new bricks.HttpJson();
-	var method = options.method or 'GET';
+	var method = options.method || 'GET';
 	if (options.params instanceof FormData) {
 		method = 'POST';
 	var data = await jc.httpcall(url, { 
