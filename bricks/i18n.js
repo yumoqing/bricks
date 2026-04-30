@@ -27,6 +27,7 @@ bricks.I18n = class {
 
 	_(txt, obj){
 		var outt, mt;
+		this.change_lang(this.lang);
 		var msgs = this.lang_msgs[this.lang].msgs;
 		mt = msgs[txt] || txt;
 		if (obj instanceof Object){
@@ -73,7 +74,10 @@ bricks.I18n = class {
 			this.setup_dict(d, lang);
 		} catch(e) {
 			console.log('get_lang_dic() error', lang, e);
-			this.setup_dict({}, lang);
+			this.lang_msgs[lang] = {
+				msgs:{},
+				unmsgs:{}
+			}
 		}
 	
 	}
