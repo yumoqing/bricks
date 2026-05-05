@@ -28,7 +28,7 @@ bricks.I18n = class {
 	_(txt, obj){
 		var outt, mt;
 		this.change_lang(this.lang);
-		var msgs = this.lang_msgs[this.lang].msgs;
+		var msgs = this.lang_msgs[this.lang].msgs || {};
 		mt = msgs[txt] || txt;
 		if (obj instanceof Object){
 			outt = obj_fmtstr(obj, mt);
