@@ -410,7 +410,7 @@ _buildDataHandler = async function(from_widget, target, options, desc){
 	if (options.params instanceof FormData) {
 		method = 'POST';
 	}
-	var data = await jc.httpcall(url, { 
+	var data = await jc.httpcall(options.url, { 
 		method: method, 
 		params: options.params
 	});
