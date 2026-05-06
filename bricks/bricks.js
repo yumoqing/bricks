@@ -416,7 +416,7 @@ _buildDataHandler = async function(from_widget, target, options, desc){
 	});
 
 	var newdesc = desc.status_of[data.status];
-	var w = await widgetBuild(from_widget, newdesc, data.data)
+	var w = await bricks.widgetBuild(from_widget, newdesc, data.data)
 	if (!w){
 		console.log('build error,newdesc=', newdesc, 'data=', data.data);
 		return;
