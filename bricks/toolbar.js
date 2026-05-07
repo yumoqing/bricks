@@ -44,6 +44,10 @@ bricks.Toolbar = class extends bricks.Layout {
 		}
 	}
 	async createTools(){
+		if (!this.opts.tools){
+			console.log('error: tools not exists in options');
+			return;
+		}
 		var l = this.opts.tools.length;
 		for (var i=0;i<l; i++){
 			await this.createTool(this.opts.tools[i]);
