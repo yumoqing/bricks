@@ -384,8 +384,9 @@ bricks.buildNewWindowHandler = function(w, target, rtdata, desc){
 	return _buildWidget.bind(null, w, target, desc.mode || 'replace', opts, desc);
 }
 var _add_event_data = function(params, event_data, rtdata, params_mapping){
+	var p;
 	if (event_data instanceof FormData){
-		var p = event_data;
+		p = event_data;
 		for ( const [key, value] of Object.entries(rtdata)){
 			p.append(key, value);
 		}
@@ -394,14 +395,13 @@ var _add_event_data = function(params, event_data, rtdata, params_mapping){
 		}
 		return p;
 	} else {
-		var p = bricks.extend(rtdata, event_data);
-		if (params_mapping){
-			p = bricks.map(p, params_mapping.mapping, params_mapping.need_others);
-		}
+		p = bricks.extend(rtdata, event_data);
 		p = bricks.extend(p, rtdata);
-		return p;
 	}
-
+	if (params_mapping){
+		p = bricks.map(p, params_mapping.mapping, params_mapping.need_others);
+	}
+	return p;
 }
 
 _buildDataHandler = async function(from_widget, target, options, desc){
