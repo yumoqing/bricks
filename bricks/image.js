@@ -13,7 +13,7 @@ bricks.Image = class extends bricks.JsWidget {
 		if (this.opts.url){
 			this.set_url(this.opts.url);
 		}
-		this.set_style('alignSelf', 'flexStart');
+		this.set_style('alignSelf', 'flex-start');
 	}
 	create(){
 		this.dom_element = document.createElement('img');
