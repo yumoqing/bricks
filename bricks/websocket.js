@@ -37,7 +37,7 @@ bricks.WebSocket = class extends bricks.VBox {
 	}
 	on_error(e){
 		this.dispatch('onerror');
-		console.log(error);
+		console.log(e);
 	}
 	on_message(e){
 		var d = JSON.parse(e.data);
