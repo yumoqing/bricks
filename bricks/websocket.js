@@ -18,7 +18,7 @@ bricks.WebSocket = class extends bricks.VBox {
 		super(opts);
 		if (opts.with_session){
 			var session =  bricks.app.get_session();
-			this.ws = new WebSocket(this.ws_url, sessopn);
+			this.ws = new WebSocket(this.ws_url, session);
 		} else {
 			this.ws = new WebSocket(this.ws_url);
 		}
