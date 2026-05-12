@@ -446,6 +446,9 @@ bricks.buildUrldataHandler = function(w, target, rtdata, desc){
 		desc.event_params,
 		rtdata,desc.params_mapping);
 	options.params = params;
+	if (params instanceof FormData){
+		options.method = 'POST'
+	}
 	var opts = {
 		"widgettype":"urlwidget",
 		"options":options
