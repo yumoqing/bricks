@@ -387,15 +387,16 @@ var _add_event_data = function(params, event_data, rtdata, params_mapping){
 	var p;
 	if (event_data instanceof FormData){
 		p = event_data;
-		for ( const [key, value] of Object.entries(rtdata)){
+		for ( const [key, value] of Object.entries(params||{})){
 			p.append(key, value);
 		}
-		for ( const [key, value] of Object.entries(params||{})){
+		for ( const [key, value] of Object.entries(rtdata)){
 			p.append(key, value);
 		}
 		return p;
 	} else {
-		p = bricks.extend(rtdata, event_data);
+		p = bricks.extend(params, rtdata)
+		p = bricks.extend(p, event_data);
 		p = bricks.extend(p, rtdata);
 	}
 	if (params_mapping){
