@@ -222,7 +222,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 				if (resp.status == 'FAILED'){
 					return;
 				}
-				this.query_task_status(mout, resp.taskid)
+				await this.query_task_status(mout, resp.taskid)
 				break;
 			case 'stream':
 				var d = this.inputdata2uploaddata(data);
@@ -257,7 +257,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 	llm_msg_format(){
 		return this.llm_message_format || {role:'assistant', content:"${content}"}
 	}
-	query_task_status(mout, taskid){
+	async query_task_status(mout, taskid){
 		var pt = this.opts.period_time || 30;
 		if (this.query_task) {
 			this.query_task.cancel()
