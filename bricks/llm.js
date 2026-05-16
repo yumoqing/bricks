@@ -263,7 +263,10 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			this.query_task.cancel()
 		}
 		var hj = new bricks.HttpJson()
-		var resp = await hj.post(this.opts.url, {params:d});
+		var d = {
+			taskid: taskid
+		}
+		var resp = await hj.post(this.opts.query_url, {params:d});
 		if (! resp) {
 			return;
 		}
