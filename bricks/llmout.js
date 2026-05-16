@@ -81,6 +81,7 @@ bricks.LlmOut = class extends bricks.VBox {
 		this.i_w = null;
 		this.a_w = null;
 		this.glb_w = null;
+		this.s_w = null;  // 状态
 		this.images = [];
 		this.reasoning_content = '';
 		this.content = '';
@@ -88,6 +89,13 @@ bricks.LlmOut = class extends bricks.VBox {
 	}
 	
 	update(data){
+		if (data.status){
+			this.s_w = new bricks.Text({
+				width: '100%',
+				height: 'auto',
+				text: JSON.stringify(data)
+			});
+		}
 		if (data.audio){
 			var url = data.audio;
 			if (! data.audio.startsWith('http')){
@@ -187,6 +195,9 @@ bricks.LlmOut = class extends bricks.VBox {
 				});
 				this.add_widget(w)
 			});
+		}
+		if(this.s_w){
+			this.add_widget(this.s_w);
 		}
 	}
 }

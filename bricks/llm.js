@@ -208,26 +208,43 @@ bricks.LlmModel = class extends bricks.JsWidget {
 					estimate_url:this.llmio.estimate_url
 					});
 		this.llmio.o_w.add_widget(mout);
-		if (this.response_mode == 'stream' || this.response_mode == 'async') {
-			var d = this.inputdata2uploaddata(data);
-			var hr = new bricks.HttpResponseStream();
-			var resp = await hr.post(this.opts.url, {params:d});
-			if (! resp) {
-				mout.run_stopped();
-				return;
-			}
-			await hr.handle_chunk(resp, this.chunk_response.bind(this, mout));
-			this.chunk_ended();
-		} else {
-			var d = this.inputdata2uploaddata(data);
-			console.log('data_inouted=', data, 'upload_data=', d);
-			var hj = new bricks.HttpJson()
-			var resp = await hj.post(this.opts.url, {params:d});
-			if (! resp) {
-				mout.run_stopped();
-				return;
-			}
-			mout.update_data(resp);
+		switch (this.response_mode) {
+			case 'async':
+				var d = this.inputdata2uploaddata(data);
+				console.log('data_inouted=', data, 'upload_data=', d);
+				var hj = new bricks.HttpJson()
+				var resp = await hj.post(this.opts.url, {params:d});
+				if (! resp) {
+					mout.run_stopped();
+					return;
+				}
+				mout.update_data(resp);
+				if (resp.status == 'FAILED'){
+					return;
+				}
+				this.query_task_status(mout, resp.taskid)
+				break;
+			case 'stream':
+				var d = this.inputdata2uploaddata(data);
+				var hr = new bricks.HttpResponseStream();
+				var resp = await hr.post(this.opts.url, {params:d});
+				if (! resp) {
+					mout.run_stopped();
+					return;
+				}
+				await hr.handle_chunk(resp, this.chunk_response.bind(this, mout));
+				this.chunk_ended();
+				break;
+			default:
+				var d = this.inputdata2uploaddata(data);
+				console.log('data_inouted=', data, 'upload_data=', d);
+				var hj = new bricks.HttpJson()
+				var resp = await hj.post(this.opts.url, {params:d});
+				if (! resp) {
+					mout.run_stopped();
+					return;
+				}
+				mout.update_data(resp);
 		}
 		mout.estimate_w.show();
 	}
@@ -240,6 +257,22 @@ bricks.LlmModel = class extends bricks.JsWidget {
 	llm_msg_format(){
 		return this.llm_message_format || {role:'assistant', content:"${content}"}
 	}
+	query_task_status(mout, taskid){
+		var pt = this.opts.period_time || 30;
+		if (this.query_task) {
+			this.query_task.cancel()
+		}
+		var hj = new bricks.HttpJson()
+		var resp = await hj.post(this.opts.url, {params:d});
+		if (! resp) {
+			return;
+		}
+		mout.update_data(resp)
+		if (resp.status == 'FAILED' || resp.status == 'SUCCEEDED'){
+			return
+		}
+		schedule_once(this.query_task_status.bind(this, mout, taskid), pt)
+	}
 	chunk_response(mout, l){
 		l = l.trim();
 		try {
@@ -249,9 +282,8 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			return
 		}
 		if (this.opts.response_mode == 'async'){
-			if(d.status != 'SUCCEEDED' && d.status != 'FAILED' ){
-				console.log('filter all message not successed or failed', d);
-				return;
+			if (d.taskid){
+				this.query_task_status(mout, d.taskid)
 			}
 		} 
 		console.log('l=', l, 'd=', d);
