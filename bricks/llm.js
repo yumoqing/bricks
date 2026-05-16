@@ -180,6 +180,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		if (data instanceof FormData){
 			if( ! this.llmio.model_inputed ) d.append('model', this.opts.model)
 			d.append('llmid', this.opts.llmid)
+			d.append('stream', this.opts.stream)
 			if (this.llmio.enabled_kdb){
 				Object.keys(this.llmio.kdb_setting).forEach(k =>{
 					d.append(k, this.llmio.kdb_setting[k]);
