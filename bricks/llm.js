@@ -274,7 +274,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		if (resp.status != 'ok'){
 			console.log('error:' + resp.data.message);
 		}
-		data = resp.data.response
+		var data = resp.data.response
 		if (data.status == 'FAILED' || data.status == 'SUCCEEDED'){
 			return
 		}
