@@ -258,7 +258,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		return this.llm_message_format || {role:'assistant', content:"${content}"}
 	}
 	async query_task_status(mout, taskid){
-		var pt = this.opts.period_time || 30;
+		var pt = this.opts.period_time || 50;
 		if (this.query_task) {
 			this.query_task.cancel()
 		}
@@ -271,9 +271,14 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			return;
 		}
 		mout.update_data(resp)
-		if (resp.status == 'FAILED' || resp.status == 'SUCCEEDED'){
+		if (resp.status != 'ok'){
+			console.log('error:' + resp.data.message);
+		}
+		data = resp.data.response
+		if (data.status == 'FAILED' || data.status == 'SUCCEEDED'){
 			return
 		}
+		mout.update_data(data);
 		schedule_once(this.query_task_status.bind(this, mout, taskid), pt)
 	}
 	chunk_response(mout, l){
