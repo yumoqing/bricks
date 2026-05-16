@@ -273,10 +273,10 @@ bricks.LlmModel = class extends bricks.JsWidget {
 				console.log('error:' + resp.data.message);
 			}
 			var data = resp.data.response
+			mout.update_data(data);
 			if (data.status == 'FAILED' || data.status == 'SUCCEEDED'){
 				return
 			}
-			mout.update_data(data);
 		}
 	}
 	chunk_response(mout, l){
