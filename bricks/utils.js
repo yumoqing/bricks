@@ -1,5 +1,9 @@
 var bricks = window.bricks || {};
 bricks.bug = false;
+bricks.sleep = function(seconds){
+	var ms = seconds * 1000;
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 bricks.timeDiff = function(startTime) {
   const now = Date.now();
