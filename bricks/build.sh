@@ -3,7 +3,7 @@ SOURCES=" page_data_loader.js factory.js uitypesdef.js utils.js uitype.js \
 	jsoncall.js myoperator.js scroll.js menu.js popup.js recorder.js \
 	modal.js running.js llmout.js glbviewer.js \
 	markdown_viewer.js audio.js toolbar.js tab.js \
-	input.js registerfunction.js button.js accordion.js dataviewer.js \
+	input.js registerfunction.js button.js accordion.js searchbar.js dataviewer.js \
 	tree.js multiple_state_image.js dynamiccolumn.js form.js message.js conform.js \
 	paging.js datagrid.js iframe.js cols.js echartsext.js \
 	floaticonbar.js miniform.js wterm.js dynamicaccordion.js \
@@ -11,7 +11,7 @@ SOURCES=" page_data_loader.js factory.js uitypesdef.js utils.js uitype.js \
 	llm.js websocket.js datarow.js tabular.js continueaudio.js \
 	line.js pie.js bar.js gobang.js period.js iconbarpage.js \
 	keypress.js asr.js webspeech.js countdown.js progressbar.js \
-	qaframe.js svg.js videoplayer.js sctter.js radar.js kline.js \
+	qaframe.js svg.js videoplayer.js scatter.js radar.js kline.js \
 	heatmap.js map.js qr.js textfiles.js agent.js "
 echo ${SOURCES}
 cat ${SOURCES} > ../dist/bricks.js

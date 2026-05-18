@@ -17,6 +17,7 @@ bricks.DataViewer = class extends bricks.VBox {
 		this.active_item = null;
 		this.loading = false;
 		this.data_offset = 0;
+		this.search_keyword = this.get_initial_search_keyword();
 		this.keyselectable = true;
 		this.bind('row_check_changed', this.show_check_event_data.bind(this));
 		schedule_once(this.build_all.bind(this), 0.1);
@@ -30,6 +31,7 @@ bricks.DataViewer = class extends bricks.VBox {
 		this.build_title_widget();
 		this.build_description_widget();
 		this.build_toolbar_widget();
+		this.build_searchbar_widget();
 		this.build_records_area();
 		await this.build_other();
 		this.check_changed_row = null;
@@ -42,7 +44,7 @@ bricks.DataViewer = class extends bricks.VBox {
 	async build_other(){
 	}
 	async render(params) {
-		params = params || {};
+		params = this.merge_search_params(params || {});
 		if (params == this.old_params){
 			return;
 		}
@@ -75,6 +77,59 @@ bricks.DataViewer = class extends bricks.VBox {
 		this.add_widget(this.filler_widget)
 		this.scrollpanel = new bricks.VScrollPanel({});
 		this.filler_widget.add_widget(this.scrollpanel);
+	}
+	get_initial_search_keyword(){
+		if (!this.searchable){
+			return '';
+		}
+		if (this.search_value != null){
+			return this.search_value;
+		}
+		if (typeof this.searchable == 'object' && this.searchable.value != null){
+			return this.searchable.value;
+		}
+		return '';
+	}
+	build_searchbar_widget(){
+		if (!this.searchable){
+			return;
+		}
+		var opts = {};
+		if (typeof this.searchable == 'object'){
+			opts = bricks.extend(opts, this.searchable);
+		}
+		opts.width = opts.width || this.search_width || '100%';
+		opts.placeholder = opts.placeholder || this.search_placeholder;
+		opts.value = opts.value || this.search_value || this.search_keyword || '';
+		opts.search_label = opts.search_label || this.search_label;
+		opts.clear_label = opts.clear_label || this.clear_label;
+		this.searchbar_w = new bricks.SearchBar(opts);
+		this.searchbar_w.bind('search', this.search_event_handle.bind(this));
+		this.add_widget(this.searchbar_w);
+	}
+	merge_search_params(params){
+		var merged = bricks.extend({}, params || {});
+		if (this.searchable){
+			var search_param = this.search_param || 'keyword';
+			if (this.search_keyword){
+				merged[search_param] = this.search_keyword;
+			} else {
+				delete merged[search_param];
+			}
+		}
+		return merged;
+	}
+	async search_event_handle(event){
+		var d = event.params || {};
+		this.search_keyword = d.keyword || '';
+		this.old_params = null;
+		this.select_row = null;
+		this.active_item = null;
+		this.data_offset = 0;
+		if (this.loader){
+			this.loader.pages = [];
+		}
+		await this.render({});
 	}
 	async renderPageData(data, page){
 		var pos;
