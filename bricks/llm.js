@@ -258,7 +258,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		return this.llm_message_format || {role:'assistant', content:"${content}"}
 	}
 	async query_task_status(mout, taskid){
-		var pt = this.opts.period_time || 50;
+		var pt = this.opts.period_time || 30 * 1000;
 		while (true) {
 			var hj = new bricks.HttpJson()
 			var d = {
