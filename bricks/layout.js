@@ -295,6 +295,36 @@ bricks.ResponsiveBox = class extends bricks.Layout {
 		}
 	}
 }
+bricks.RefreshWidget = class extends bricks.VBox {
+	/* 
+	{
+		period_seconds:
+		params:
+		method
+		url:
+	}
+	*/
+	constructor(opts){
+		super(opts);
+		this.refresh_task = null;
+		schedule_once(this.show_widget.bind(this), 0.01);
+	}
+	async show_widget(){
+		var desc = {
+			widgttype: "urlwidget",
+			options: {
+				params: this.opts.params,
+				method: this.opts.method,
+				url: this.opts.url
+			}
+		};
+		var w = new bricks.widgetBuild(desc, this);
+		if (w){
+			this.add_widget(w)
+		}
+		schedule_once(this.show_widget.bind(this), this.opts.period_seconds);
+	}
+}
 bricks.Factory.register('HBox', bricks.HBox);
 bricks.Factory.register('FHBox', bricks.FHBox);
 bricks.Factory.register('VBox', bricks.VBox);
@@ -304,3 +334,4 @@ bricks.Factory.register('HFiller', bricks.Filler);
 bricks.Factory.register('VFiller', bricks.Filler);
 bricks.Factory.register('ResponsiveBox', bricks.ResponsiveBox);
 bricks.Factory.register('ResponsableBox', bricks.ResponsiveBox);
+bricks.Factory.register('RefreshWidget', bricks.RefreshWidget);
