@@ -318,7 +318,7 @@ bricks.RefreshWidget = class extends bricks.VBox {
 				url: this.opts.url
 			}
 		};
-		var w = new bricks.widgetBuild(desc, this);
+		var w = await bricks.widgetBuild(desc, this);
 		if (w){
 			this.add_widget(w)
 		}
