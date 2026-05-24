@@ -320,6 +320,7 @@ bricks.RefreshWidget = class extends bricks.VBox {
 		};
 		var w = await bricks.widgetBuild(desc, this);
 		if (w){
+			this.clear_widgets();
 			this.add_widget(w)
 		}
 		schedule_once(this.show_widget.bind(this), this.opts.period_seconds);
