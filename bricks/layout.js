@@ -311,7 +311,7 @@ bricks.RefreshWidget = class extends bricks.VBox {
 	}
 	async show_widget(){
 		var desc = {
-			widgttype: "urlwidget",
+			widgettype: "urlwidget",
 			options: {
 				params: this.opts.params,
 				method: this.opts.method,
