@@ -36,7 +36,7 @@ bricks.PageDataLoader = class {
 	}
 	async loadNextPage(){
 		var page = Math.max(...this.pages) + 1;
-		if (page < this.lastPage){
+		if (page <= this.lastPage){
 			var d = await this.loadPage(page);
 			var p = this.pages.length - 1;
 			d.pos_rate = p / this.pages.length;
