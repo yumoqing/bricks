@@ -57,6 +57,7 @@ bricks.PageDataLoader = class {
 			var params = bricks.extend({}, this.params);
 			params = bricks.extend(params,{
 				page:page, 
+				pagerows:this.rows
 				rows:this.rows
 			});
 			var d = await jc.httpcall(this.data_url,{method:this.method, params:params});
