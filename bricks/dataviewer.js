@@ -32,6 +32,7 @@ bricks.DataViewer = class extends bricks.VBox {
 		this.build_description_widget();
 		this.build_toolbar_widget();
 		this.build_searchbar_widget();
+		this.build_datafilter_widget();
 		this.build_records_area();
 		await this.build_other();
 		this.check_changed_row = null;
@@ -107,6 +108,37 @@ bricks.DataViewer = class extends bricks.VBox {
 		this.searchbar_w.bind('search', this.search_event_handle.bind(this));
 		this.add_widget(this.searchbar_w);
 	}
+	build_datafilter_widget(){
+		if (!this.opts.data_filter){
+			return;
+		}
+		var opts = {
+			data_filter: this.opts.data_filter,
+			browserfields: this.opts.browserfields || {},
+			field_labels: this.opts.filter_labels || {},
+			search_label: this.opts.filter_search_label || '搜索',
+			clear_label: this.opts.filter_clear_label || '清空'
+		};
+		this.datafilter_w = new bricks.DataFilter(opts);
+		this.datafilter_w.bind('filter_search', this.filter_event_handle.bind(this));
+		this.datafilter_w.bind('filter_clear', this.filter_clear_handle.bind(this));
+		this.add_widget(this.datafilter_w);
+	}
+	async filter_event_handle(event){
+		var d = event.params || {};
+		this.filter_values = d.values || {};
+		this.old_params = null;
+		this.select_row = null;
+		this.active_item = null;
+		this.data_offset = 0;
+		if (this.loader){
+			this.loader.pages = [];
+		}
+		await this.render({});
+	}
+	async filter_clear_handle(event){
+		this.filter_values = {};
+	}
 	merge_search_params(params){
 		var merged = bricks.extend({}, params || {});
 		if (this.searchable){
@@ -115,6 +147,16 @@ bricks.DataViewer = class extends bricks.VBox {
 				merged[search_param] = this.search_keyword;
 			} else {
 				delete merged[search_param];
+			}
+		}
+		/* data_filter: send the filter JSON + collected var values */
+		if (this.opts.data_filter){
+			merged['data_filter'] = JSON.stringify(this.opts.data_filter);
+			var filter_values = this.filter_values || {};
+			for (var k in filter_values){
+				if (filter_values[k] !== '' && filter_values[k] !== null && filter_values[k] !== undefined){
+					merged[k] = filter_values[k];
+				}
 			}
 		}
 		return merged;
