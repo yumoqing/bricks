@@ -3,7 +3,7 @@ SOURCES=" page_data_loader.js factory.js uitypesdef.js utils.js uitype.js \
 	jsoncall.js myoperator.js scroll.js menu.js popup.js recorder.js \
 	modal.js running.js llmout.js glbviewer.js \
 	markdown_viewer.js audio.js toolbar.js tab.js \
-	input.js registerfunction.js button.js accordion.js searchbar.js data_filter.js dataviewer.js \
+	input.js registerfunction.js button.js accordion.js searchbar.js dataviewer.js \
 	tree.js multiple_state_image.js dynamiccolumn.js form.js message.js conform.js \
 	paging.js datagrid.js iframe.js cols.js echartsext.js \
 	floaticonbar.js miniform.js wterm.js dynamicaccordion.js \

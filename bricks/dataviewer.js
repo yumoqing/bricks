@@ -32,7 +32,6 @@ bricks.DataViewer = class extends bricks.VBox {
 		this.build_description_widget();
 		this.build_toolbar_widget();
 		this.build_searchbar_widget();
-		this.build_datafilter_widget();
 		this.build_records_area();
 		await this.build_other();
 		this.check_changed_row = null;
@@ -107,37 +106,6 @@ bricks.DataViewer = class extends bricks.VBox {
 		this.searchbar_w = new bricks.SearchBar(opts);
 		this.searchbar_w.bind('search', this.search_event_handle.bind(this));
 		this.add_widget(this.searchbar_w);
-	}
-	build_datafilter_widget(){
-		if (!this.opts.data_filter){
-			return;
-		}
-		var opts = {
-			data_filter: this.opts.data_filter,
-			browserfields: this.opts.browserfields || {},
-			field_labels: this.opts.filter_labels || {},
-			search_label: this.opts.filter_search_label || '搜索',
-			clear_label: this.opts.filter_clear_label || '清空'
-		};
-		this.datafilter_w = new bricks.DataFilter(opts);
-		this.datafilter_w.bind('filter_search', this.filter_event_handle.bind(this));
-		this.datafilter_w.bind('filter_clear', this.filter_clear_handle.bind(this));
-		this.add_widget(this.datafilter_w);
-	}
-	async filter_event_handle(event){
-		var d = event.params || {};
-		this.filter_values = d.values || {};
-		this.old_params = null;
-		this.select_row = null;
-		this.active_item = null;
-		this.data_offset = 0;
-		if (this.loader){
-			this.loader.pages = [];
-		}
-		await this.render({});
-	}
-	async filter_clear_handle(event){
-		this.filter_values = {};
 	}
 	merge_search_params(params){
 		var merged = bricks.extend({}, params || {});
@@ -239,9 +207,18 @@ bricks.DataViewer = class extends bricks.VBox {
 				edit_names.push(t.name);
 			});
 		}
+		/* data_filter: add search tool to toolbar */
+		if (this.opts.data_filter){
+			tbdesc.tools.push({
+				name:'filter',
+				label: this.opts.filter_label || '搜索',
+				tip: 'filter records',
+				icon: this.opts.filter_icon || bricks_resource('imgs/search.svg')
+			});
+		}
 		if (this.toolbar){
 			this.toolbar.tools.forEach(t => {
-				if (! edit_names.includes(t.name)){
+				if (! edit_names.includes(t.name) && t.name !== 'filter'){
 					tbdesc.tools.push(t);
 				}
 			});
@@ -275,6 +252,10 @@ bricks.DataViewer = class extends bricks.VBox {
 			this.delete_record(this.select_row);
 			return;
 		}
+		if (tdesc.name == 'filter'){
+			await this.show_filter_form();
+			return;
+		}
 		var data = null;
 		if (this.select_row){
 			var r = this.select_row;
@@ -282,6 +263,93 @@ bricks.DataViewer = class extends bricks.VBox {
 		}
 		console.log(tdesc.name, 'clicked ==================', tdesc.name, data)
 		this.dispatch(tdesc.name, data);
+	}
+	/* Recursively extract {var, field, op} from data_filter JSON tree */
+	get_filter_fields(){
+		var fields = [];
+		var self = this;
+		var alters = (this.opts.browserfields && this.opts.browserfields.alters) || {};
+		var labels = this.opts.filter_labels || {};
+
+		function extract(node){
+			if (!node || typeof node !== 'object') return;
+			var keys = Object.keys(node);
+			for (var i = 0; i < keys.length; i++){
+				var key = keys[i];
+				var val = node[key];
+				if (key === 'AND' || key === 'OR'){
+					if (Array.isArray(val)){
+						val.forEach(extract);
+					}
+				} else if (key === 'NOT'){
+					extract(val);
+				} else if (key === 'field'){
+					if (node.var){
+						var alter = alters[node.field] || {};
+						var f = {
+							name: node.var,
+							label: labels[node.var] || node.field,
+							op: node.op || '='
+						};
+						if (alter.uitype === 'code'){
+							f.uitype = 'code';
+							if (alter.data && Array.isArray(alter.data)){
+								f.data = alter.data;
+							}
+							if (alter.dataurl){
+								f.dataurl = alter.dataurl;
+								f.datamethod = alter.datamethod || 'GET';
+								f.dataparams = alter.dataparams || {};
+							}
+							if (alter.data_field){
+								f.data_field = alter.data_field;
+							}
+						}
+						fields.push(f);
+					}
+					return;
+				}
+			}
+		}
+		extract(this.opts.data_filter);
+		return fields;
+	}
+	async show_filter_form(){
+		var fields = this.get_filter_fields();
+		var submit_url = this.opts.data_url || '';
+		var form_opts = {
+			submit_url: '#',
+			width: '100%',
+			height: '100%',
+			fields: fields
+		};
+		var form = new bricks.Form(form_opts);
+		var popup = new bricks.PopupWindow({
+			title: this.opts.filter_title || '搜索过滤',
+			icon: bricks_resource('imgs/search.svg'),
+			widget: this,
+			archor: 'cc',
+			movable: true,
+			resizable: true,
+			width: '50%',
+			height: 'auto'
+		});
+		form.bind('cancel', popup.dismiss.bind(popup));
+		form.bind('submited', this.filter_form_submited.bind(this, popup, form));
+		popup.add_widget(form);
+		popup.open();
+	}
+	async filter_form_submited(popup, form, event){
+		popup.dismiss();
+		this.filter_values = form._getValue();
+		this.old_params = null;
+		this.select_row = null;
+		this.active_item = null;
+		this.data_offset = 0;
+		if (this.loader){
+			this.loader.pages = [];
+		}
+		await this.render({});
 	}
 	get_edit_fields(){
 		var fs = this.row_options.fields;
