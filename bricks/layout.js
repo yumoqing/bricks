@@ -323,7 +323,11 @@ bricks.RefreshWidget = class extends bricks.VBox {
 			this.clear_widgets();
 			this.add_widget(w)
 		}
-		schedule_once(this.show_widget.bind(this), this.opts.period_seconds);
+		if (this.is_in_dom()){
+			schedule_once(this.show_widget.bind(this), this.opts.period_seconds);
+		} else {
+			console.log('Stop load data from server');
+		}
 	}
 }
 bricks.Factory.register('HBox', bricks.HBox);
