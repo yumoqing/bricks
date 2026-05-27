@@ -3554,6 +3554,10 @@ bricks.HttpText = class {
 		}
 		
 		console.log('withLoginInfo: retry successful');
+		// Dispatch sage_login event so shell can reload menu
+		if (bricks.app && bricks.app.dispatch) {
+			bricks.app.dispatch('sage_login');
+		}
 		return await this.get_result_data(retryResult);
 	}	
 	async get(url, {headers=null, params=null}={}){
