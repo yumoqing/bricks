@@ -41,6 +41,7 @@ bricks.HttpText = class {
 			headers = {};
 		this.headers = headers || {
 			"Accept":"text/html",
+			"client_uuid": bricks.app.deviceid
 		};
 		bricks.extend(this.headers, headers);
 		var width=0, height=0;
