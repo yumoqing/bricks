@@ -348,6 +348,12 @@ var _buildWidget = async function(from_widget, target, mode, options, desc){
 	if (mode == 'replace'){
 		target.clear_widgets();
 		target.add_widget(w);
+		// Router hook: track urlwidget navigations to registered targets
+		if (bricks.Router && bricks.Router._enabled
+			&& options && options.widgettype === 'urlwidget'
+			&& options.options && options.options.url){
+			bricks.Router._onReplace(target, options.options.url);
+		}
 	} else if (mode == 'insert'){
 		target.add_widget(w, 0);
 	} else {
