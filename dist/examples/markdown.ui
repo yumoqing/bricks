@@ -1,0 +1,21 @@
+
+{
+	"widgettype":"VBox",
+	"options":{
+	},
+	"subwidgets":[
+		{
+			"widgettype":"Title1",
+			"options":{
+				"text":"Pic Viewer",
+				"i18n":true
+			}
+		},
+		{
+			"widgettype":"MarkdownViewer",
+			"options":{
+				"md_url":"test1.md"
+			}
+		}
+	]
+}

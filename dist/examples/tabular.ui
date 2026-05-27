@@ -1,0 +1,36 @@
+{
+	"widgettype":"Tabular",
+	"options":{
+		"data_url":"{{entire_url('./channels.dspy')}}",
+		"content_view":{
+			"id":"videoplayer",
+			"widgettype":"Iframe",
+			"options":{
+				"width":"100%",
+				"url":"${url}"
+			}   
+		},
+		"editable":{
+		},
+		"row_options":{
+				"fields":[
+					{
+						"name":"logo_url",
+						"uitype":"icon",
+						"label":"Icon",
+						"value":"${logo_url}"
+					},
+					{
+						"name":"title",
+						"uitype":"str",
+						"lable":"Channel",
+						"value":"${tv_name}"
+					}
+				],
+				"height":"100%",
+				"width":"100%"
+		},
+		"page_rows":800,
+		"cache_limit":5
+	}
+}

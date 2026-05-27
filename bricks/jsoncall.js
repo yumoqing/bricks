@@ -132,8 +132,8 @@ bricks.HttpText = class {
 				headers: opts.headers, 
 				params: opts.params});
 		if (fetchResult.status == 401 && bricks.app.login_url){
-			console.log('go to login')
-			return await this.withLoginInfo(url, opts.params);
+			console.log('401 unauthorized, opening login')
+			return await this.withLoginInfo(url, opts);
 		}
 		if (fetchResult.status == 403){
 			var w = new bricks.Error({
@@ -167,18 +167,46 @@ bricks.HttpText = class {
 		}
 		return result;
 	}
-	async withLoginInfo(url, params){
-		var get_login_info = function(e){
-			bricks.debug('login info:', e.target.getValue());
-			return e.target.getValue();
-		}
-		var w = await bricks.widgetBuild({
+	async withLoginInfo(url, opts){
+		var login_window = await bricks.widgetBuild({
 			"widgettype":"urlwidget",
 			"options":{
 				"url":bricks.app.login_url
 			}
 		});
-		return null;
+		
+		if (!login_window){
+			console.log('withLoginInfo: failed to build login widget');
+			return null;
+		}
+		
+		// Wait for login window to be destroyed (successful login)
+		await new Promise(resolve => {
+			login_window.bind('destroy', resolve);
+		});
+		
+		console.log('withLoginInfo: login window destroyed, retrying request');
+		
+		// Retry the original request
+		const retryResult = await this.bricks_fetch(url, {
+			method: opts.method,
+			headers: opts.headers,
+			params: opts.params
+		});
+		
+		// If still 401, don't loop - user may have closed without logging in
+		if (retryResult.status == 401){
+			console.log('withLoginInfo: retry still 401, giving up');
+			return null;
+		}
+		
+		if (!retryResult.ok){
+			console.log('withLoginInfo: retry failed with status', retryResult.status);
+			return null;
+		}
+		
+		console.log('withLoginInfo: retry successful');
+		return await this.get_result_data(retryResult);
 	}	
 	async get(url, {headers=null, params=null}={}){
 		return await this.httpcall(url, {

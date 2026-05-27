@@ -1,0 +1,6 @@
+{
+	"widgettype":"Text",
+	"options":{
+		"text":"{{params_kw.get('text') or 'default text'}}"
+	}
+}
