@@ -822,3 +822,53 @@ hr {
 [data-theme="dark"] .llm_title {
 	background-color: #1E293B;
 }
+
+/* ---- Menu widget (language switcher, context menus) ---- */
+[data-theme="dark"] .menuitem {
+	background-color: #334155 !important;
+	color: #E2E8F0 !important;
+	border: 1px solid #475569;
+}
+[data-theme="dark"] .menuitem:hover {
+	background-color: #475569 !important;
+}
+
+/* Override Menu widget's inline backgroundColor:"white" */
+[data-theme="dark"] .popup .vbox,
+[data-theme="dark"] .popup .vcontainer,
+[data-theme="dark"] .popup .vscroll {
+	background-color: #1E293B !important;
+	color: #E2E8F0;
+}
+
+/* ---- Popup content text visibility ---- */
+[data-theme="dark"] .popup h1,
+[data-theme="dark"] .popup h2,
+[data-theme="dark"] .popup h3,
+[data-theme="dark"] .popup h4,
+[data-theme="dark"] .popup h5,
+[data-theme="dark"] .popup h6 {
+	color: #F1F5F9;
+}
+[data-theme="dark"] .popup .clickable {
+	color: #60A5FA;
+}
+
+/* ---- WindowsPanel (minimized windows dock) ---- */
+[data-theme="dark"] .mini-window {
+	background-color: #1E293B;
+	border: 1px solid #475569;
+}
+[data-theme="dark"] .mini-window:hover {
+	border-color: #60A5FA;
+}
+
+/* ---- DynamicColumn ---- */
+[data-theme="dark"] .griddata {
+	background-color: transparent;
+}
+
+/* ---- Top popup shadow (dark variant) ---- */
+[data-theme="dark"] .toppopup {
+	box-shadow: 10px 5px 10px rgba(0,0,0,0.5), 0 -5px 5px rgba(255,255,255,0.05);
+}
