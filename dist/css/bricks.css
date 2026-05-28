@@ -645,3 +645,230 @@ hr {
 .inputbox:focus {
 	border-color: #007bff;
 }
+
+/* ========== Dark Theme (Sage Shell) ========== */
+[data-theme="dark"] body,
+[data-theme="dark"] {
+	color: #CBD5E1;
+	background-color: #0F172A;
+}
+
+[data-theme="dark"] .card {
+	background-color: #1E293B;
+	border: 1px solid #334155;
+	color: #E2E8F0;
+}
+[data-theme="dark"] .card:hover {
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	border: 2px solid #60A5FA;
+}
+
+[data-theme="dark"] .subcard {
+	background-color: #1a2436;
+}
+
+[data-theme="dark"] .tabular {
+	background-color: #1E293B;
+	border: 1px solid #334155;
+	color: #CBD5E1;
+}
+
+[data-theme="dark"] .tabular-header-row {
+	background-color: #334155;
+	color: #F1F5F9;
+}
+[data-theme="dark"] .tabular-row:nth-child(odd) {
+	background-color: #1E293B;
+}
+[data-theme="dark"] .tabular-row:nth-child(even) {
+	background-color: #172033;
+}
+[data-theme="dark"] .tabular-row-selected {
+	color: #F87171;
+}
+[data-theme="dark"] .tabular-cell {
+	border: 1px solid #334155;
+	color: #CBD5E1;
+}
+
+[data-theme="dark"] .curpos {
+	background-color: #1E293B;
+}
+
+[data-theme="dark"] .inputbox {
+	background-color: #1E293B;
+	color: #E2E8F0;
+	border: 1px solid #475569;
+}
+[data-theme="dark"] .inputbox:focus {
+	border-color: #3B82F6;
+}
+
+[data-theme="dark"] .popup {
+	background-color: #1E293B;
+	color: #E2E8F0;
+	border: 1px solid #475569;
+}
+
+[data-theme="dark"] .modal {
+	background-color: #1E293B;
+	color: #E2E8F0;
+	border: 1px solid #475569;
+}
+[data-theme="dark"] .modal>.title {
+	background-color: #334155;
+	color: #F1F5F9;
+}
+
+[data-theme="dark"] .message {
+	background-color: #1E293B;
+	color: #E2E8F0;
+	border: 1px solid #475569;
+}
+
+[data-theme="dark"] .vtoolbar,
+[data-theme="dark"] .htoolbar {
+	background-color: #1E293B;
+	border: 1px solid #334155;
+}
+
+[data-theme="dark"] .toolbar-button {
+	border: 1px solid #475569;
+	color: #CBD5E1;
+}
+[data-theme="dark"] .toolbar-button-active {
+	background-color: #334155;
+}
+
+[data-theme="dark"] .tabpanel {
+	background-color: #1E293B;
+	border: 3px solid #475569;
+}
+[data-theme="dark"] .tabpanel-content {
+	background-color: #172033;
+	border: 2px solid #475569;
+}
+
+[data-theme="dark"] .selected {
+	background-color: #334155;
+}
+
+[data-theme="dark"] .accordion-item {
+	border: 1px solid #334155;
+}
+[data-theme="dark"] .accordion-item:nth-child(odd) {
+	background-color: #1E293B;
+}
+[data-theme="dark"] .accordion-item:nth-child(even) {
+	background-color: #172033;
+}
+[data-theme="dark"] .accordion-item-header {
+	background-color: #334155;
+}
+[data-theme="dark"] .accordion-item-info {
+	background-color: #1E293B;
+}
+[data-theme="dark"] .accordion-item-info-selected {
+	background-color: #334155;
+}
+
+[data-theme="dark"] .titlebar {
+	background-color: #334155;
+}
+
+[data-theme="dark"] .droparea {
+	border: 2px dashed #475569;
+	color: #94A3B8;
+}
+[data-theme="dark"] .droparea:hover {
+	border-color: #60A5FA;
+	color: #60A5FA;
+	background: #172033;
+}
+
+[data-theme="dark"] pre {
+	background-color: #1E293B;
+	color: #E2E8F0;
+}
+
+[data-theme="dark"] hr {
+	background-color: #475569;
+}
+
+[data-theme="dark"] .auto-textarea {
+	background-color: #1E293B;
+	color: #E2E8F0;
+	border: 1px solid #475569;
+}
+
+[data-theme="dark"] .thinking-content {
+	background-color: #1a2436;
+}
+[data-theme="dark"] .resp-content {
+	background-color: #1a2436;
+}
+[data-theme="dark"] .resp-error {
+	background-color: #7F1D1D;
+}
+
+[data-theme="dark"] .llm_msg {
+	background-color: #334155;
+	color: #E2E8F0;
+}
+[data-theme="dark"] .user_msg {
+	background-color: #1E3A5F;
+	color: #E2E8F0;
+}
+[data-theme="dark"] .llm_title {
+	background-color: #1E293B;
+}
+
+/* ---- Menu widget (language switcher, context menus) ---- */
+[data-theme="dark"] .menuitem {
+	background-color: #334155 !important;
+	color: #E2E8F0 !important;
+	border: 1px solid #475569;
+}
+[data-theme="dark"] .menuitem:hover {
+	background-color: #475569 !important;
+}
+
+/* Override Menu widget's inline backgroundColor:"white" */
+[data-theme="dark"] .popup .vbox,
+[data-theme="dark"] .popup .vcontainer,
+[data-theme="dark"] .popup .vscroll {
+	background-color: #1E293B !important;
+	color: #E2E8F0;
+}
+
+/* ---- Popup content text visibility ---- */
+[data-theme="dark"] .popup h1,
+[data-theme="dark"] .popup h2,
+[data-theme="dark"] .popup h3,
+[data-theme="dark"] .popup h4,
+[data-theme="dark"] .popup h5,
+[data-theme="dark"] .popup h6 {
+	color: #F1F5F9;
+}
+[data-theme="dark"] .popup .clickable {
+	color: #60A5FA;
+}
+
+/* ---- WindowsPanel (minimized windows dock) ---- */
+[data-theme="dark"] .mini-window {
+	background-color: #1E293B;
+	border: 1px solid #475569;
+}
+[data-theme="dark"] .mini-window:hover {
+	border-color: #60A5FA;
+}
+
+/* ---- DynamicColumn ---- */
+[data-theme="dark"] .griddata {
+	background-color: transparent;
+}
+
+/* ---- Top popup shadow (dark variant) ---- */
+[data-theme="dark"] .toppopup {
+	box-shadow: 10px 5px 10px rgba(0,0,0,0.5), 0 -5px 5px rgba(255,255,255,0.05);
+}
