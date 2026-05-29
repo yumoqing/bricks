@@ -432,6 +432,7 @@ hr {
 	background-color: #f9f9f9;
 }
 .tabular-row-selected {
+	background-color: #fee2e2 !important;
 	color: #ef0000;
 }
 .tabular-row-content {
@@ -684,6 +685,7 @@ hr {
 	background-color: #172033;
 }
 [data-theme="dark"] .tabular-row-selected {
+	background-color: #451a1a !important;
 	color: #F87171;
 }
 [data-theme="dark"] .tabular-cell {
