@@ -1,8 +1,0 @@
-{
-	"id":"videoplayer",
-	"widgettype":"Iframe",
-	"options":{
-		"width":"100%",
-		"url":"{{params_kw.url}}"
-	}   
-}
