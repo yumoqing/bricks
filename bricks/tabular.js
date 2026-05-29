@@ -40,7 +40,12 @@ bricks.Tabular = class extends bricks.DataViewer {
 		return row
 	}
 	async record_clicked(row, record, event){
-		var r = event.target.bricks_widget;
+		// Prevent click on interactive elements (links, buttons, inputs) from triggering selection
+		var target = event.target;
+		if (target && (target.tagName === 'A' || target.tagName === 'BUTTON' || target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA')) {
+			return;
+		}
+		
 		var old_select_row = this.select_row;
 		if (old_select_row){
 			this.select_row = null;
