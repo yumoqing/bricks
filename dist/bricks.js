@@ -13012,9 +13012,11 @@ bricks.Tabular = class extends bricks.DataViewer {
 	}
 	async build_record_view(record){
 		var r = await this.build_info(record);
+		console.log('[Tabular] build_record_view', 'row widget=', r, 'dom=', r.dom_element);
 		if (!this.content_view){
 			r.user_data = record;
 			r.bind('click', this.record_clicked.bind(this, r, record));
+			console.log('[Tabular] build_record_view: click bound to DataRow');
 			return r;
 		}
 		var row = new bricks.VBox({
@@ -13026,6 +13028,7 @@ bricks.Tabular = class extends bricks.DataViewer {
 		});
 		row.add_widget(content);
 		r.bind('click', this.record_clicked.bind(this, row, record));
+		console.log('[Tabular] build_record_view: click bound to VBox wrapper');
 		row.rec_widget = r;
 		row.content_widget = content;
 		row.user_data = record;
@@ -13033,11 +13036,11 @@ bricks.Tabular = class extends bricks.DataViewer {
 	}
 	async record_clicked(row, record, event){
 		var r = event.target.bricks_widget;
-		bricks.debug('record_clicked', 'row=', row, 'record=', record, 'target=', event.target, 'targetWidget=', r);
+		console.log('[Tabular] record_clicked', 'row=', row, 'record=', record, 'target=', event.target.tagName, 'targetWidget=', r);
 		// Prevent click on interactive elements (links, buttons, inputs) from triggering selection
 		var target = event.target;
 		if (target && (target.tagName === 'A' || target.tagName === 'BUTTON' || target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA')) {
-			bricks.debug('record_clicked: skip interactive element', target.tagName);
+			console.log('[Tabular] record_clicked: skip interactive element', target.tagName);
 			return;
 		}
 		
@@ -13059,7 +13062,7 @@ bricks.Tabular = class extends bricks.DataViewer {
 			} else {
 				row.set_css('tabular-row-selected');
 			}
-			bricks.debug('record_clicked: row selected, dispatching row_selected');
+			console.log('[Tabular] record_clicked: row selected, dispatching row_selected');
 			this.dispatch('row_selected', row.user_data);
 		}
 	}
