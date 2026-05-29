@@ -14,14 +14,27 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		opts.height = '100%';
 		super(options);
 		this.dom_element.style.display = "";
-		this.dom_element.style.backgroundColor = options.bgcolor || "white";
+		this.dom_element.style.backgroundColor = options.bgcolor || "transparent";
 		this.build_title();
 		this.build_description();
 		this.user_data = this.opts;
+		this.is_collapsed = false;
 		this.bind('item_click', this.menu_clicked.bind(this));
 		this.container = new bricks.VBox({});
 		this.add_widget(this.container);
 		schedule_once(this.create_children.bind(this, this, 0), 0.1);
+	}
+	collapse(){
+		this.is_collapsed = true;
+		this.dom_element.classList.add('menu-collapsed');
+	}
+	expand(){
+		this.is_collapsed = false;
+		this.dom_element.classList.remove('menu-collapsed');
+	}
+	toggle_collapse(){
+		if (this.is_collapsed) this.expand();
+		else this.collapse();
 	}
 	create_submenu_container(){
 		let cp = new bricks.VBox({});
@@ -199,6 +212,7 @@ bricks.Menu = class extends bricks.VScrollPanel {
 		iw.menuitem = w;
 		tw.menuitem = w;
 		w.set_css(this.menuitem_css || 'menuitem');
+		if (item.label) w.dom_element.title = item.label;
 		return w;
 	}
 	regen_menuitem_event(item, event){
