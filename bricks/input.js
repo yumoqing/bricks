@@ -1135,14 +1135,16 @@ bricks.UiCode =class extends bricks.UiType {
 		while(e.firstChild){
 			e.removeChild(e.firstChild);
 		}
+		var vf = this.opts.valueField || 'value';
+		var tf = this.opts.textField || 'text';
 		var v = this.opts.value || this.opts.defaultvalue || null;
 		if (!v && ! this.opts.nullable && data.length > 0){
-			v = data[0][this.opts.valueField]
+			v = data[0][vf]
 		}
 		if (this.opts.nullable){
 			var tmp = {};
-			tmp[this.opts.valueField] = null;
-			tmp[this.opts.textField] = '';
+			tmp[vf] = null;
+			tmp[tf] = '';
 			data.unshift(tmp);
 		}
 		this.value = v;
@@ -1150,9 +1152,9 @@ bricks.UiCode =class extends bricks.UiType {
 		this.option_widgets = {};
 		for (var i=0; i<data.length; i++){
 			var o = document.createElement('option');
-			o.value = data[i][this.opts.valueField||'value'];
-			var txt = bricks.app.i18n._(data[i][this.opts.textField||'text']);
-			if (!txt) txt = data[i][this.opts.valueField||'value'];
+			o.value = data[i][vf];
+			var txt = bricks.app.i18n._(data[i][tf]);
+			if (!txt) txt = data[i][vf];
 			o.innerText = txt;
 			this.option_widgets[o.value] = o;
 			if (o.value == v){

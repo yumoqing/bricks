@@ -1,0 +1,106 @@
+
+{
+	"widgettype":"VBox",
+	"options":{
+	},
+	"subwidgets":[
+		{
+			"widgettype":"Title1",
+			"options":{
+				"text":"Pic Viewer",
+				"color":"#ff0000",
+				"bgcolor":"#00ffff",
+				"dynsize":true,
+				"i18n":true
+			}
+		},
+		{
+			"widgettype":"Title2",
+			"options":{
+				"text":"Pic Viewer",
+				"dynsize":true,
+				"i18n":true
+			}
+		},
+		{
+			"widgettype":"Title3",
+			"options":{
+				"text":"Pic Viewer",
+				"dynsize":true,
+				"i18n":true
+			}
+		},
+		{
+			"widgettype":"Title4",
+			"options":{
+				"text":"Pic Viewer",
+				"dynsize":true,
+				"i18n":true
+			}
+		},
+		{
+			"widgettype":"Title5",
+			"options":{
+				"text":"Pic Viewer",
+				"dynsize":true,
+				"i18n":true
+			}
+		},
+		{
+			"widgettype":"Title6",
+			"options":{
+				"text":"Pic Viewer",
+				"dynsize":true,
+				"i18n":true
+			}
+		},
+		{
+			"widgettype":"Text",
+			"options":{
+				"text":"Pic Viewer",
+				"dynsize":true,
+				"i18n":true
+			}
+		},
+		{
+			"widgettype":"HBox",
+			"options":{
+			},
+			"subwidgets":[
+				{
+					"widgettype":"Button",
+					"options":{
+						"label":"A",
+						"item_rate":1.4
+					},
+					"binds":[
+						{
+							"wid":"self",
+							"event":"click",
+							"actiontype":"script",
+							"target":"app",
+							"script":"bricks.app.textsize_bigger()"
+						}
+					]
+				},
+				{
+					"widgettype":"Button",
+					"options":{
+						"label":"A",
+						"item_rate":0.7,
+						"item_size":"20px"
+					},
+					"binds":[
+						{
+							"wid":"self",
+							"event":"click",
+							"actiontype":"script",
+							"target":"app",
+							"script":"bricks.app.textsize_smaller()"
+						}
+					]
+				}
+			]
+		}
+	]
+}

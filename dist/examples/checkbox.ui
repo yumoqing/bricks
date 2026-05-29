@@ -1,0 +1,29 @@
+{
+	"widgettype":"UiCheckBox",
+	"options":{
+		"name":"cb",
+		"multicheck":false,
+		"uitype":"checkbox",
+		"valueField":"value",
+		"textField":"text",
+		"data":[
+			{
+				"value":"test1",
+				"text":"Test1"
+			},
+			{
+				"value":"test2",
+				"text":"Test 2"
+			}
+		]
+	},
+	"binds":[
+		{
+			"wid":"self",
+			"event":"changed",
+			"actiontype":"script",
+			"target":"self",
+			"script":"alert(JSON.stringify(event.params))"
+		}
+	]
+}

@@ -1,0 +1,42 @@
+
+{
+	"widgettype":"HBox",
+	"options":{
+		"height":"auto",
+		"width":"100%"
+	},
+	"subwidgets":[
+		{
+			"widgettype":"Button",
+			"options":{
+				"name":"test",
+				"icon":"/bricks/imgs/submit.png",
+				"label":"test once",
+				"tooltip":"This is a joke too",
+				"bgcolor":"#ff00ff",
+				"color":"#ffffff",
+				"nonepack":true,
+				"orientation":"horizontal"
+			}
+		},
+		{
+			"widgettype":"Button",
+			"options":{
+				"name":"test",
+				"icon":"/bricks/imgs/reset.png",
+				"tooltip":"This is a joke",
+				"label":"test twice",
+				"nonepack":true,
+				"orientation":"horizontal"
+			}
+		}
+	],
+	"binds":[
+		{
+			"wid":"self",
+			"event":"click",
+			"actiontype":"script",
+			"script":"alert('HBox clicked');"
+		}
+	]
+}

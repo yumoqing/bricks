@@ -1,0 +1,31 @@
+
+{
+	"widgettype":"Toolbar",
+	"options":{
+		"target":null,
+		"orientation":"horizontal",
+		"tool_margin":"15px",
+		"tools":[
+			{
+				"name":"c",
+				"label":"C",
+				"icon":null
+			},
+			{
+				"name":"javascript",
+				"label":"JavaScript",
+				"icon":null
+			},
+			{
+				"name":"php",
+				"label":"PHP",
+				"icon":null
+			},
+			{
+				"name":"python",
+				"label":"Python",
+				"icon":null
+			},
+		]
+	}
+}
