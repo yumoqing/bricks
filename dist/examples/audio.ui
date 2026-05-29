@@ -1,9 +1,0 @@
-
-{
-	"id":"audioplayer",
-	"widgettype":"AudioPlayer",
-	"options":{
-		"autoplay":true,
-		"url":"http://kimird.com/songs/sample-mp3-file.mp3"
-	}
-}
