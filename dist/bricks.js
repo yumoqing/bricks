@@ -13033,9 +13033,11 @@ bricks.Tabular = class extends bricks.DataViewer {
 	}
 	async record_clicked(row, record, event){
 		var r = event.target.bricks_widget;
+		bricks.debug('record_clicked', 'row=', row, 'record=', record, 'target=', event.target, 'targetWidget=', r);
 		// Prevent click on interactive elements (links, buttons, inputs) from triggering selection
 		var target = event.target;
 		if (target && (target.tagName === 'A' || target.tagName === 'BUTTON' || target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA')) {
+			bricks.debug('record_clicked: skip interactive element', target.tagName);
 			return;
 		}
 		
@@ -13057,6 +13059,7 @@ bricks.Tabular = class extends bricks.DataViewer {
 			} else {
 				row.set_css('tabular-row-selected');
 			}
+			bricks.debug('record_clicked: row selected, dispatching row_selected');
 			this.dispatch('row_selected', row.user_data);
 		}
 	}
