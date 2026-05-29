@@ -268,7 +268,8 @@ bricks.DataViewer = class extends bricks.VBox {
 	get_filter_fields(){
 		var fields = [];
 		var self = this;
-		var alters = (this.opts.browserfields && this.opts.browserfields.alters) || {};
+		var bf = this.opts.browserfields || (this.opts.row_options && this.opts.row_options.browserfields) || {};
+		var alters = bf.alters || {};
 		var labels = this.opts.filter_labels || {};
 
 		function extract(node){
@@ -304,6 +305,11 @@ bricks.DataViewer = class extends bricks.VBox {
 							if (alter.data_field){
 								f.data_field = alter.data_field;
 							}
+						} else if (alter.uitype === 'select' && alter.options){
+							f.uitype = 'code';
+							f.data = alter.options;
+						} else {
+							f.uitype = 'str';
 						}
 						fields.push(f);
 					}
