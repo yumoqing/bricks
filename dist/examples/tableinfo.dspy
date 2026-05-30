@@ -1,0 +1,6 @@
+db = DBPools()
+
+async with db.sqlorContext('kboss') as sor:
+	r = await sor.I(params_kw.get('tablename', 'user'))
+	return r
+

@@ -1,0 +1,10 @@
+
+{
+	"id":"videoplayer",
+	"widgettype":"VideoPlayer",
+	"options":{
+		"autoplay":true,
+		"url":"{{params_kw.get('url')}}",
+		"type":"hls"
+	}
+}

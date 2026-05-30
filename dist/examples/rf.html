@@ -1,0 +1,115 @@
+<link rel="stylesheet" href="http://localhost:80/bricks/css/bricks.css">
+
+<!-- support IE8 (for Video.js versions prior to v7) -->
+<script src="http://localhost:80/bricks/3parties/videojs-ie8.min.js"></script>
+</head>
+  <body>
+  <script src="http://localhost:80/bricks/3parties/marked.min.js"></script>
+  <script src="http://localhost:80/bricks/3parties/xterm.js"></script>
+  <script src="http://localhost:80/bricks/3parties/video.min.js"></script>
+  <script src="http://localhost:80/bricks/3parties/recorder.wav.min.js"></script>
+<!---  <script src="http://localhost:80/bricks/3parties/videojs-contrib-hls.min.js"></script> --->
+  <script src="http://localhost:80/bricks/bricks.js"></script>
+	<script>
+		/*
+		if (bricks.is_mobile()){
+			alert('wh=' + window.innerWidth + ':' + window.innerHeight);
+		}
+		*/
+		var myfunc = function(params){
+			this.set_text(params.text);
+		}
+		bricks.RF.register('setText', myfunc);
+		const opts = {
+			"widget": {
+	"widgettype":"VBox",
+	"options":{
+		"width":"100%",
+		"height":"100%"
+	},
+	"subwidgets":[
+		{
+			"widgettype":"HBox",
+			"options":{
+				"height":"40px"
+			},
+			"subwidgets":[
+				{
+					"id":"changetext",
+					"widgettype":"Button",
+					"options":{
+						"dynsize":false,
+						"width":"80px",
+						"i18n":true,
+						"label":"Change text"
+					}  
+				},
+				{
+					"id":"smaller",
+					"widgettype":"Button",
+					"options":{
+						"dynsize":false,
+						"width":"80px",
+						"i18n":true,
+						"label":"Small size"
+					}  
+				},
+				{
+					"id":"larger",
+					"widgettype":"Button",
+					"options":{
+						"dynsize":false,
+						"width":"80px",
+						"i18n":true,
+						"label":"larger size"
+					}
+				}
+			]
+		},
+		{
+			"widgettype":"Filler",
+			"options":{},
+			"subwidgets":[
+				{
+					"id":"text_1",
+					"widgettype":"Text",
+					"options":{
+						"dynsize":true,
+						"text":"original text"
+					}
+				}
+			]
+		}
+	],
+	"binds":[
+		{
+			"wid":"changetext",
+			"event":"click",
+			"actiontype":"registerfunction",
+			"target":"text_1",
+			"params":{
+				"text":"new text"
+			},
+			"rfname":"setText"
+		},
+		{
+			"wid":"smaller",
+			"event":"click",
+			"actiontype":"method",
+			"target":"app",
+			"method":"textsize_smaller"
+		},
+		{
+			"wid":"larger",
+			"event":"click",
+			"actiontype":"method",
+			"target":"app",
+			"method":"textsize_bigger"
+		}
+	]
+}	};
+	const app = new bricks.App(opts);
+	app.run();
+</script>
+</body>
+</html>

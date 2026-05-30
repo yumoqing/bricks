@@ -34,7 +34,7 @@ bricks.UiType =class extends bricks.Layout {
 	setValue(v){
 		if (! v)
 			v = '';
-		this.vlaue = v;
+		this.value = v;
 		this.dom_element.value = v;
 	}
 	set_disabled(f){

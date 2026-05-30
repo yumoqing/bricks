@@ -1,0 +1,12 @@
+
+{
+	"id":"uuuu",
+	"widgettype":"Conform",
+	"options":{
+		"width":"40%",
+		"height":"40%",
+		"archor":"cc",
+		"title":"Test Title",
+		"message":"This is a test message"
+	}
+}
