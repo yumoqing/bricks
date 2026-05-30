@@ -1,7 +1,0 @@
-{
-	"widgettype":"Text",
-	"options":{
-		"text":"{{quotedstr(json.dumps(params_kw))}}",
-		"wrap":true
-	}
-}
