@@ -70,11 +70,16 @@ bricks.Menu = class extends bricks.VScrollPanel {
 						"url":opts.url
 					}
 				}
-				var w = await bricks.widgetBuild(desc, this);
-				if (w && ! bricks.Factory.isWidgetType(w, 'Popup')){
-					t.clear_widgets();
-					t.add_widget(w);
-				} else {
+			var w = await bricks.widgetBuild(desc, this);
+			if (w && ! bricks.Factory.isWidgetType(w, 'Popup')){
+				t.clear_widgets();
+				t.add_widget(w);
+				// Router hook: notify SPA router of menu-driven navigation
+				if (bricks.Router && bricks.Router._enabled
+					&& opts.url){
+					bricks.Router._onReplace(t, opts.url);
+				}
+			} else {
 					console.log('menu_clicked():widgetBuild() failed', desc);
 				}
 			} else if (opts.script){
