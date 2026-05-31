@@ -834,6 +834,9 @@ hr {
 [data-theme="dark"] .menuitem:hover {
 	background-color: #475569 !important;
 }
+[data-theme="dark"] .menuitem img {
+	filter: invert(1);
+}
 
 /* Override Menu widget's inline backgroundColor:"white" */
 [data-theme="dark"] .popup .vbox,
