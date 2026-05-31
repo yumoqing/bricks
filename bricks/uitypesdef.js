@@ -108,11 +108,23 @@ bricks.uitypesdef.setViewBuilder('float', floatViewBuilder);
 var codeViewBuilder = function(desc, rec){
 	var opts = objcopy(desc)
 	if (opts.uiparams) bricks.extend(opts, opts.uiparams);
-	var name = desc.textFeild || 'text';
-	var v = rec[name];
+	// rec may be undefined when called from DataRow, use desc.user_data instead
+	var record = rec || desc.user_data || {};
+	// Try textField (correct spelling) first, then textFeild (legacy typo), then default 'text'
+	var tf = desc.textField || desc.textFeild || 'text';
+	var v = record[tf];
 	if (! v) {
-		name = desc.valueField || 'value';
-		v = rec[name];
+		// Try field_name + '_text' convention
+		v = record[desc.name + '_text'];
+	}
+	if (! v) {
+		// Fall back to valueField or 'value'
+		var vf = desc.valueField || 'value';
+		v = record[vf];
+	}
+	if (! v) {
+		// Last resort: use the raw field value
+		v = record[desc.name];
 	}
 	return buildText(v, 'left')
 }
