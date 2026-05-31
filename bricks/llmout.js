@@ -77,17 +77,54 @@ bricks.LlmOut = class extends bricks.VBox {
 		super(opts);
 		this.rc_w = null;
 		this.c_w = null;
-		this.v_w = null;
-		this.i_w = null;
-		this.a_w = null;
-		this.glb_w = null;
 		this.s_w = null;  // 状态
+		this.videos = [];
+		this.glbs = [];
+		this.audios = []
 		this.images = [];
 		this.reasoning_content = '';
 		this.content = '';
 		this.error = '';
 	}
 	
+	render_video(v){
+		var w = new bricks.VideoPlayer({
+			width: '100%',
+			url: v,
+			autoplay: true
+		});
+		this.add_widget(w);
+	}
+	render_glb(glb){
+		var w = new bricks.GlbViewer({
+			url:glb,
+			width: '100%'
+		});
+		this.add_widget(w);
+	}
+	render_audio(a){
+		var url = a;
+		if (! url.startsWith('http')){
+			if (! url.startsWith('data:audio/')){
+				url = 'data:audio/wav;base64,' + url;
+			}
+		}
+		var w = new bricks.AudioPlayer({
+				width: '100%',
+				autoplay: true,
+				url: url,
+				cheight:2
+			});
+		}
+		this.add_widget(w);
+	}
+	render_image(i){
+		var w = new bricks.Image({
+			width: '100%',
+			url: i
+		});
+		this.add_widget(w);
+	}
 	update(data){
 		if (data.status){
 			this.s_w = new bricks.Text({
@@ -97,38 +134,31 @@ bricks.LlmOut = class extends bricks.VBox {
 			});
 		}
 		if (data.audio){
-			var url = data.audio;
-			if (! data.audio.startsWith('http')){
-				if (! data.audio.startsWith('data:audio/')){
-					url = 'data:audio/wav;base64,' + url;
-				}
-			}
-			if (!this.a_w) {
-				this.a_w = new bricks.AudioPlayer({
-					width: '100%',
-					autoplay: true,
-					url: url,
-					cheight:2
-				});
+			if (Array.isArray(data.audio)){
+				this.audios.concat(data.audio);
 			} else {
-				this.a_w.add_url(url);
+				this.audios.push(data.audio);
 			}
 		}
 		if (data.glb){
-			this.glb_w = new bricks.GlbViewer({
-				url:data.glb,
-				width: '100%'
-			});
+			if (Array.isArray(data.glb)){
+				this.glbs.concat(data.glb);
+			} else {
+				this.glbs.push(data.glb);
+			}
 		}
 		if (data.video){
-			if (!this.v_w){
-				this.v_w = new bricks.VideoPlayer({
-					width: '100%',
-					url: data.video,
-					autoplay: true
-				});
+			if (Array.isArray(data.video)){
+				this.videos.concat(data.video);
 			} else {
-				this.v_w.add_url(data.video);
+				this.videos.push(data.video);
+			}
+		}
+		if (data.image){
+			if (Array.isArray(data.image)){
+				this.images.concat(data.image);
+			} else {
+				this.images.push(data.image);
 			}
 		}
 		if (data.error){
@@ -139,13 +169,6 @@ bricks.LlmOut = class extends bricks.VBox {
 		}
 		if (data.content){
 			this.content += data.content;
-		}
-		if (data.image){
-			if (Array.isArray(data.image)){
-				this.images.concat(data.image);
-			} else {
-				this.images.push(data.image);
-			}
 		}
 		this.clear_widgets();
 		if (this.error.length) {
@@ -178,23 +201,17 @@ bricks.LlmOut = class extends bricks.VBox {
 			});
 			this.add_widget(this.c_w);
 		}
-		if (this.v_w) {
-			this.add_widget(this.v_w);
+		this.videos.forEach(v => {
+			this.render_video(v);
+		})
+		this.glbs.forEach(glb => {
+			this.render_glb(glb);
 		}
-		if (this.glb_w){
-			this.add_widget(this.glb_w);
+		this.audios.forEach(a => {	
+			this.render_audio(a);
 		}
-		if (this.a_w) {
-			this.add_widget(this.a_w);
-		}
-		if (this.images.length){
-			this.images.forEach( i => {
-				var w = new bricks.Image({
-					width: '100%',
-					url: i
-				});
-				this.add_widget(w)
-			});
+		this.imges.forEach(i => {
+			this.render_image(i);
 		}
 		if(this.s_w){
 			this.add_widget(this.s_w);
