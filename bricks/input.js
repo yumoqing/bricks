@@ -992,6 +992,14 @@ bricks.UiText =class extends bricks.UiType {
 		this.dom_element.value = v;
 		debug('UiText: v=', v);
 		this.handleInput();
+		// Defer re-calc in case element wasn't rendered yet (e.g. during Form build)
+		if (!this._resizeScheduled) {
+			this._resizeScheduled = true;
+			requestAnimationFrame(() => {
+				this._resizeScheduled = false;
+				this.handleInput();
+			});
+		}
 	}
 	reset(){
 		var v = this.opts.value || this.opts.defaultvalue||'';
