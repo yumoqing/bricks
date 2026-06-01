@@ -209,7 +209,7 @@ bricks.LlmOut = class extends bricks.VBox {
 		this.audios.forEach(a => {	
 			this.render_audio(a);
 		});
-		this.imges.forEach(i => {
+		this.images.forEach(i => {
 			this.render_image(i);
 		});
 		if(this.s_w){
