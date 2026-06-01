@@ -40,6 +40,23 @@ bricks.Router = (function(){
 		return new URLSearchParams(window.location.search).get(key);
 	}
 
+	/** Normalize a URL value to a relative path.
+	 *  Full URLs to same origin → extract pathname
+	 *  Already relative → return as-is
+	 */
+	function _normalizeUrl(url){
+		if (!url) return url;
+		try {
+			if (url.indexOf('://') !== -1){
+				var parsed = new URL(url);
+				if (parsed.origin === window.location.origin){
+					return parsed.pathname;
+				}
+			}
+		} catch(e){}
+		return url;
+	}
+
 	function _pushState(){
 		var url = new URL(window.location);
 		for (var id in _targets){
@@ -76,6 +93,7 @@ bricks.Router = (function(){
 
 	async function _loadInto(targetId, url){
 		if (!bricks.app){ return; }
+		url = _normalizeUrl(url);
 		var target = bricks.getWidgetById(targetId, bricks.app);
 		if (!target){
 			console.log('[Router] target not found:', targetId);
@@ -119,7 +137,7 @@ bricks.Router = (function(){
 		var anyRoute = false;
 		for (var id in _targets){
 			var cfg = _targets[id];
-			var url = _getURLParam(cfg.param);
+			var url = _normalizeUrl(_getURLParam(cfg.param));
 			if (url){
 				cfg.current = url;
 				anyRoute = true;
@@ -167,6 +185,7 @@ bricks.Router = (function(){
 			if (!_enabled || _restoring || _isPopState){ return; }
 			var cfg = _targets[target.id];
 			if (!cfg){ return; }
+			url = _normalizeUrl(url);
 			if (cfg.current === url){ return; }
 			cfg.current = url;
 			_pushState();
@@ -208,6 +227,7 @@ bricks.Router = (function(){
 				console.error('[Router] unknown target:', targetId);
 				return;
 			}
+			url = _normalizeUrl(url);
 			_loadInto(targetId, url).then(function(){
 				cfg.current = url;
 				_pushState();
