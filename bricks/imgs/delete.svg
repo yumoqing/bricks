@@ -1,1 +1,4 @@
-<svg t="1748765552387" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="44745" width="100%" height="100%"><path d="M512 512m-481.882353 0a481.882353 481.882353 0 1 0 963.764706 0 481.882353 481.882353 0 1 0-963.764706 0Z" fill="currentColor" p-id="44746"></path><path d="M597.172706 542.117647l85.202823 85.172706a60.235294 60.235294 0 1 1-85.202823 85.202823L512 627.290353l-85.172706 85.202823a60.235294 60.235294 0 1 1-85.202823-85.202823L426.827294 542.117647l-85.202823-85.172706a60.235294 60.235294 0 1 1 85.202823-85.202823L512 456.944941l85.172706-85.202823a60.235294 60.235294 0 1 1 85.202823 85.202823L597.172706 542.117647z" fill="#FFFFFF" p-id="44747"></path></svg>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
