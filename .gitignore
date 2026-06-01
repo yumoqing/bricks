@@ -1,1 +1,4 @@
 dist/
+
+# NFS temp files
+.nfs*
