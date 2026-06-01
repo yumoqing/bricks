@@ -115,7 +115,6 @@ bricks.LlmOut = class extends bricks.VBox {
 				url: url,
 				cheight:2
 			});
-		}
 		this.add_widget(w);
 	}
 	render_image(i){
@@ -203,16 +202,16 @@ bricks.LlmOut = class extends bricks.VBox {
 		}
 		this.videos.forEach(v => {
 			this.render_video(v);
-		})
+		});
 		this.glbs.forEach(glb => {
 			this.render_glb(glb);
-		}
+		});
 		this.audios.forEach(a => {	
 			this.render_audio(a);
-		}
+		});
 		this.imges.forEach(i => {
 			this.render_image(i);
-		}
+		});
 		if(this.s_w){
 			this.add_widget(this.s_w);
 		}
