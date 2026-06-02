@@ -17,19 +17,9 @@ bricks.ApiDoc = class extends bricks.VBox {
 		this.api_base_url = this.opts.base_url || '';
 		this.sections = [];
 		this.active_section = null;
-		bricks.ApiDoc._ensure_css();
 		this._build_layout();
 		var self = this;
 		schedule_once(function() { self._load(); }, 0.1);
-	}
-
-	static _ensure_css() {
-		if (bricks.ApiDoc._css_loaded) return;
-		bricks.ApiDoc._css_loaded = true;
-		var link = document.createElement('link');
-		link.rel = 'stylesheet';
-		link.href = bricks.absurl('/bricks/css/api_doc.css');
-		document.head.appendChild(link);
 	}
 
 	_build_layout() {
