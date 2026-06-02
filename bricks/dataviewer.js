@@ -294,8 +294,16 @@ bricks.DataViewer = class extends bricks.VBox {
 						};
 						if (alter.uitype === 'code'){
 							f.uitype = 'code';
+							f.data = [];
+							// 检查是否已有空选项
+							var hasEmpty = alter.data && alter.data.some(d => 
+								d.value === '' || d.value === null || d.value === undefined
+							);
+							if (!hasEmpty) {
+								f.data.push({value: '', text: ''});
+							}
 							if (alter.data && Array.isArray(alter.data)){
-								f.data = alter.data;
+								f.data = f.data.concat(alter.data);
 							}
 							if (alter.dataurl){
 								f.dataurl = alter.dataurl;
@@ -307,7 +315,15 @@ bricks.DataViewer = class extends bricks.VBox {
 							}
 						} else if (alter.uitype === 'select' && alter.options){
 							f.uitype = 'code';
-							f.data = alter.options;
+							f.data = [];
+							// 检查是否已有空选项
+							var hasEmpty = alter.options && alter.options.some(d => 
+								d.value === '' || d.value === null || d.value === undefined
+							);
+							if (!hasEmpty) {
+								f.data.push({value: '', text: ''});
+							}
+							f.data = f.data.concat(alter.options);
 						} else {
 							f.uitype = 'str';
 						}
