@@ -1,7 +1,7 @@
 var bricks = window.bricks || {};
 /*
  * ApiDoc widget - renders API documentation from markdown
- * Depends on: marked (CDN), highlight.js (CDN, optional)
+ * Depends on: marked (/bricks/3parties/marked.js, loaded by header.tmpl)
  * Options:
  *   md_url: string - URL to fetch markdown from
  *   title: string (optional) - page title
