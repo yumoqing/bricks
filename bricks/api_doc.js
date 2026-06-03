@@ -12,7 +12,7 @@ bricks.ApiDoc = class extends bricks.VBox {
 	constructor(options) {
 		if (!options) options = {};
 		super(options);
-		this.md_url = bricks.absurl(this.opts.md_url);
+		this.md_url = bricks.absurl(this.opts.md_url, this);
 		this.api_title = this.opts.title || 'API Documentation';
 		this.api_base_url = this.opts.base_url || '';
 		this.sections = [];
@@ -81,29 +81,73 @@ bricks.ApiDoc = class extends bricks.VBox {
 		var tmp = document.createElement('div');
 		tmp.innerHTML = html;
 
-		// Extract sections (h2 elements = API endpoints)
-		var sections = [];
-		var current = null;
+		// Extract structure: H1 = category groups, H2 = API endpoint sections
+		var categories = [];
+		var current_cat = null;
+		var current_sec = null;
+		var preamble = [];
 		var children = tmp.children;
 
 		for (var i = 0; i < children.length; i++) {
 			var el = children[i];
-			if (el.tagName === 'H2') {
-				if (current) sections.push(current);
-				current = {
+			if (el.tagName === 'H1') {
+				// Finalize previous section into category
+				if (current_sec) {
+					if (!current_cat) {
+						current_cat = { heading: '', id: 'api-cat-uncat', sections: [] };
+						categories.push(current_cat);
+					}
+					current_cat.sections.push(current_sec);
+					current_sec = null;
+				}
+				current_cat = {
 					heading: el.textContent.trim(),
-					id: 'api-sec-' + sections.length,
+					id: 'api-cat-' + categories.length,
+					sections: []
+				};
+				categories.push(current_cat);
+			} else if (el.tagName === 'H2') {
+				// Finalize previous section
+				if (current_sec) {
+					if (!current_cat) {
+						current_cat = { heading: '', id: 'api-cat-uncat', sections: [] };
+						categories.push(current_cat);
+					}
+					current_cat.sections.push(current_sec);
+				}
+				var all_secs = categories.reduce(function(a, c) { return a.concat(c.sections); }, []);
+				current_sec = {
+					heading: el.textContent.trim(),
+					id: 'api-sec-' + all_secs.length,
 					elements: []
 				};
-			} else if (current) {
-				current.elements.push(el);
+			} else if (current_sec) {
+				current_sec.elements.push(el);
+			} else {
+				// Elements before any H1/H2 go to preamble
+				preamble.push(el);
 			}
 		}
-		if (current) sections.push(current);
+		// Finalize last section
+		if (current_sec) {
+			if (!current_cat) {
+				current_cat = { heading: '', id: 'api-cat-uncat', sections: [] };
+				categories.push(current_cat);
+			}
+			current_cat.sections.push(current_sec);
+		}
 
-		this.sections = sections;
+		this.categories = categories;
+		// Flatten sections for content rendering
+		var all_sections = [];
+		for (var i = 0; i < categories.length; i++) {
+			for (var j = 0; j < categories[i].sections.length; j++) {
+				all_sections.push(categories[i].sections[j]);
+			}
+		}
+		this.sections = all_sections;
 		this._build_sidebar();
-		this._build_content(sections);
+		this._build_content(all_sections);
 
 		// Highlight code blocks
 		if (typeof hljs !== 'undefined') {
@@ -127,36 +171,49 @@ bricks.ApiDoc = class extends bricks.VBox {
 		sidebar.innerHTML = '';
 
 		var self = this;
-		for (var i = 0; i < this.sections.length; i++) {
-			var sec = this.sections[i];
-			var item = document.createElement('div');
-			item.className = 'bricks-apidoc-nav-item';
-			item.setAttribute('data-section', sec.id);
+		for (var c = 0; c < this.categories.length; c++) {
+			var cat = this.categories[c];
 
-			// Parse method from heading (e.g. "POST /v1/chat/completions")
-			var parts = sec.heading.split(' ');
-			if (parts.length >= 2) {
-				var method = parts[0].toUpperCase();
-				var path = parts.slice(1).join(' ');
-				var badge = document.createElement('span');
-				badge.className = 'bricks-apidoc-method-badge';
-				badge.className += ' bricks-apidoc-method-' + method.toLowerCase();
-				badge.textContent = method;
-				item.appendChild(badge);
-
-				var pathEl = document.createElement('span');
-				pathEl.className = 'bricks-apidoc-nav-path';
-				pathEl.textContent = path.replace('/v1/', '/');
-				item.appendChild(pathEl);
-			} else {
-				item.textContent = sec.heading;
+			// Category header (H1)
+			if (cat.heading) {
+				var cat_label = document.createElement('div');
+				cat_label.className = 'bricks-apidoc-nav-category';
+				cat_label.textContent = cat.heading;
+				sidebar.appendChild(cat_label);
 			}
 
-			item.onclick = (function(sid) {
-				return function() { self._scroll_to(sid); };
-			})(sec.id);
+			// Sections under this category
+			for (var s = 0; s < cat.sections.length; s++) {
+				var sec = cat.sections[s];
+				var item = document.createElement('div');
+				item.className = 'bricks-apidoc-nav-item';
+				item.setAttribute('data-section', sec.id);
 
-			sidebar.appendChild(item);
+				// Parse method from heading (e.g. "POST /v1/chat/completions")
+				var parts = sec.heading.split(' ');
+				if (parts.length >= 2) {
+					var method = parts[0].toUpperCase();
+					var path = parts.slice(1).join(' ');
+					var badge = document.createElement('span');
+					badge.className = 'bricks-apidoc-method-badge';
+					badge.className += ' bricks-apidoc-method-' + method.toLowerCase();
+					badge.textContent = method;
+					item.appendChild(badge);
+
+					var pathEl = document.createElement('span');
+					pathEl.className = 'bricks-apidoc-nav-path';
+					pathEl.textContent = path.replace('/v1/', '/');
+					item.appendChild(pathEl);
+				} else {
+					item.textContent = sec.heading;
+				}
+
+				item.onclick = (function(sid) {
+					return function() { self._scroll_to(sid); };
+				})(sec.id);
+
+				sidebar.appendChild(item);
+			}
 		}
 	}
 
@@ -296,7 +353,7 @@ bricks.ApiDoc = class extends bricks.VBox {
 
 	render(params) {
 		if (params && params.md_url) {
-			this.md_url = bricks.absurl(params.md_url);
+			this.md_url = bricks.absurl(params.md_url, this);
 			this._load();
 		}
 	}

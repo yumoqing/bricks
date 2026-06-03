@@ -283,3 +283,25 @@
 		display: none;
 	}
 }
+
+/* Category group label in sidebar (H1) */
+.bricks-apidoc-nav-category {
+	padding: 12px 16px 4px 16px;
+	font-size: 0.75em;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
+	color: var(--text-dim, #777);
+	margin-top: 8px;
+	border-top: 1px solid var(--border-color, rgba(255,255,255,0.06));
+}
+
+.bricks-apidoc-nav-category:first-child {
+	margin-top: 0;
+	border-top: none;
+}
+
+/* Indent nav items under a category */
+.bricks-apidoc-nav-category ~ .bricks-apidoc-nav-item {
+	padding-left: 24px;
+}
