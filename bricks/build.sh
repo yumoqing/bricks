@@ -42,6 +42,4 @@ cp -a ../examples/* ../dist/examples
 cp -a ../3parties/* ../dist/3parties
 cp -a ../docs/* ../dist/docs
 cp *.tmpl ../dist
-cp -a ../dist /tmp
-cp -a ../dist/* /d/public/bricks
 echo "Finished ..."
