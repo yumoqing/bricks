@@ -259,6 +259,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 	}
 	async query_task_status(mout, taskid){
 		var pt = this.opts.period_time || 30 * 1000;
+		while (1){
 		var hj = new bricks.HttpJson()
 		var d = {
 			taskid: taskid
@@ -276,7 +277,9 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		if (data.status == 'FAILED' || data.status == 'SUCCEEDED'){
 			return;
 		}
-		schedule_once(this.query_task_status.bind(this), pt)
+		await bricks.sleep(pt);
+		}
+		//schedule_once(this.query_task_status.bind(this), pt)
 	}
 	chunk_response(mout, l){
 		l = l.trim();
@@ -286,11 +289,6 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			console.log(l, 'is not a json data');
 			return
 		}
-		if (this.opts.response_mode == 'async'){
-			if (d.taskid){
-				this.query_task_status(mout, d.taskid)
-			}
-		} 
 		console.log('l=', l, 'd=', d);
 		mout.update_data(d);
 	}
