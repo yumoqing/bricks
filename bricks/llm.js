@@ -259,26 +259,24 @@ bricks.LlmModel = class extends bricks.JsWidget {
 	}
 	async query_task_status(mout, taskid){
 		var pt = this.opts.period_time || 30 * 1000;
-		while (true) {
-			var hj = new bricks.HttpJson()
-			var d = {
-				taskid: taskid
-			}
-			var resp = await hj.post(this.opts.query_url, {params:d});
-			if (! resp) {
-				return;
-			}
-			mout.update_data(resp)
-			if (resp.status != 'ok'){
-				console.log('error:' + resp.data.message);
-			}
-			var data = resp.data.response
-			mout.update_data(data);
-			if (data.status == 'FAILED' || data.status == 'SUCCEEDED'){
-				return;
-			}
-			await bricks.sleep(pt);
+		var hj = new bricks.HttpJson()
+		var d = {
+			taskid: taskid
 		}
+		var resp = await hj.post(this.opts.query_url, {params:d});
+		if (! resp) {
+			return;
+		}
+		mout.update_data(resp)
+		if (resp.status != 'ok'){
+			console.log('error:' + resp.data.message);
+		}
+		var data = resp.data.response
+		mout.update_data(data);
+		if (data.status == 'FAILED' || data.status == 'SUCCEEDED'){
+			return;
+		}
+		schedule_once(this.query_task_status.bind(this), pt)
 	}
 	chunk_response(mout, l){
 		l = l.trim();
