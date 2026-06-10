@@ -268,7 +268,6 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		if (! resp) {
 			return;
 		}
-		mout.update_data(resp)
 		if (resp.status != 'ok'){
 			console.log('error:' + resp.data.message);
 		}
