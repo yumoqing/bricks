@@ -181,6 +181,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 			if( ! this.llmio.model_inputed ) d.append('model', this.opts.model)
 			d.append('llmid', this.opts.llmid)
 			d.append('stream', this.opts.stream)
+			if (this.opts.llmcatelogid) d.append('llmcatelogid', this.opts.llmcatelogid)
 			if (this.llmio.enabled_kdb){
 				Object.keys(this.llmio.kdb_setting).forEach(k =>{
 					d.append(k, this.llmio.kdb_setting[k]);
@@ -189,6 +190,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		} else {
 			if (! this.llmio.model_inputed) d.model = this.opts.model;
 			d.llmid = this.opts.llmid;
+			if (this.opts.llmcatelogid) d.llmcatelogid = this.opts.llmcatelogid;
 			if (this.llmio.enabled_kdb){
 				Object.keys(this.llmio.kdb_setting).forEach(k =>{
 					d[k] = this.llmio.kdb_setting[k];
