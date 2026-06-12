@@ -295,12 +295,20 @@ bricks.DataViewer = class extends bricks.VBox {
 						if (alter.uitype === 'code'){
 							f.uitype = 'code';
 							f.data = [];
+							// Pass valueField/textField from alter config
+							if (alter.valueField) f.valueField = alter.valueField;
+							if (alter.textField) f.textField = alter.textField;
+							var vf = f.valueField || 'value';
+							var tf = f.textField || 'text';
 							// 检查是否已有空选项
 							var hasEmpty = alter.data && alter.data.some(d => 
-								d.value === '' || d.value === null || d.value === undefined
+								d[vf] === '' || d[vf] === null || d[vf] === undefined
 							);
 							if (!hasEmpty) {
-								f.data.push({value: '', text: ''});
+								var emptyOpt = {};
+								emptyOpt[vf] = '';
+								emptyOpt[tf] = '';
+								f.data.push(emptyOpt);
 							}
 							if (alter.data && Array.isArray(alter.data)){
 								f.data = f.data.concat(alter.data);
