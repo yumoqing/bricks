@@ -155,7 +155,7 @@ bricks.LlmModel = class extends bricks.JsWidget {
 		this.llmio = llmio;
 	}
 	render_title(){
-		var w = new bricks.HBox({padding:'15px'});
+		var w = new bricks.HBox({cwidth:3, cheight:3, padding:'4px', margin:'2px', css:'clickable'});
 		w.bind('click', this.show_setup_panel.bind(this))
 		var img = new bricks.Svg({
 			rate:2,
