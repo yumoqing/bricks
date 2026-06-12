@@ -422,12 +422,13 @@ bricks.LlmIO = class extends bricks.VBox {
 				llmcatelogid:this.models[0].llmcatelogid
 			},
 			data_method:'POST',
-			col_cwidth: 24,
+			col_cwidth: 36,
 			record_view:{
 				widgettype:"VBox",
 				options:{
-					cheight:20,
-					css:"card"
+					cheight:14,
+					css:"card",
+					margin:"8px"
 				},
 				subwidgets:[
 					{
