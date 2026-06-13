@@ -6,7 +6,7 @@ bricks.DataViewer = class extends bricks.VBox {
 		opts.overflow = 'hidden';
 		super(opts);
 		this.loader = new bricks.PageDataLoader({
-			url:this.opts.data_url,
+			url:this.opts.data_url || this.opts.url,
 			params:this.opts.data_params,
 			pagerows:this.opts.page_rows,
 			method:this.opts.data_method,
