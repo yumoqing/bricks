@@ -419,6 +419,7 @@ bricks.InlineForm = class extends bricks.HBox {
 			} else if (!inputdesc.placeholder && f.label){
 				inputdesc.placeholder = f.label;
 			}
+			if (f.codes && !inputdesc.data) inputdesc.data = f.codes;
 			var w = Input.factory(inputdesc);
 			if (w){
 				cell.add_widget(w);
