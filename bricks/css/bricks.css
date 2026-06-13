@@ -838,6 +838,24 @@ hr {
 	filter: invert(1);
 }
 
+/* ---- Sidebar Menu collapse ---- */
+.menu-collapsed {
+	width: 48px !important;
+	min-width: 48px !important;
+	overflow: hidden;
+}
+.menu-collapsed .menuitem {
+	justify-content: center;
+	padding: 8px 0;
+}
+.menu-collapsed .menuitem .bricks-text,
+.menu-collapsed .menuitem .text {
+	display: none;
+}
+.menu-collapsed .menuitem img {
+	margin: 0 auto;
+}
+
 /* Override Menu widget's inline backgroundColor:"white" */
 [data-theme="dark"] .popup .vbox,
 [data-theme="dark"] .popup .vcontainer,
@@ -876,4 +894,15 @@ hr {
 /* ---- Top popup shadow (dark variant) ---- */
 [data-theme="dark"] .toppopup {
 	box-shadow: 10px 5px 10px rgba(0,0,0,0.5), 0 -5px 5px rgba(255,255,255,0.05);
+}
+
+/* ---- InlineForm ---- */
+.inline-form-field {
+	flex-shrink: 0;
+	white-space: nowrap;
+}
+.inline-form-field input,
+.inline-form-field select {
+	height: auto;
+	margin: 0;
 }

@@ -342,16 +342,104 @@ bricks.FormBase = class extends bricks.Layout {
 	}
 }
 
-bricks.InlineForm = class extends bricks.FormBase {
+bricks.InlineForm = class extends bricks.HBox {
+	/*
+	Horizontal inline form — all fields in one row.
+	Options:
+		fields: [{name, label, uitype, placeholder, ...}]
+		submit_label: "搜索" (button text, default "Submit")
+		submit_icon: url to icon (optional)
+		submit_css: "primary" (css class for button)
+		submit_bgcolor: "#xxx" (background color)
+		gap: "0.5" (gap between items in charsize)
+		show_label: true/false (show label before input, default true)
+	Events:
+		submit: dispatched with form data on button click
+	*/
 	constructor(opts){
-		opts.height = "100%";
-		opts.width = "100%";
-		opts.overflow = "auto";
+		opts.width = opts.width || '100%';
+		opts.height = 'auto';
+		opts.overflow = 'none';
+		opts.alignItems = 'center';
+		opts.gap = opts.gap || '0.5';
 		super(opts);
-		this.fg = new bricks.FieldGroup({});
-		this.fg.build_fields(this, this, this.opts.fields)
-		this.build_toolbar(this.children[0]);
-		this.save_origin_data();
+		this.name_inputs = {};
+		this.build_fields();
+		this.build_submit();
+	}
+	getValue(){
+		var data = {};
+		for (var name in this.name_inputs){
+			if (!this.name_inputs.hasOwnProperty(name)) continue;
+			var w = this.name_inputs[name];
+			var d = w.getValue();
+			bricks.extend(data, d);
+		}
+		return data;
+	}
+	setValue(name, value){
+		var w = this.name_inputs[name];
+		if (w) w.setValue(value);
+	}
+	reset(){
+		for (var name in this.name_inputs){
+			if (!this.name_inputs.hasOwnProperty(name)) continue;
+			this.name_inputs[name].reset();
+		}
+	}
+	validation(){
+		var data = this.getValue();
+		this.dispatch('submit', data);
+	}
+	build_fields(){
+		var fields = this.opts.fields || [];
+		var show_label = this.opts.show_label !== false;
+		for (var i=0; i<fields.length; i++){
+			var f = fields[i];
+			if (f.nonuse) continue;
+			var cell = new bricks.HBox({
+				height:'auto',
+				alignItems:'center',
+				gap:'0.3'
+			});
+			cell.set_css('inline-form-field');
+			if (show_label && f.label){
+				var lbl = new bricks.Text({
+					otext: f.label,
+					height:'auto',
+					dynsize:true,
+					i18n:true
+				});
+				cell.add_widget(lbl);
+			}
+			var inputdesc = objcopy(f);
+			if (!inputdesc.width) inputdesc.width = 'auto';
+			if (f.placeholder && !inputdesc.placeholder){
+				inputdesc.placeholder = f.placeholder;
+			} else if (!inputdesc.placeholder && f.label){
+				inputdesc.placeholder = f.label;
+			}
+			var w = Input.factory(inputdesc);
+			if (w){
+				cell.add_widget(w);
+				this.name_inputs[f.name] = w;
+				w.set_id(f.name);
+			}
+			cell.set_id(f.name + '_box');
+			this.add_widget(cell);
+		}
+	}
+	build_submit(){
+		this.add_widget(new bricks.Filler());
+		var btnopts = {
+			label: this.opts.submit_label || 'Submit',
+			css: this.opts.submit_css || 'primary'
+		};
+		if (this.opts.submit_icon) btnopts.icon = this.opts.submit_icon;
+		if (this.opts.submit_bgcolor) btnopts.bgcolor = this.opts.submit_bgcolor;
+		var btn = new bricks.Button(btnopts);
+		btn.bind('click', this.validation.bind(this));
+		this.add_widget(btn);
 	}
 }
 
