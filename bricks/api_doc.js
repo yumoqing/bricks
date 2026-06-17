@@ -69,7 +69,7 @@ bricks.ApiDoc = class extends bricks.VBox {
 			this.content_el.innerHTML =
 				'<div class="bricks-apidoc-error">Failed to load: ' +
 				this.md_url + '</div>';
-			bricks.error('ApiDoc load error:', e);
+			console.error('ApiDoc load error:', e);
 		}
 	}
 
