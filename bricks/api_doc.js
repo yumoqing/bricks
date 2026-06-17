@@ -161,8 +161,8 @@ bricks.ApiDoc = class extends bricks.VBox {
 		this._add_copy_buttons();
 
 		// Activate first section
-		if (sections.length > 0) {
-			this._activate_section(sections[0].id);
+		if (all_sections.length > 0) {
+			this._activate_section(all_sections[0].id);
 		}
 	}
 
