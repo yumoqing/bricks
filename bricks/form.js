@@ -71,6 +71,13 @@ bricks.FieldGroup = class {
 						box.add_widget(errw);
 						form.name_error_widgets[fields[i].name] = errw;
 						form.field_rules[fields[i].name] = fields[i].rules;
+						// Bind focus event to clear error
+						var fname = fields[i].name;
+						if (w.dom_element){
+							w.dom_element.addEventListener('focus', function(){
+								form.clear_field_error(fname);
+							});
+						}
 					}
 				} else {
 					bricks.debug(fields[i], 'createInput failed');
@@ -221,6 +228,12 @@ bricks.FormBase = class extends bricks.Layout {
 		}
 		var box = bricks.getWidgetById(name + '_box', this);
 		if (box && box.dom_element) box.dom_element.classList.add('field-error');
+	}
+	clear_field_error(name){
+		var ew = this.name_error_widgets[name];
+		if (ew){ ew.set_otext(''); ew.hide(); }
+		var box = bricks.getWidgetById(name + '_box', this);
+		if (box && box.dom_element) box.dom_element.classList.remove('field-error');
 	}
 	clear_all_errors(){
 		for (var name in this.name_error_widgets){

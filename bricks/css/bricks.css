@@ -649,7 +649,7 @@ hr {
 .inputbox.field-error {
 	border-color: #e74c3c;
 }
-.field-error-msg .bricks-text {
+.bricks-text.field-error-msg {
 	color: #e74c3c !important;
 }
 
