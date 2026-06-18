@@ -441,11 +441,11 @@ bricks.TextBase = class extends bricks.JsWidget {
 		if (this.i18n && this.otext) {
 			this.text = bricks.app.i18n._(this.otext);
 		}
-		this.dom_element.innerHTML = this.text;
+		this.dom_element.innerHTML = this.text || '';
 	}
 	set_otext(otxt){
 		var text;
-		this.otext = otxt;
+		this.otext = otxt || '';
 		if (this.i18n) {
 			text = bricks.app.i18n._(this.otext);
 		} else {
@@ -464,7 +464,7 @@ bricks.TextBase = class extends bricks.JsWidget {
 	}
 	set_text(text){
 		this.text = text;
-		this.dom_element.innerHTML = this.text;
+		this.dom_element.innerHTML = this.text || '';
 	}
 		
 }
