@@ -118,7 +118,8 @@ bricks.DataRow = class extends bricks.HBox {
 				opts.value = f.label || f.name;
 			} else {
 				opts.user_data = this.user_data;
-				opts.value = opts.tip = this.user_data[f.name];
+				var val = this.user_data[f.name];
+				opts.value = opts.tip = (val === null || val === undefined) ? '' : val;
 			}
 			opts.cwidth = cwidths[f.name] ||f.cwidth || 10;
 			var f = bricks.get_ViewBuilder(f.uitype);
