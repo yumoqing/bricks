@@ -57,6 +57,21 @@ bricks.FieldGroup = class {
 					box.add_widget(w);
 					form.name_inputs[fields[i].name] = w;
 					w.set_id(fields[i].name);
+					if (fields[i].rules && fields[i].rules.length > 0){
+						var errw = new bricks.Text({
+							otext:'',
+							height:'auto',
+							dynsize:true,
+							i18n:false,
+							cfontsize:0.8
+						});
+						errw.set_id(fields[i].name + '_error');
+						errw.set_css('field-error-msg');
+						errw.hide();
+						box.add_widget(errw);
+						form.name_error_widgets[fields[i].name] = errw;
+						form.field_rules[fields[i].name] = fields[i].rules;
+					}
 				} else {
 					bricks.debug(fields[i], 'createInput failed');
 				}
@@ -136,6 +151,84 @@ bricks.FormBase = class extends bricks.Layout {
 	constructor(opts){
 		super(opts);
 		this.name_inputs = {};
+		this.name_error_widgets = {};
+		this.field_rules = {};
+	}
+	validate_rules(){
+		var valid = true;
+		this.clear_all_errors();
+		for (var name in this.field_rules){
+			if (!this.field_rules.hasOwnProperty(name)) continue;
+			var w = this.name_inputs[name];
+			if (!w) continue;
+			if (w.parent && w.parent.is_disabled && w.parent.is_disabled()) continue;
+			var d = w.getValue();
+			var value = d[name];
+			var rules = this.field_rules[name];
+			for (var i = 0; i < rules.length; i++){
+				var msg = this._check_rule(rules[i], value);
+				if (msg){
+					this.show_field_error(name, msg);
+					if (valid && w.focus) w.focus();
+					valid = false;
+					break;
+				}
+			}
+		}
+		return valid;
+	}
+	_check_rule(rule, value){
+		var v = (value === null || value === undefined) ? '' : String(value);
+		switch(rule.type){
+			case 'required':
+				if (v === '' || v.trim() === '') return rule.message;
+				break;
+			case 'minlength':
+				if (v !== '' && v.length < rule.value) return rule.message;
+				break;
+			case 'maxlength':
+				if (v.length > rule.value) return rule.message;
+				break;
+			case 'min':
+				if (v !== ''){
+					var n = parseFloat(v);
+					if (isNaN(n) || n < rule.value) return rule.message;
+				}
+				break;
+			case 'max':
+				if (v !== ''){
+					var n = parseFloat(v);
+					if (isNaN(n) || n > rule.value) return rule.message;
+				}
+				break;
+			case 'pattern':
+				if (v !== '' && !new RegExp(rule.value).test(v)) return rule.message;
+				break;
+			case 'email':
+				if (v !== '' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return rule.message;
+				break;
+			case 'number':
+				if (v !== '' && isNaN(parseFloat(v))) return rule.message;
+				break;
+		}
+		return null;
+	}
+	show_field_error(name, msg){
+		var ew = this.name_error_widgets[name];
+		if (ew){
+			ew.set_otext(msg);
+			ew.show();
+		}
+		var box = bricks.getWidgetById(name + '_box', this);
+		if (box && box.dom_element) box.dom_element.classList.add('field-error');
+	}
+	clear_all_errors(){
+		for (var name in this.name_error_widgets){
+			var ew = this.name_error_widgets[name];
+			if (ew){ ew.set_otext(''); ew.hide(); }
+			var box = bricks.getWidgetById(name + '_box', this);
+			if (box && box.dom_element) box.dom_element.classList.remove('field-error');
+		}
 	}
 	build_toolbar(widget){
 		var box = new bricks.HBox({height:'auto', width:'100%'});
@@ -308,6 +401,9 @@ bricks.FormBase = class extends bricks.Layout {
 		return null
 	}
 	async validation(){
+		if (!this.validate_rules()){
+			return;
+		}
 		var running = new bricks.Running({target:this});
 		try {
 			var data;

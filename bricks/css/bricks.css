@@ -646,6 +646,12 @@ hr {
 .inputbox:focus {
 	border-color: #007bff;
 }
+.inputbox.field-error {
+	border-color: #e74c3c;
+}
+.field-error-msg .bricks-text {
+	color: #e74c3c !important;
+}
 
 /* ========== Dark Theme (Sage Shell) ========== */
 [data-theme="dark"] body,
