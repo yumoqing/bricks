@@ -34,7 +34,7 @@ bricks.add_ViewBuilder('code', function(opts){
 });
 bricks.add_ViewBuilder('password', function(opts){
 	var options = bricks.extend({}, opts);
-	options.otext = '******';
+	options.otext = opts.user_data ? '******' : (opts.value || '******');
 	options.i18n = true;
 	return new bricks.Text(options);
 });

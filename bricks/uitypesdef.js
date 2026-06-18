@@ -87,6 +87,7 @@ var strInputBuilder = function(desc, rec) {
 bricks.uitypesdef.setInputBuilder('str', strInputBuilder);
 
 var passwordViewBuilder = function(desc, rec){
+	if (!rec) return new buildText(desc.label || desc.name || '******');
 	return new buildText('******');
 }
 bricks.uitypesdef.setViewBuilder('password', passwordViewBuilder);

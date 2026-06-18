@@ -31,7 +31,7 @@ uitypesdef.setViewKlass('str', ViewStr);
 
 var ViewPassword = function(desc){
 	var w = Text({
-		'text':"****",
+		'text': desc.row_data ? "****" : (desc.value || desc.label || desc.name || "****"),
 		'halign':'left'
 	})
 	if (desc.row_data)
