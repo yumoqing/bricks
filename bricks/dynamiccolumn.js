@@ -16,7 +16,7 @@ bricks.DynamicColumn = class extends bricks.Layout {
 			}
 		}
 		opts.col_cgap = opts.col_cgap || 1;
-		opts.mobile_cols = opts.mobile_cols|| 1;
+		opts.mobile_cols = opts.mobile_cols|| 2;
 		super(opts);
 		this.set_style('display', 'grid');
 		this.set_style('align-items', 'start');
