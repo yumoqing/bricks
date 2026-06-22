@@ -182,7 +182,8 @@ bricks.JsWidget = class {
 			"objectFit",
 			"objectPosition",
 			"outline",
-			"boxSizing"
+			"boxSizing",
+			"display"
 		];
 		var mapping_keys = {
 			"bgcolor":"backgroundColor"
