@@ -119,6 +119,7 @@ bricks.DataViewer = class extends bricks.VBox {
 		form_opts.show_label = sf.show_label !== undefined ? sf.show_label : false;
 		form_opts.submit_label = sf.submit_label || '搜索';
 		form_opts.submit_css = sf.submit_css || 'primary';
+		form_opts.wrap = sf.wrap !== undefined ? sf.wrap : true;
 		this.search_form_w = new bricks.InlineForm(form_opts);
 		this.search_form_w.bind('submit', this.search_form_submited.bind(this));
 		this.add_widget(this.search_form_w);

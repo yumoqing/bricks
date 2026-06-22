@@ -453,7 +453,7 @@ bricks.FormBase = class extends bricks.Layout {
 
 bricks.InlineForm = class extends bricks.HBox {
 	/*
-	Horizontal inline form — all fields in one row.
+	Horizontal inline form — all fields in one row (or wrap to multiple rows).
 	Options:
 		fields: [{name, label, uitype, placeholder, ...}]
 		submit_label: "搜索" (button text, default "Submit")
@@ -462,6 +462,7 @@ bricks.InlineForm = class extends bricks.HBox {
 		submit_bgcolor: "#xxx" (background color)
 		gap: "0.5" (gap between items in charsize)
 		show_label: true/false (show label before input, default true)
+		wrap: true/false (allow fields to wrap to next line, default false)
 	Events:
 		submit: dispatched with form data on button click
 	*/
@@ -471,6 +472,7 @@ bricks.InlineForm = class extends bricks.HBox {
 		opts.overflow = 'none';
 		opts.alignItems = 'center';
 		opts.gap = opts.gap || '0.5';
+		if (opts.wrap) opts.flexWrap = 'wrap';
 		super(opts);
 		this.name_inputs = {};
 		this.build_fields();
