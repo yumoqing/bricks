@@ -32,6 +32,7 @@ bricks.DataViewer = class extends bricks.VBox {
 		this.build_description_widget();
 		this.build_toolbar_widget();
 		this.build_searchbar_widget();
+		this.build_search_form_widget();
 		this.build_records_area();
 		await this.build_other();
 		this.check_changed_row = null;
@@ -107,6 +108,22 @@ bricks.DataViewer = class extends bricks.VBox {
 		this.searchbar_w.bind('search', this.search_event_handle.bind(this));
 		this.add_widget(this.searchbar_w);
 	}
+	build_search_form_widget(){
+		var sf = this.opts.search_form;
+		if (!sf || !sf.fields || sf.fields.length == 0){
+			return;
+		}
+		var form_opts = bricks.extend({}, sf);
+		form_opts.css = sf.css || 'card';
+		form_opts.padding = sf.padding || '8px';
+		form_opts.show_label = sf.show_label !== undefined ? sf.show_label : false;
+		form_opts.submit_label = sf.submit_label || '搜索';
+		form_opts.submit_css = sf.submit_css || 'primary';
+		this.search_form_w = new bricks.InlineForm(form_opts);
+		this.search_form_w.bind('submit', this.search_form_submited.bind(this));
+		this.add_widget(this.search_form_w);
+		this.search_form_w.hide();
+	}
 	merge_search_params(params){
 		var merged = bricks.extend({}, params || {});
 		if (this.searchable){
@@ -124,6 +141,14 @@ bricks.DataViewer = class extends bricks.VBox {
 			for (var k in filter_values){
 				if (filter_values[k] !== '' && filter_values[k] !== null && filter_values[k] !== undefined){
 					merged[k] = filter_values[k];
+				}
+			}
+		}
+		/* search_form: send InlineForm field values */
+		if (this.search_form_values){
+			for (var k in this.search_form_values){
+				if (this.search_form_values[k] !== '' && this.search_form_values[k] !== null && this.search_form_values[k] !== undefined){
+					merged[k] = this.search_form_values[k];
 				}
 			}
 		}
@@ -253,7 +278,7 @@ bricks.DataViewer = class extends bricks.VBox {
 			return;
 		}
 		if (tdesc.name == 'filter'){
-			await this.show_filter_form();
+			this.toggle_search_form();
 			return;
 		}
 		var data = null;
@@ -263,6 +288,27 @@ bricks.DataViewer = class extends bricks.VBox {
 		}
 		console.log(tdesc.name, 'clicked ==================', tdesc.name, data)
 		this.dispatch(tdesc.name, data);
+	}
+	toggle_search_form(){
+		if (!this.search_form_w) return;
+		if (this.search_form_w.dom_element.style.display == 'none'){
+			this.search_form_w.show();
+		} else {
+			this.search_form_w.hide();
+		}
+	}
+	async search_form_submited(event){
+		var params = event.params || {};
+		this.search_form_values = params;
+		this.search_form_w.hide();
+		this.old_params = null;
+		this.select_row = null;
+		this.active_item = null;
+		this.data_offset = 0;
+		if (this.loader){
+			this.loader.pages = [];
+		}
+		await this.render({});
 	}
 	/* Recursively extract {var, field, op} from data_filter JSON tree */
 	get_filter_fields(){
