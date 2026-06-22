@@ -232,8 +232,8 @@ bricks.DataViewer = class extends bricks.VBox {
 				edit_names.push(t.name);
 			});
 		}
-		/* data_filter: add search tool to toolbar */
-		if (this.opts.data_filter){
+		/* search_form: add search tool to toolbar */
+		if (this.opts.search_form || this.opts.data_filter){
 			tbdesc.tools.push({
 				name:'filter',
 				label: this.opts.filter_label || '搜索',
