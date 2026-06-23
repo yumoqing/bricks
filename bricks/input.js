@@ -324,7 +324,7 @@ bricks.UiFloat  =class extends bricks.UiInt {
 	constructor(options){
 		super(options);
 		this.uitype='float';
-		this.pattern = '\\d*\\.?\\d+';
+		this.pattern = '-?\\d*\\.?\\d*';
 		var dec_len = this.opts.dec_len || 2;
 		var step = 1;
 		for (var i=0; i<dec_len; i++)
