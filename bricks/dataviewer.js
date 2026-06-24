@@ -473,6 +473,9 @@ bricks.DataViewer = class extends bricks.VBox {
 			fs.push(f);
 		}
 		opts.fields = fs
+		if (this.editable.binds){
+			opts.binds = this.editable.binds;
+		}
 		var formw = new bricks.Form(opts);
 		return formw;
 	}
@@ -493,6 +496,9 @@ bricks.DataViewer = class extends bricks.VBox {
 		}
 		fs.push({name:'id', value:data.id, uitype:'hide'})
 		opts.fields = fs
+		if (this.editable.binds){
+			opts.binds = this.editable.binds;
+		}
 		var formw = new bricks.Form(opts);
 		return formw;
 	}
@@ -511,6 +517,9 @@ bricks.DataViewer = class extends bricks.VBox {
 			fs.push(f);
 		}
 		opts.fields = fs
+		if (this.editable.binds){
+			opts.binds = this.editable.binds;
+		}
 		var formw = new bricks.Form(opts);
 		return formw;
 	}
