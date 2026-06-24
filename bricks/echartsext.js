@@ -47,6 +47,11 @@ bricks.EchartsExt = class extends bricks.VBox {
 		if (this._refresh_timer) return; // 防止重复启动
 
 		const doRefresh = () => {
+			if (!this.is_in_dom()) {
+				console.log('EchartsExt: widget not in DOM, stop auto-refresh');
+				this._refresh_timer = null;
+				return;
+			}
 			this.render_urldata().then(() => {
 				// 继续下一轮
 				if (this._refresh_timer) { // 检查是否已被取消
@@ -54,7 +59,11 @@ bricks.EchartsExt = class extends bricks.VBox {
 				}
 			}).catch(err => {
 				console.error('Auto-refresh failed:', err);
-				this._refresh_timer = setTimeout(doRefresh, this.refresh_period * 1000); // 失败也重试
+				if (this.is_in_dom()) {
+					this._refresh_timer = setTimeout(doRefresh, this.refresh_period * 1000); // 失败也重试
+				} else {
+					this._refresh_timer = null;
+				}
 			});
 		};
 
