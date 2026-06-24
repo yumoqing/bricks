@@ -453,7 +453,7 @@ bricks.DataViewer = class extends bricks.VBox {
 	}
 	get_hidefields(){
 		var fs = [];
-		var params = this.data_params || {};
+		var params = this.opts.data_params || {};
 		for (var k in params){
 			fs.push({name:k, value:params[k], uitype:'hide'});
 		}
