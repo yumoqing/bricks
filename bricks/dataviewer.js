@@ -473,10 +473,12 @@ bricks.DataViewer = class extends bricks.VBox {
 			fs.push(f);
 		}
 		opts.fields = fs
-		if (this.editable.binds){
-			opts.binds = this.editable.binds;
-		}
 		var formw = new bricks.Form(opts);
+		if (this.editable.binds){
+			for (var i=0; i<this.editable.binds.length; i++){
+				bricks.buildBind(formw, this.editable.binds[i]);
+			}
+		}
 		return formw;
 	}
 	build_update_form(data){
@@ -496,10 +498,12 @@ bricks.DataViewer = class extends bricks.VBox {
 		}
 		fs.push({name:'id', value:data.id, uitype:'hide'})
 		opts.fields = fs
-		if (this.editable.binds){
-			opts.binds = this.editable.binds;
-		}
 		var formw = new bricks.Form(opts);
+		if (this.editable.binds){
+			for (var i=0; i<this.editable.binds.length; i++){
+				bricks.buildBind(formw, this.editable.binds[i]);
+			}
+		}
 		return formw;
 	}
 	build_clone_form(data){
@@ -517,10 +521,12 @@ bricks.DataViewer = class extends bricks.VBox {
 			fs.push(f);
 		}
 		opts.fields = fs
-		if (this.editable.binds){
-			opts.binds = this.editable.binds;
-		}
 		var formw = new bricks.Form(opts);
+		if (this.editable.binds){
+			for (var i=0; i<this.editable.binds.length; i++){
+				bricks.buildBind(formw, this.editable.binds[i]);
+			}
+		}
 		return formw;
 	}
 	build_window(icon, title, form){
