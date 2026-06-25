@@ -402,7 +402,7 @@ bricks.UiFile = class extends bricks.VBox {
 		if (opts.accept) this.input.accept = opts.accept;
 		if (opts.multiple) this.input.multiple = true;
 		this.input.addEventListener('change', this.handleFileSelect.bind(this));
-		this.add_widget(new bricks.Text({text:'drop in or click to choose file'}));
+		this.add_widget(new bricks.Text({otext:'drop in or click to choose file', i18n:true}));
 		this.dom_element.appendChild(this.input);
 	}
     reset(){
