@@ -402,7 +402,7 @@ bricks.DataViewer = class extends bricks.VBox {
 		};
 		var form = new bricks.Form(form_opts);
 		var popup = new bricks.PopupWindow({
-			title: this.opts.filter_title || '搜索过滤',
+			title: this.opts.filter_title || bricks.app.i18n._('Search Filter'),
 			icon: bricks_resource('imgs/search.svg'),
 			widget: this,
 			archor: 'cc',
@@ -589,8 +589,8 @@ bricks.DataViewer = class extends bricks.VBox {
 			cwidth:16,
 			cheight:9,
 			target:this,
-			title:'Delete conform',
-			message:'Are you sure to delete is record?'
+			title: bricks.app.i18n._('Delete conform'),
+			message: bricks.app.i18n._('Are you sure to delete this record?')
 		});
 		conform_w.bind('conformed', this.delete_record_act.bind(this, row, record));
 		conform_w.bind('discard', conform_w.dismiss.bind(conform_w));
