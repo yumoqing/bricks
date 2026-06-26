@@ -7,10 +7,12 @@ bricks.BaseRunning = class extends bricks.HBox {
 	}
 	*/
 	constructor(opts){
-		if (! opts.cwidth) opts.cwidth = 2;
+		if (! opts.cwidth) opts.width = 'auto';
 		if (! opts.cheight) opts.cheight = 2;
 		super(opts);
 		this.icon_w = new bricks.Icon({
+			height: '100%',
+			width: 'auto',
 			url:opts.icon || bricks_resource('imgs/running.gif')
 		});
 		this.time_w = new bricks.Text({
