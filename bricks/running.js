@@ -1,6 +1,6 @@
 var bricks = window.bricks || {};
 
-bricks.BaseRunning = class extends bricks.FHBox {
+bricks.BaseRunning = class extends bricks.HBox {
 	/*
 	{
 		"icon"
@@ -11,7 +11,6 @@ bricks.BaseRunning = class extends bricks.FHBox {
 		if (! opts.cheight) opts.cheight = 2;
 		super(opts);
 		this.icon_w = new bricks.Icon({
-			rate: opts.rate|| 2,
 			url:opts.icon || bricks_resource('imgs/running.gif')
 		});
 		this.time_w = new bricks.Text({
