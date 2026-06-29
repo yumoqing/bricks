@@ -137,7 +137,7 @@ bricks.HttpText = class {
 		}
 		if (fetchResult.status == 403){
 			var w = new bricks.Error({
-				"title":"access error",
+				"title":bricks.app.i18n._("access error"),
 				"auto_open":true,
 				"message":"you are forbidden to access it",
 				"archor":"cc",
@@ -149,7 +149,7 @@ bricks.HttpText = class {
 		}
 		if (! fetchResult.ok){
 			var w = new bricks.Error({
-				"title":"access error",
+				"title":bricks.app.i18n._("access error"),
 				"auto_open":true,
 				"message":"server return error with error code" + fetchResult.status,
 				"archor":"cc",

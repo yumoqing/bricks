@@ -1,0 +1,12 @@
+Conform: Confirm
+Discard: Discard
+add a new record: Add a new record
+Submit: Submit
+Reset: Reset
+Cancel: Cancel
+Requirement: Requirement
+required field must input: Required field must input
+access error: Access error
+知识库: Knowledge Base
+召回数量: Recall Count
+模版: Template

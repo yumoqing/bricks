@@ -29,12 +29,12 @@ bricks.Conform = class extends bricks.PopupWindow {
 				bricks.extend({
 					"name":"conform",
 					"icon":bricks_resource('imgs/conform.svg'),
-					"label":'Conform'
+					"label":bricks.app.i18n._('Conform')
 				}, this.opts.conform||{}),
 				bricks.extend({
 					"name":"discard",
 					"icon":bricks_resource('imgs/cancel.svg'),
-					"label":"Discard"
+					"label":bricks.app.i18n._("Discard")
 				}, this.opts.discard||{})
 			]
 		}

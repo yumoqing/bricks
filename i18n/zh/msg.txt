@@ -1,0 +1,12 @@
+Conform: 确认
+Discard: 放弃
+add a new record: 添加新记录
+Submit: 提交
+Reset: 重置
+Cancel: 取消
+Requirement: 必填
+required field must input: 必填字段必须输入
+access error: 访问错误
+知识库: 知识库
+召回数量: 召回数量
+模版: 模版

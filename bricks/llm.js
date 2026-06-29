@@ -531,7 +531,7 @@ bricks.LlmIO = class extends bricks.VBox {
 					"uitype":"checkbox",
 					"multicheck": true,
 					"required": true,
-					"label":"知识库",
+					"label":bricks.app.i18n._("知识库"),
 					"valueField":"id",
 					"textField":"name",
 					"dataurl":this.get_kdb_url
@@ -540,14 +540,14 @@ bricks.LlmIO = class extends bricks.VBox {
 					"name":"recall_cnt",
 					"uitype":"int",
 					"value": data.recall_cnt,
-					"label":"召回数量"
+					"label":bricks.app.i18n._("召回数量")
 				},
 				{
 					"name":"prompt_tmpl",
 					"value":data.prompt_tmpl,
 					"uitype":"text",
 					"required": true,
-					"label":"模版"
+					"label":bricks.app.i18n._("模版")
 				}
 			]
 		}

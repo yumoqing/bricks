@@ -1,0 +1,12 @@
+Conform: 확인
+Discard: 취소
+add a new record: 새 레코드 추가
+Submit: 제출
+Reset: 재설정
+Cancel: 취소
+Requirement: 필수
+required field must input: 필수 필드를 입력하세요
+access error: 액세스 오류
+知识库: 지식 베이스
+召回数量: 검색 수
+模版: 템플릿

@@ -275,7 +275,7 @@ bricks.DynamicAccordion = class extends bricks.VScrollPanel {
 						"tools":[
 							{
 								"name":"add",
-								"tip":"add a new record",
+								"tip":bricks.app.i18n._("add a new record"),
 								"icon":this.editable.add_icon || bricks_resource('imgs/add.svg')
 							}
 						]

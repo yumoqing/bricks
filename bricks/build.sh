@@ -42,4 +42,9 @@ cp -a ../examples/* ../dist/examples
 cp -a ../3parties/* ../dist/3parties
 cp -a ../docs/* ../dist/docs
 cp *.tmpl ../dist
+if [ ! -d ../dist/i18n ];then
+	rm -rf ../dist/i18n
+	mkdir ../dist/i18n
+fi
+cp -a ../i18n/* ../dist/i18n
 echo "Finished ..."

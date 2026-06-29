@@ -251,19 +251,19 @@ bricks.FormBase = class extends bricks.Layout {
 				icon:bricks_resource('imgs/submit.svg'),
 				name:'submit',
 				css:'submit_btn',
-				label:'Submit'
+				label:bricks.app.i18n._('Submit')
 			},
 			{
 				icon:bricks_resource('imgs/reset.svg'),
 				name:'reset',
 				css:'reset_btn',
-				label:'Reset'
+				label:bricks.app.i18n._('Reset')
 			},
 			{
 				icon:bricks_resource('imgs/cancel.svg'),
 				name:'cancel',
 				css:'clear_btn',
-				label:'Cancel'
+				label:bricks.app.i18n._('Cancel')
 			}
 		]
 		var tb_desc={};
@@ -338,7 +338,7 @@ bricks.FormBase = class extends bricks.Layout {
 			var d = w.getValue();
 			if (w.required && ( d[name] == '' || d[name] === null)){
 				bricks.debug('data=', data, 'd=', d);
-				new bricks.Error({title:'Requirement', message:'required field must input"' + w.label + '"'})
+				new bricks.Error({title:bricks.app.i18n._('Requirement'), message:bricks.app.i18n._('required field must input') + '"' + w.label + '"'})
 				w.focus();
 				return;
 			}
@@ -392,7 +392,7 @@ bricks.FormBase = class extends bricks.Layout {
 			if (w.parent.is_disabled()) continue;
 			var d = w.getValue();
 			if (w.required && ( d[name] == '' || d[name] === null)){
-				new bricks.Error({title:'Requirement', message:'required field must input"' + w.label + '"'})
+				new bricks.Error({title:bricks.app.i18n._('Requirement'), message:bricks.app.i18n._('required field must input') + '"' + w.label + '"'})
 				w.focus();
 				return;
 			}
@@ -544,7 +544,7 @@ bricks.InlineForm = class extends bricks.HBox {
 	build_submit(){
 		this.add_widget(new bricks.Filler());
 		var btnopts = {
-			label: this.opts.submit_label || 'Submit',
+			label: this.opts.submit_label || bricks.app.i18n._('Submit'),
 			css: this.opts.submit_css || 'primary'
 		};
 		if (this.opts.submit_icon) btnopts.icon = this.opts.submit_icon;

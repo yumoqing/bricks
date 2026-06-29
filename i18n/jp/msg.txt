@@ -1,0 +1,12 @@
+Conform: 確認
+Discard: 破棄
+add a new record: 新規レコード追加
+Submit: 提出
+Reset: リセット
+Cancel: キャンセル
+Requirement: 必須
+required field must input: 必須フィールドを入力してください
+access error: アクセスエラー
+知识库: 知識ベース
+召回数量: 検索数
+模版: テンプレート
