@@ -35,6 +35,7 @@ bricks.PageDataLoader = class {
 		return p == Math.max(...this.pages);
 	}
 	async loadNextPage(){
+		if (this.pages.length == 0) return null;
 		var page = Math.max(...this.pages) + 1;
 		if (page <= this.lastPage){
 			var d = await this.loadPage(page);
@@ -44,6 +45,7 @@ bricks.PageDataLoader = class {
 		}
 	}
 	async loadPreviousPage(){
+		if (this.pages.length == 0) return null;
 		var page = Math.min(...this.pages) - 1;
 		if (page > 0){
 			var d = await this.loadPage(page);
