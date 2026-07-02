@@ -336,7 +336,10 @@ bricks.FormBase = class extends bricks.Layout {
 
 			var w = this.name_inputs[name];
 			var d = w.getValue();
-			if (w.required && ( d[name] == '' || d[name] === null)){
+			var val = d[name];
+			var empty = (val === '' || val === null || val === undefined ||
+				(Array.isArray(val) && val.length === 0));
+			if (w.required && empty){
 				bricks.debug('data=', data, 'd=', d);
 				new bricks.Error({title:bricks.app.i18n._('Requirement'), message:bricks.app.i18n._('required field must input') + '"' + w.label + '"'})
 				w.focus();
@@ -391,7 +394,10 @@ bricks.FormBase = class extends bricks.Layout {
 			var w = this.name_inputs[name];
 			if (w.parent.is_disabled()) continue;
 			var d = w.getValue();
-			if (w.required && ( d[name] == '' || d[name] === null)){
+			var val = d[name];
+			var empty = (val === '' || val === null || val === undefined ||
+				(Array.isArray(val) && val.length === 0));
+			if (w.required && empty){
 				new bricks.Error({title:bricks.app.i18n._('Requirement'), message:bricks.app.i18n._('required field must input') + '"' + w.label + '"'})
 				w.focus();
 				return;

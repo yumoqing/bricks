@@ -462,14 +462,25 @@ bricks.UiFile = class extends bricks.VBox {
 		console.log('"changed" fired', this.getValue());
 	}
 	set_formdata(fd){
-		fd.append(this.name, this.resultValue());
+		var v = this.resultValue();
+		if (this.opts.multiple && Array.isArray(v)){
+			for (var i=0; i<v.length; i++){
+				fd.append(this.name, v[i]);
+			}
+		} else {
+			fd.append(this.name, v);
+		}
 	}
 	resultValue(){
 		if (this.value){
 			return this.value;
 		}
-		if (this.input.files.length)
+		if (this.input.files.length){
+			if (this.opts.multiple){
+				return Array.from(this.input.files);
+			}
 			return this.input.files[0];
+		}
 		return null;
 	}
 	getValue(){
