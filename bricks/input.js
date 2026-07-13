@@ -499,7 +499,7 @@ bricks.UiAudio =class extends bricks.UiFile {
 		this.uitype='audio';
 		this.camera_w = new bricks.Svg({
 				url:bricks_resource('imgs/mic.svg'),
-				tip:'use mic to record audio',
+				tip:bricks.app.i18n._('use mic to record audio'),
 				rate:2});
 		this.add_widget(this.camera_w);
 		this.camera_w.bind('click', this.open_recorder.bind(this));
@@ -571,7 +571,7 @@ bricks.UiVideo =class extends bricks.UiFile {
 		this.uitype='video';
 		this.camera_w = new bricks.Svg({
 				url:bricks_resource('imgs/video-recorder.svg'),
-				tip:'use cemera to record video',
+				tip:bricks.app.i18n._('use cemera to record video'),
 				rate:2});
 		this.set_css('droparea');
 		this.add_widget(this.camera_w);
@@ -642,7 +642,7 @@ bricks.UiImage =class extends bricks.UiFile {
 		this.uitype='image';
 		this.camera_w = new bricks.Svg({
 				url:bricks_resource('imgs/camera.svg'),
-				tip:'use cemera to take a picture',
+				tip:bricks.app.i18n._('use cemera to take a picture'),
 				rate:2});
 		this.set_css('droparea');
 		this.add_widget(this.camera_w);

@@ -13,7 +13,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		this.controls = new bricks.HBox({width: '100%', cheight: 2.5});
 		this.toggle_record = new bricks.Svg({
 			url: bricks_resource('/imgs/start_recording.svg'),
-			tip: 'start or stop record',
+			tip: bricks.app.i18n._('start or stop record'),
 			rate: 2
 		});
 		this.timepass = new bricks.Text({text:'00:00:00', cheight: 1.2});
@@ -21,7 +21,7 @@ bricks.MediaRecorder = class extends bricks.Popup {
 		var cancel = new bricks.Svg({
 						url: bricks_resource('imgs/delete.svg'), 
 						rate:2,
-						tip: 'cancel recording'});
+						tip: bricks.app.i18n._('cancel recording')});
 		cancel.bind('click', this.cancel_record.bind(this))
 		this.add_widget(this.preview);
 		this.add_widget(this.controls);

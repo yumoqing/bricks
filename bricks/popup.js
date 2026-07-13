@@ -518,19 +518,19 @@ bricks.PopupWindow = class extends bricks.Popup {
 					name:'delete',
 					icon:bricks_resource('imgs/app_delete.svg'),
 					dynsize:true,
-					tip:'Destroy this window'
+					tip:bricks.app.i18n._('Destroy this window')
 				},
 				{
 					name:'minimize',
 					icon:bricks_resource('imgs/app_minimize.svg'),
 					dynsize:true,
-					tip:'minimize this window'
+					tip:bricks.app.i18n._('minimize this window')
 				},
 				{
 					name:'fullscreen',
 					icon:bricks_resource('imgs/app_fullscreen.svg'),
 					dynsize:true,
-					tip:'fullscreen this window'
+					tip:bricks.app.i18n._('fullscreen this window')
 				}
 			]
 		});

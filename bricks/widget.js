@@ -31,7 +31,7 @@ bricks.JsWidget = class {
 		this.dom_element.bricks_widget = this;
 		if (this.opts.tip){
 			var w = bricks.app.tooltip;
-			this.bind('mousemove', w.show.bind(w, this.opts.tip));
+			this.bind('mousemove', w.show.bind(w, bricks.app.i18n._(this.opts.tip||'')));
 			this.bind('mouseout', w.hide.bind(w));
 			this.bind('click', w.hide.bind(w));
 		}
