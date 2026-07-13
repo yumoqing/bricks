@@ -23,5 +23,7 @@
   "Update record": "レコード更新",
   "Clone record": "レコード複製",
   "Are you sure to delete this record?": "このレコードを削除しますか？",
-  "[Untitle window]": "[無題ウィンドウ]"
+  "[Untitle window]": "[無題ウィンドウ]",
+  "Delete": "削除",
+  "Search": "検索"
 }

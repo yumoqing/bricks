@@ -23,5 +23,7 @@
   "Update record": "Update record",
   "Clone record": "Clone record",
   "Are you sure to delete this record?": "Are you sure to delete this record?",
-  "[Untitle window]": "[Untitled window]"
+  "[Untitle window]": "[Untitled window]",
+  "Delete": "Delete",
+  "Search": "Search"
 }

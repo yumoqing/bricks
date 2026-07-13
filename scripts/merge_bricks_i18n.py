@@ -28,14 +28,18 @@ def merge(bricks_i18n_dir, sage_i18n_dir):
             sage_msgs = json.load(f)
 
         added = 0
+        updated = 0
         for k, v in brick_msgs.items():
             if k not in sage_msgs:
                 sage_msgs[k] = v
                 added += 1
+            elif sage_msgs[k] == k:  # identity mapping (untranslated)
+                sage_msgs[k] = v
+                updated += 1
 
         with open(sage_path, 'w') as f:
             json.dump(sage_msgs, f, ensure_ascii=False, indent='\t')
-        print(f"  {lang}: {len(sage_msgs)} entries (+{added} from bricks)")
+        print(f"  {lang}: {len(sage_msgs)} entries (+{added} new, ~{updated} fixed)")
 
 
 if __name__ == '__main__':

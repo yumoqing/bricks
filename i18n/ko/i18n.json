@@ -23,5 +23,7 @@
   "Update record": "레코드 수정",
   "Clone record": "레코드 복제",
   "Are you sure to delete this record?": "이 레코드를 삭제하시겠습니까?",
-  "[Untitle window]": "[제목 없음]"
+  "[Untitle window]": "[제목 없음]",
+  "Delete": "삭제",
+  "Search": "검색"
 }

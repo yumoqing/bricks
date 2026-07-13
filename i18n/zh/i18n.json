@@ -23,5 +23,7 @@
   "Update record": "更新记录",
   "Clone record": "克隆记录",
   "Are you sure to delete this record?": "确定删除此记录？",
-  "[Untitle window]": "[未命名窗口]"
+  "[Untitle window]": "[未命名窗口]",
+  "Delete": "删除",
+  "Search": "搜索"
 }
