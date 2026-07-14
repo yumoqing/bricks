@@ -101,6 +101,8 @@ bricks.Menu = class extends bricks.VScrollPanel {
 					console.log('menu item define error', opts);
 				}
 				f.bind(t, this)(event);
+			} else if (opts.children || opts.items) {
+				// parent menu item with sub-items, handled by Menu toggle
 			} else {
 				console.log('********** menu item configured error *******');
 			}
