@@ -16,23 +16,26 @@ bricks.UserInputView = class extends bricks.VBox {
 		this.v_ws = [];
 		this.a_ws = [];
 		this.input_fields.forEach(f =>{
-			if (data[f.name]){
+			var vals = data[f.name];
+			if (!vals) return;
+			if (!Array.isArray(vals)) vals = [vals];
+			vals.forEach(val => {
 				if (f.name.startsWith('video')){
-					var url = URL.createObjectURL(data[f.name]);
+					var url = URL.createObjectURL(val);
 					this.v_ws.push(new bricks.VideoPlayer({
 						url:url,
 						autoplay:false,
 						width: '100%'
 					}));
 				} else if (f.name.startsWith('audio')){
-					var url = URL.createObjectURL(data[f.name]);
+					var url = URL.createObjectURL(val);
 					this.a_ws.push(new bricks.AudioPlayer({
 						url:url,
 						autoplay:false,
 						width: '100%'
 					}));
 				} else if (f.name.startsWith('image')){
-					var url = URL.createObjectURL(data[f.name]);
+					var url = URL.createObjectURL(val);
 					mdtext += `
 * ${f.label || f.name}
 ![${f.label || f.name}](${url})
@@ -41,11 +44,11 @@ bricks.UserInputView = class extends bricks.VBox {
 					mdtext += `
 * ${f.label || f.name}
 
-${data[f.name]}
+${val}
 
 `;
 				}
-			}
+			});
 		});
 		this.clear_widgets();
 		var w = new bricks.MdWidget({

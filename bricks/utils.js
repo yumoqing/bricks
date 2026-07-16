@@ -222,8 +222,9 @@ var inputdata2dic = function(data){
 	try {
 		var d = {}
 		for (let k of data.keys()){
-			var x = data.get(k);
-			if (k == 'prompt'){
+			var vals = data.getAll(k);
+			var x = vals.length > 1 ? vals : vals[0];
+			if (k == 'prompt' && typeof x === 'string'){
 				x = bricks.escapeSpecialChars(x);
 			}	
 			d[k] = x;
