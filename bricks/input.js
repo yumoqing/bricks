@@ -379,16 +379,20 @@ bricks.UiFile = class extends bricks.VBox {
 	/*
         accept:
         multiple:
+        preview: true to show file previews after selection
 	*/
 	constructor(opts){
 		opts.width = opts.width || '100%';
 		super(opts);
 		this.set_css('droparea');
+		this.accept = opts.accept || '';
+		this._preview = opts.preview !== undefined ? opts.preview : true;
+		this.preview_box = null;
 		this.bind('dragover', (event) => {
 			event.preventDefault();
 		});
 		["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
-      		this.bind(eventName, (e) => e.preventDefault(), false);
+     		this.bind(eventName, (e) => e.preventDefault(), false);
 		});
 		this.bind('dragenter', () => {
 			this.set_css('hover');
@@ -409,6 +413,7 @@ bricks.UiFile = class extends bricks.VBox {
         var v = this.opts.value || this.opts.defaultvalue||'';
 		this.value = '';
         this.input.value = '';
+		this._clearPreview();
     }
 	handleFileSelect(event){
 		var files = [];
@@ -423,6 +428,7 @@ bricks.UiFile = class extends bricks.VBox {
 		} else {
 			this.value = files[0];
 		}
+		this._renderPreview(this.opts.multiple ? files : [files[0]]);
 		console.log('"changed" fired', this.value);
 		this.dispatch('changed', this.getValue());
 	}
@@ -458,8 +464,40 @@ bricks.UiFile = class extends bricks.VBox {
 			this.value = files[0];
 			this.set_input_file([this.value]);
 		}
+		this._renderPreview(this.opts.multiple ? files : [files[0]]);
 		this.dispatch('changed', this.getValue());
 		console.log('"changed" fired', this.getValue());
+	}
+	_clearPreview(){
+	if (this.preview_box){
+		this.remove_widget(this.preview_box);
+		this.preview_box = null;
+	}
+	}
+	_renderPreview(files){
+	if (!this._preview) return;
+	this._clearPreview();
+	if (!files || files.length === 0) return;
+	this.preview_box = new bricks.HBox({width:'100%', css:'filler'});
+	files.forEach(f => {
+		var url = URL.createObjectURL(f);
+		var typ = f.type.split('/')[0];
+		if (typ === 'image'){
+			var w = new bricks.Image({url:url, cheight:10, flexShrink:0, css:'card'});
+			this.preview_box.add_widget(w);
+		} else if (typ === 'video'){
+			var w = new bricks.VideoPlayer({url:url, width:'100%', autoplay:false});
+			this.preview_box.add_widget(w);
+		} else if (typ === 'audio'){
+			var w = new bricks.AudioPlayer({url:url, width:'100%', autoplay:false});
+			this.preview_box.add_widget(w);
+		}
+	});
+	if (this.preview_box._widgets && this.preview_box._widgets.length > 0){
+		this.add_widget(this.preview_box);
+	} else {
+		this.preview_box = null;
+	}
 	}
 	set_formdata(fd){
 		var v = this.resultValue();

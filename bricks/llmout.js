@@ -7,29 +7,30 @@ bricks.UserInputView
 bricks.UserInputView = class extends bricks.VBox {
 	constructor(opts){
 		super(opts);
-		this.v_w = null;
-		this.a_v = null;
+		this.v_ws = [];
+		this.a_ws = [];
 		this.show_input(this.data);
 	}
 	show_input(data){
 		var mdtext = '';
+		this.v_ws = [];
+		this.a_ws = [];
 		this.input_fields.forEach(f =>{
 			if (data[f.name]){
 				if (f.name.startsWith('video')){
 					var url = URL.createObjectURL(data[f.name]);
-					this.v_w = new bricks.VideoPlayer({
+					this.v_ws.push(new bricks.VideoPlayer({
 						url:url,
-						autoplay:true,
+						autoplay:false,
 						width: '100%'
-					});
+					}));
 				} else if (f.name.startsWith('audio')){
 					var url = URL.createObjectURL(data[f.name]);
-					console.log('audio:', f.name, data[f.name]);
-					this.a_w = new bricks.AudioPlayer({
+					this.a_ws.push(new bricks.AudioPlayer({
 						url:url,
-						autoplay:true,
+						autoplay:false,
 						width: '100%'
-					});
+					}));
 				} else if (f.name.startsWith('image')){
 					var url = URL.createObjectURL(data[f.name]);
 					mdtext += `
@@ -53,12 +54,8 @@ ${data[f.name]}
 		});
 		console.log('mdtext=', mdtext);
 		this.add_widget(w);
-		if (this.v_w){
-			this.add_widget(this.v_w);
-		}
-		if (this.a_w){
-			this.add_widget(this.a_w);
-		}
+		this.v_ws.forEach(v => this.add_widget(v));
+		this.a_ws.forEach(a => this.add_widget(a));
 	}
 }
 /*
@@ -134,28 +131,28 @@ bricks.LlmOut = class extends bricks.VBox {
 		}
 		if (data.audio){
 			if (Array.isArray(data.audio)){
-				this.audios.concat(data.audio);
+				this.audios = this.audios.concat(data.audio);
 			} else {
 				this.audios.push(data.audio);
 			}
 		}
 		if (data.glb){
 			if (Array.isArray(data.glb)){
-				this.glbs.concat(data.glb);
+				this.glbs = this.glbs.concat(data.glb);
 			} else {
 				this.glbs.push(data.glb);
 			}
 		}
 		if (data.video){
 			if (Array.isArray(data.video)){
-				this.videos.concat(data.video);
+				this.videos = this.videos.concat(data.video);
 			} else {
 				this.videos.push(data.video);
 			}
 		}
 		if (data.image){
 			if (Array.isArray(data.image)){
-				this.images.concat(data.image);
+				this.images = this.images.concat(data.image);
 			} else {
 				this.images.push(data.image);
 			}
