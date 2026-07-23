@@ -61,11 +61,12 @@ bricks.ChartScatter = class extends bricks.EchartsExt {
         trigger: 'axis',
         formatter: function(params) {
           const p = params[0];
-          return `${p.seriesName}<br/>${xAxisName}: ${p.value[0]}<br/>${yAxisName}: ${p.value[1]}`;
+          const name = p.value[2] ? p.value[2] + '<br/>' : '';
+          return name + xAxisName + ': ' + p.value[0] + '<br/>' + yAxisName + ': ' + p.value[1];
         }
       },
       legend: {
-        data: Object.keys(seriesMap)
+        show: false
       },
       xAxis: {
         type: 'value',
