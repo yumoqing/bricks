@@ -536,7 +536,7 @@ bricks.Tree = class extends bricks.VScrollPanel {
 		if (this.selected_node){
 			this.node_selected(this.selected_node, false);
 		}
-		if (this.selected_node == node){
+		if (this.selected_node == node && !this.opts.select_only){
 			this.selected_node = null;
 		} else {
 			this.selected_node = node;
