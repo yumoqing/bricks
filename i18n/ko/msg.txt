@@ -1,6 +1,10 @@
 Conform: 확인
 Discard: 취소
 add a new record: 새 레코드 추가
+Add record: 레코드 추가
+Update record: 레코드 수정
+Clone record: 레코드 복제
+Delete conform: 삭제 확인
 Submit: 제출
 Reset: 재설정
 Cancel: 취소

@@ -1,6 +1,10 @@
 Conform: 确认
 Discard: 放弃
 add a new record: 添加新记录
+Add record: 添加记录
+Update record: 更新记录
+Clone record: 克隆记录
+Delete conform: 删除确认
 Submit: 提交
 Reset: 重置
 Cancel: 取消

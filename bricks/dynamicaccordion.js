@@ -245,7 +245,7 @@ bricks.DynamicAccordion = class extends bricks.VScrollPanel {
 	delete_record(info, record){
 		var conform_w = new bricks.Conform({
 			target:this,
-			title:'Delete conform',
+					title: bricks.app.i18n._('Delete conform'),
 			message:'Are you sure to delete is record?'
 		});
 		conform_w.bind('conformed', this.delete_record_act.bind(this, info, record));

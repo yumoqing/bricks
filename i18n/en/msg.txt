@@ -1,6 +1,10 @@
 Conform: Confirm
 Discard: Discard
 add a new record: Add a new record
+Add record: Add record
+Update record: Update record
+Clone record: Clone record
+Delete conform: Delete confirm
 Submit: Submit
 Reset: Reset
 Cancel: Cancel
