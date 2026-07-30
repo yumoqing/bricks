@@ -972,3 +972,9 @@ hr {
 	align-items: center;
 	justify-content: center;
 }
+
+/* DimensionFilter active state */
+.dimension-btn-active {
+    background-color: var(--sage-brand, #6366f1) !important;
+    color: #fff !important;
+}
