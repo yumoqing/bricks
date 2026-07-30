@@ -7,6 +7,7 @@ SOURCES=" page_data_loader.js factory.js uitypesdef.js utils.js uitype.js \
 	tree.js multiple_state_image.js dynamiccolumn.js form.js message.js conform.js \
 	paging.js datagrid.js iframe.js cols.js echartsext.js \
 	floaticonbar.js miniform.js wterm.js dynamicaccordion.js \
+	dimension_filter.js \
 	binstreaming.js streaming_audio.js vadtext.js rtc.js docxviewer.js \
 	llm.js websocket.js datarow.js tabular.js continueaudio.js \
 	line.js pie.js bar.js gobang.js period.js iconbarpage.js \
