@@ -123,6 +123,7 @@ bricks.DimensionFilter = class extends bricks.VBox {
 		}
 		this.build_horizontal_buttons();
 		this.build_vertical_buttons();
+		await this.refresh_display();
 	}
 
 	build_horizontal_buttons(){
@@ -219,13 +220,13 @@ bricks.DimensionFilter = class extends bricks.VBox {
 
 	async refresh_display(){
 		this.display_w.clear_widgets();
-		var params = {
-			h_id: this.selected_h_id,
-			v_id: this.selected_v_id
-		};
-		if (this.search_keyword){
-			params.keyword = this.search_keyword;
-		}
+		var hp = this.opts.h_param_name || 'h_id';
+		var vp = this.opts.v_param_name || 'v_id';
+		var kp = this.opts.keyword_param_name || 'keyword';
+		var params = {};
+		if (this.selected_h_id != 'all') params[hp] = this.selected_h_id;
+		if (this.selected_v_id != 'all') params[vp] = this.selected_v_id;
+		if (this.search_keyword) params[kp] = this.search_keyword;
 		var desc = {
 			widgettype: 'urlwidget',
 			options: {
