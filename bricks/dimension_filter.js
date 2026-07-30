@@ -7,7 +7,8 @@ bricks.DimensionFilter = class extends bricks.VBox {
 		h_data_url: URL to fetch horizontal dimension labels/values,
 		v_measure_url: URL to fetch vertical dimension labels/values,
 		show_data_url: base URL to fetch display data,
-		search_placeholder: placeholder text for search input
+		search_placeholder: placeholder text for search input,
+		h_param_name / v_param_name / keyword_param_name: optional param name overrides
 	}
 	events:
 		filter_changed: {h_id: string, v_id: string, keyword: string}
@@ -15,7 +16,6 @@ bricks.DimensionFilter = class extends bricks.VBox {
 	constructor(opts){
 		opts.width = '100%';
 		opts.height = '100%';
-		opts.overflow = 'hidden';
 		super(opts);
 		this.selected_h_id = 'all';
 		this.selected_v_id = 'all';
@@ -41,37 +41,31 @@ bricks.DimensionFilter = class extends bricks.VBox {
 			search_label: this.opts.search_label || '搜索',
 			clear_label: this.opts.clear_label || '清除'
 		});
+		this.searchbar.set_style('flexShrink', '0');
 		this.searchbar.bind('search', this.search_handle.bind(this));
 		this.add_widget(this.searchbar);
 	}
 
 	build_horizontal_bar(){
-		var bar = new bricks.HBox({width: '100%', height: 'auto', flexShrink: 0});
+		var bar = new bricks.HBox({width: '100%', height: 'auto'});
+		bar.set_style('flexShrink', '0');
 		bar.set_style('alignItems', 'center');
 
 		this.left_arrow = new bricks.Button({
-			label: '◀',
-			width: 'auto',
-			height: 'auto',
-			flexShrink: 0,
-			nonepack: true
+			label: '◀', width: 'auto', height: 'auto',
+			flexShrink: 0, nonepack: true
 		});
 		this.left_arrow.bind('click', this.scroll_left.bind(this));
 		bar.add_widget(this.left_arrow);
 
 		this.h_scroll = new bricks.HBox({
-			width: '100%',
-			flexGrow: 1,
-			overflow: 'hidden'
+			width: '100%', flexGrow: 1, overflow: 'hidden'
 		});
 		bar.add_widget(this.h_scroll);
 
 		this.right_arrow = new bricks.Button({
-			label: '▶',
-			width: 'auto',
-			height: 'auto',
-			flexShrink: 0,
-			nonepack: true
+			label: '▶', width: 'auto', height: 'auto',
+			flexShrink: 0, nonepack: true
 		});
 		this.right_arrow.bind('click', this.scroll_right.bind(this));
 		bar.add_widget(this.right_arrow);
@@ -80,31 +74,40 @@ bricks.DimensionFilter = class extends bricks.VBox {
 	}
 
 	build_content_area(){
+		// Filler area: fills remaining vertical space
 		var content = new bricks.HBox({width: '100%', height: '100%'});
+		content.set_style('flexGrow', '1');
 
-		/* Left: vertical measure buttons in a scroll panel */
+		// Left: vertical measure buttons in scroll panel (fixed width)
 		this.v_scroll = new bricks.VScrollPanel({width: 'auto', height: '100%'});
-		this.v_scroll.set_style('maxWidth', '200px');
-		this.v_scroll.set_style('minWidth', '80px');
+		this.v_scroll.set_style('flexShrink', '0');
+		this.v_scroll.set_style('width', '160px');
+		this.v_scroll.set_style('minWidth', '120px');
 		content.add_widget(this.v_scroll);
 
-		/* Right: display area for show_data_url results */
-		this.display_filler = new bricks.Filler({flexGrow: 1});
-		this.display_w = new bricks.VBox({width: '100%', height: '100%'});
-		this.display_filler.add_widget(this.display_w);
-		content.add_widget(this.display_filler);
+		// Right: display area — VScrollPanel with id so content can scroll
+		var filler = new bricks.Filler({flexGrow: 1, width: '100%', height: '100%'});
+		this.display_scroll = new bricks.VScrollPanel({
+			id: this.opts.display_id || 'dim_display',
+			width: '100%',
+			height: '100%',
+			css: 'filler'
+		});
+		filler.add_widget(this.display_scroll);
+		this.display_w = this.display_scroll;
+		content.add_widget(filler);
 
 		this.add_widget(content);
 	}
 
 	scroll_left(){
 		var el = this.h_scroll.dom_element;
-		el.scrollLeft -= 150;
+		if(el) el.scrollLeft -= 150;
 	}
 
 	scroll_right(){
 		var el = this.h_scroll.dom_element;
-		el.scrollLeft += 150;
+		if(el) el.scrollLeft += 150;
 	}
 
 	async load_dimensions_data(){
@@ -232,7 +235,9 @@ bricks.DimensionFilter = class extends bricks.VBox {
 			options: {
 				url: this.opts.show_data_url,
 				params: params,
-				method: this.opts.show_data_method || 'GET'
+				method: this.opts.show_data_method || 'GET',
+				width: '100%',
+				height: '100%'
 			}
 		};
 		var w = await bricks.widgetBuild(desc, this);
