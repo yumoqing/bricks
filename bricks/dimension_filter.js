@@ -19,6 +19,7 @@ bricks.DimensionFilter = class extends bricks.VBox {
 		super(opts);
 		this.dom_element.style.display = 'flex';
 		this.dom_element.style.flexDirection = 'column';
+		this.set_css('dimension-filter');
 		this.selected_h_id = 'all';
 		this.selected_v_id = 'all';
 		this.search_keyword = '';

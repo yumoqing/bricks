@@ -978,3 +978,16 @@ hr {
     background-color: var(--sage-brand, #6366f1) !important;
     color: #fff !important;
 }
+[data-theme="dark"] .dimension-btn-active {
+    background-color: var(--sage-brand, #818cf8) !important;
+}
+
+/* DimensionFilter base */
+.dimension-filter {
+    background: var(--sage-bg, #fff);
+    color: var(--sage-text, #333);
+}
+[data-theme="dark"] .dimension-filter {
+    background: var(--sage-bg-dark, #1e1e2e);
+    color: var(--sage-text-dark, #e0e0e0);
+}
