@@ -17,6 +17,8 @@ bricks.DimensionFilter = class extends bricks.VBox {
 		opts.width = '100%';
 		opts.height = '100%';
 		super(opts);
+		this.dom_element.style.display = 'flex';
+		this.dom_element.style.flexDirection = 'column';
 		this.selected_h_id = 'all';
 		this.selected_v_id = 'all';
 		this.search_keyword = '';
@@ -74,9 +76,9 @@ bricks.DimensionFilter = class extends bricks.VBox {
 	}
 
 	build_content_area(){
-		// Filler area: fills remaining vertical space
 		var content = new bricks.HBox({width: '100%', height: '100%'});
-		content.set_style('flexGrow', '1');
+		content.dom_element.style.flex = '1';
+		content.dom_element.style.overflow = 'hidden';
 
 		// Left: vertical measure buttons in scroll panel (fixed width)
 		this.v_scroll = new bricks.VScrollPanel({width: 'auto', height: '100%'});
