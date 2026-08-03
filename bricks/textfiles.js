@@ -38,7 +38,7 @@ bricks.DeletableLabel = class extends bricks.HBox {
 bricks.TextFiles = class extends bricks.VBox {
 	/*
 	输入长文本和一到多个文件，高度随着输入文本的多少以及添加的文件数量变化，添加的文件有一个删除按钮可以删除掉
-	有一个按钮提交数据，点击后触发“inputed”事件
+	有一个按钮提交数据，点击后触发"inputed"事件
 	{
 		"params": 参数
 	}
@@ -94,10 +94,10 @@ bricks.TextFiles = class extends bricks.VBox {
 		var file = this.inputfilew.getValue().add_file;
 		this.inputfilew.reset();
 		this.add_files.push(file);
+		this.filesbar.clear_widgets();
 		var w = new bricks.DeletableLabel({label: file.name})
 		this.filesbar.add_widget(w);
 		this.filesbar.show();
-		this.filesbar.clear_widgets();
 		w.bind('deleted', this.deleted_file.bind(this, file));
 	}
 	deleted_file(file){
