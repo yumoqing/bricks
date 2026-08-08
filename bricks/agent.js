@@ -329,7 +329,7 @@ bricks.AgentIO = class extends bricks.VBox {
 	chunk_ended(){
 		console.log('chunk end');
 	}
-	user_inputed(e){
+	async user_inputed(e){
 		this.show_input(e.params);
 		var params = e.params;
 		params.llmid = this.agent_using_llmid;
