@@ -293,50 +293,6 @@ bricks.AgentInputView = class extends bricks.VBox {
     }
 }
 
-bricks.AgentModel = class extends bricks.JsWidget {
-	/*
-		{
-			icon:
-			url:
-			params:
-			method:
-			reply_url:
-		}
-	*/
-	constructor(llmio, opts){
-		super(opts);
-		this.llmio = llmio;
-	}
-	async set_inputed(data){
-		var mout = new bricks.AgentOutput({
-						reply_url: this.opts.reply_url
-					});
-		this.llmio.msg_box.add_widget(mout);
-		var d = data;
-		var hr = new bricks.HttpResponseStream();
-		var resp = await hr.post(this.opts.url, {params:d});
-		if (! resp) {
-			mout.run_stopped();
-			return;
-		}
-		await hr.handle_chunk(resp, this.chunk_response.bind(this, mout));
-		this.chunk_ended();
-	}
-	chunk_response(mout, l){
-		l = l.trim();
-		try {
-			var d = JSON.parse(l);
-		} catch(e){
-			console.log(l, 'is not a json data');
-			return
-		}
-		console.log('l=', l, 'd=', d);
-		mout.update_data(d);
-	}
-	chunk_ended(){
-		console.log('chunk end');
-	}
-}
 bricks.AgentIO = class extends bricks.VBox {
 	/*
 	options:
@@ -359,10 +315,26 @@ bricks.AgentIO = class extends bricks.VBox {
 		this.add_widget(this.msg_box);
 		this.add_widget(this.inputw);
 	}
+	chunk_response(mout, l){
+		l = l.trim();
+		try {
+			var d = JSON.parse(l);
+		} catch(e){
+			console.log(l, 'is not a json data');
+			return
+		}
+		console.log('l=', l, 'd=', d);
+		mout.update_data(d);
+	}
+	chunk_ended(){
+		console.log('chunk end');
+	}
 	user_inputed(e){
 		this.show_input(e.params);
 		var params = e.params;
 		params.llmid = this.agent_using_llmid;
+		console.log('params=', params);
+		/*
 		var agent = new bricks.AgentModel(this, {
 			url:this.opts.url,
 			params: params,
@@ -370,6 +342,19 @@ bricks.AgentIO = class extends bricks.VBox {
 			reply_url: this.opts.reply_url
 		});
 		agent.set_inputed(params);
+		*/
+		var mout = new bricks.AgentOutput({
+						reply_url: this.opts.reply_url
+					});
+		this.msg_box.add_widget(mout);
+		var hr = new bricks.HttpResponseStream();
+		var resp = await hr.post(this.opts.url, {params:params});
+		if (! resp) {
+			mout.run_stopped();
+			return;
+		}
+		await hr.handle_chunk(resp, this.chunk_response.bind(this, mout));
+		this.chunk_ended();
 	}
     async show_input(params){
         var box = new bricks.HBox({width:'100%'});
