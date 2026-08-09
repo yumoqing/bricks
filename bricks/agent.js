@@ -61,21 +61,9 @@ bricks.AgentOut = class extends bricks.VBox {
     update(data){
         // Handle bricks widget descriptor JSON ({"widgettype": "Text", "options": {...}})
         if (data.widgettype){
-            var opts = data.options || {};
             bricks.widgetBuild(data).then(function(w){
                 if (w){
                     this.bricks_widgets.push(w);
-                    // Conform widget: bind confirm event to execute system action
-                    if (data.widgettype === 'Conform' && opts._action){
-                        w.bind('conformed', function(){
-                            var payload = opts._payload || {};
-                            payload._system_action = opts._action;
-                            var agentio = bricks._active_agentio;
-                            if (agentio && agentio.sys_post){
-                                agentio.sys_post(payload);
-                            }
-                        }.bind(this));
-                    }
                     if (!(w instanceof bricks.PopupWindow)){
                         this.add_widget(w);
                     }
@@ -339,26 +327,6 @@ bricks.AgentIO = class extends bricks.VBox {
 		this.inputw.bind('inputed', this.user_inputed.bind(this));
 		this.add_widget(this.msg_box);
 		this.add_widget(this.inputw);
-		// Store reference for Conform/system action handlers
-		bricks._active_agentio = this;
-	}
-	// Called by Conform confirm handler to post system actions
-	sys_post(payload){
-		var mout = new bricks.AgentOutput({
-			reply_url: this.opts.reply_url
-		});
-		this.msg_box.add_widget(mout);
-		var hr = new bricks.HttpResponseStream();
-		var self = this;
-		hr.post(this.opts.url, {params: payload}).then(function(resp){
-			if (resp){
-				return hr.handle_chunk(resp, self.chunk_response.bind(self, mout));
-			} else {
-				mout.run_stopped();
-			}
-		}).then(function(){
-			self.chunk_ended();
-		});
 	}
 	chunk_response(mout, l){
 		l = l.trim();
