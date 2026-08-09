@@ -55,9 +55,20 @@ bricks.AgentOut = class extends bricks.VBox {
         this.content = '';
         this.error = '';
 		this.qa_w  = null;
+        this.bricks_widgets = [];  // bricks widget descriptor chunks
     }
 
     update(data){
+        // Handle bricks widget descriptor JSON ({"widgettype": "Text", "options": {...}})
+        if (data.widgettype){
+            bricks.widgetBuild(data).then(function(w){
+                if (w){
+                    this.bricks_widgets.push(w);
+                    this.add_widget(w);
+                }
+            }.bind(this));
+            return;
+        }
         if (data.audio){
             var url = data.audio;
             if (! data.audio.startsWith('http')){
