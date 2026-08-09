@@ -70,14 +70,27 @@ bricks.AgentOut = class extends bricks.VBox {
                         w.bind('conformed', function(){
                             var payload = opts._payload || {};
                             payload._system_action = opts._action;
-                            // Find parent AgentIO to get URL
-                            var p = this.parent_widget;
-                            while (p && !(p instanceof bricks.AgentIO)){
-                                p = p.parent_widget;
+                            // Find parent AgentIO
+                            var agentio = this.parent_widget;
+                            while (agentio && !(agentio instanceof bricks.AgentIO)){
+                                agentio = agentio.parent_widget;
                             }
-                            if (p && p.opts && p.opts.url){
+                            if (agentio && agentio.opts && agentio.opts.url){
+                                // Create output widget and process streaming response
+                                var mout = new bricks.AgentOutput({
+                                    reply_url: agentio.opts.reply_url
+                                });
+                                agentio.msg_box.add_widget(mout);
                                 var hr = new bricks.HttpResponseStream();
-                                hr.post(p.opts.url, {params: payload});
+                                hr.post(agentio.opts.url, {params: payload}).then(function(resp){
+                                    if (resp){
+                                        return hr.handle_chunk(resp, agentio.chunk_response.bind(agentio, mout));
+                                    } else {
+                                        mout.run_stopped();
+                                    }
+                                }).then(function(){
+                                    agentio.chunk_ended();
+                                });
                             }
                         }.bind(this));
                     }
