@@ -61,10 +61,29 @@ bricks.AgentOut = class extends bricks.VBox {
     update(data){
         // Handle bricks widget descriptor JSON ({"widgettype": "Text", "options": {...}})
         if (data.widgettype){
+            var opts = data.options || {};
             bricks.widgetBuild(data).then(function(w){
                 if (w){
                     this.bricks_widgets.push(w);
-                    this.add_widget(w);
+                    // Conform widget: bind confirm event to execute system action
+                    if (data.widgettype === 'Conform' && opts._action){
+                        w.bind('conformed', function(){
+                            var payload = opts._payload || {};
+                            payload._system_action = opts._action;
+                            // Find parent AgentIO to get URL
+                            var p = this.parent_widget;
+                            while (p && !(p instanceof bricks.AgentIO)){
+                                p = p.parent_widget;
+                            }
+                            if (p && p.opts && p.opts.url){
+                                var hr = new bricks.HttpResponseStream();
+                                hr.post(p.opts.url, {params: payload});
+                            }
+                        }.bind(this));
+                    }
+                    if (!(w instanceof bricks.PopupWindow)){
+                        this.add_widget(w);
+                    }
                 }
             }.bind(this));
             return;
