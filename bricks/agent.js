@@ -70,27 +70,9 @@ bricks.AgentOut = class extends bricks.VBox {
                         w.bind('conformed', function(){
                             var payload = opts._payload || {};
                             payload._system_action = opts._action;
-                            // Find parent AgentIO
-                            var agentio = this.parent_widget;
-                            while (agentio && !(agentio instanceof bricks.AgentIO)){
-                                agentio = agentio.parent_widget;
-                            }
-                            if (agentio && agentio.opts && agentio.opts.url){
-                                // Create output widget and process streaming response
-                                var mout = new bricks.AgentOutput({
-                                    reply_url: agentio.opts.reply_url
-                                });
-                                agentio.msg_box.add_widget(mout);
-                                var hr = new bricks.HttpResponseStream();
-                                hr.post(agentio.opts.url, {params: payload}).then(function(resp){
-                                    if (resp){
-                                        return hr.handle_chunk(resp, agentio.chunk_response.bind(agentio, mout));
-                                    } else {
-                                        mout.run_stopped();
-                                    }
-                                }).then(function(){
-                                    agentio.chunk_ended();
-                                });
+                            var agentio = bricks._active_agentio;
+                            if (agentio && agentio.sys_post){
+                                agentio.sys_post(payload);
                             }
                         }.bind(this));
                     }
@@ -357,6 +339,26 @@ bricks.AgentIO = class extends bricks.VBox {
 		this.inputw.bind('inputed', this.user_inputed.bind(this));
 		this.add_widget(this.msg_box);
 		this.add_widget(this.inputw);
+		// Store reference for Conform/system action handlers
+		bricks._active_agentio = this;
+	}
+	// Called by Conform confirm handler to post system actions
+	sys_post(payload){
+		var mout = new bricks.AgentOutput({
+			reply_url: this.opts.reply_url
+		});
+		this.msg_box.add_widget(mout);
+		var hr = new bricks.HttpResponseStream();
+		var self = this;
+		hr.post(this.opts.url, {params: payload}).then(function(resp){
+			if (resp){
+				return hr.handle_chunk(resp, self.chunk_response.bind(self, mout));
+			} else {
+				mout.run_stopped();
+			}
+		}).then(function(){
+			self.chunk_ended();
+		});
 	}
 	chunk_response(mout, l){
 		l = l.trim();
