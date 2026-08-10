@@ -1159,6 +1159,9 @@ bricks.UiCode =class extends bricks.UiType {
 	build(){
 		this.dom_element.id = this.opts.name;
 		this.dom_element.name = this.opts.name;
+		if (this.opts.multiple){
+			this.dom_element.multiple = true;
+		}
 		if (this.opts.dataurl){
 			schedule_once(this.get_data.bind(this), 0.01);
 			return;
@@ -1224,7 +1227,15 @@ bricks.UiCode =class extends bricks.UiType {
 		this.charsize_sizing();
 	}
 	set_value_from_input(event){
-		this.value = this.dom_element.value;
+		if (this.dom_element.multiple){
+			var sel = [];
+			for (var i = 0; i < this.dom_element.selectedOptions.length; i++){
+				sel.push(this.dom_element.selectedOptions[i].value);
+			}
+			this.value = sel.join(',');
+		} else {
+			this.value = this.dom_element.value;
+		}
 		this.dispatch('changed', this.getValue());
 	}
 	resultValue(){
