@@ -343,11 +343,6 @@ bricks.AgentIO = class extends bricks.VBox {
 		console.log('chunk end');
 	}
 	async user_inputed(e){
-		// 中止上一次请求
-		if (this._current_hr) {
-			this._current_hr.abort();
-			this._current_hr = null;
-		}
 		this.show_input(e.params);
 		var params = e.params;
 		params.llmid = this.agent_using_llmid;
@@ -366,15 +361,12 @@ bricks.AgentIO = class extends bricks.VBox {
 					});
 		this.msg_box.add_widget(mout);
 		var hr = new bricks.HttpResponseStream();
-		this._current_hr = hr;
 		var resp = await hr.post(this.opts.url, {params:params});
 		if (! resp) {
 			mout.run_stopped();
-			this._current_hr = null;
 			return;
 		}
 		await hr.handle_chunk(resp, this.chunk_response.bind(this, mout));
-		this._current_hr = null;
 		this.chunk_ended();
 	}
     async show_input(params){
