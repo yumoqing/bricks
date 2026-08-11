@@ -247,6 +247,34 @@ bricks.HttpResponse = class extends bricks.HttpText {
 }
 
 bricks.HttpResponseStream = class extends bricks.HttpResponse {
+	constructor(){
+		super();
+		this._controller = new AbortController();
+	}
+	abort(){
+		this._controller.abort();
+	}
+	async bricks_fetch(url, {method='GET', headers=null, params=null, signal=null}={}){
+		url = this.url_parse(url);
+		var data = this.add_own_params(params);
+		var header = this.add_own_headers(headers);
+		var _params = {
+			method:method,
+			signal: signal || this._controller.signal
+		}
+		if (data instanceof FormData){
+			method = 'POST';
+			_params.body = data;
+		} else {
+			if (method == 'GET' || method == 'HEAD') {
+				let pstr = url_params(data);
+				url = url + '?' + pstr;
+			} else {
+				_params.body = JSON.stringify(data);
+			}
+		}
+		return await fetch(url, _params);
+	}
 	async handle_chunk(resp, handler){
 		const reader = resp.body.getReader();
 		const decoder = new TextDecoder('utf-8');
