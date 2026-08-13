@@ -170,11 +170,6 @@ bricks.Popup = class extends bricks.VBox {
 	resizing(e){
 		var ele;
 		ele = this.resizable_w.dom_element;
-		if (ele != e.target && ! ele.contains(e.target)){	
-			console.log("resizing():on other dom element");
-			this.stop_resizing();
-			return;
-		}
 		if (!this.resize_status){
 			console.log("resizing():this.resize_status=false");
 			this.stop_resizing();
