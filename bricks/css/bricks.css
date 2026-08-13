@@ -102,6 +102,7 @@ hr {
 	position: absolute;
 	bottom: 0;
 	right: 0;
+	z-index: 9999;
 	cursor: se-resize; /* 改变鼠标指针样式 */
 }
 .popup {
