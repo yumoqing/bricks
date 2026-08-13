@@ -119,8 +119,9 @@ bricks.ResourceBrowser = class extends bricks.VBox {
 		tree_col.dom_element.style.minHeight = '0';
 		body.add_widget(tree_col);
 
-		var tree_desc = this.clone_descriptor(this.tree_options);
-		delete tree_desc.tools;
+		var tree_copy = bricks.extend({}, this.tree_options);
+		delete tree_copy.tools;
+		var tree_desc = this.clone_descriptor(tree_copy);
 		// select-only: clicking the same node must not unselect it
 		tree_desc.options = tree_desc.options || {};
 		tree_desc.options.select_only = true;
@@ -167,8 +168,9 @@ bricks.ResourceBrowser = class extends bricks.VBox {
 			return;
 		}
 
-		var desc = this.clone_descriptor(this.browser_options);
-		delete desc.tools;
+		var browser_copy = bricks.extend({}, this.browser_options);
+		delete browser_copy.tools;
+		var desc = this.clone_descriptor(browser_copy);
 		desc.options = desc.options || {};
 		desc.options.params = bricks.extend({}, desc.options.params || {});
 		if (id === null || id === undefined){
