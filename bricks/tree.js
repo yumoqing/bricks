@@ -103,11 +103,7 @@ bricks.TreeNode = class extends bricks.VBox {
 	}
 	change_node_type(){
 		if (this.is_leaf){
-			this.triple.set_state('close');
-			this.triple.bind('state_changed', this.toggleExpandCollapse.bind(this));
-			return;
 			this.triple.set_url(null);
-			this.triple.unbind('state_changed', this.toggleExpandCollapse.bind(this));
 		} else {
 			this.triple.set_state('close');
 			this.triple.bind('state_changed', this.toggleExpandCollapse.bind(this));
