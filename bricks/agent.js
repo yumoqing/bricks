@@ -361,7 +361,19 @@ bricks.AgentIO = class extends bricks.VBox {
 					});
 		this.msg_box.add_widget(mout);
 		var hr = new bricks.HttpResponseStream();
-		var resp = await hr.post(this.opts.url, {params:params});
+		// 上传文件：add_files 是浏览器 File 对象，JSON 序列化会丢失内容，改用 FormData
+		var files = params.add_files || [];
+		var send_params = params;
+		if (files.length > 0) {
+			send_params = new FormData();
+			Object.keys(params).forEach(function(k){
+				if (k !== 'add_files' && k !== 'file_names') {
+					send_params.append(k, params[k]);
+				}
+			});
+			files.forEach(function(f){ send_params.append('file', f); });
+		}
+		var resp = await hr.post(this.opts.url, {params:send_params});
 		if (! resp) {
 			mout.run_stopped();
 			return;
