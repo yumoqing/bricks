@@ -102,7 +102,6 @@ bricks.TreeNode = class extends bricks.VBox {
 		});
 	}
 	change_node_type(){
-		console.log('CTN id=', this.user_data && this.user_data.id, 'is_leaf=', this.is_leaf, 'raw=', this.user_data && this.user_data.is_leaf, 'field=', this.is_leaf_field);
 		if (this.is_leaf){
 			this.triple.set_url(null);
 		} else {
