@@ -27,13 +27,18 @@ bricks.Svg = class extends bricks.VBox {
 		var token = this._url_token;
 		if (!url){
 			this.dom_element.innerHTML = '';
+			console.log('SETURL null token=', token);
 			return;
 		}
 		this.url = url;
 		fetch(url)
 			.then(response => response.text())
 			.then(svgText => {
-				if (token !== this._url_token) return;
+				if (token !== this._url_token){
+					console.log('SETURL STALE token=', token, 'cur=', this._url_token, 'url=', url);
+					return;
+				}
+				console.log('SETURL RENDER url=', url, 'len=', svgText.length);
 				if (svgText.startsWith("<svg ")){
 					this.svgText = svgText;
 					this.set_colored_svg(this.color);
