@@ -77,6 +77,7 @@ bricks.TreeNode = class extends bricks.VBox {
 			this.children_loaded = true;
 		}
 		this.container.show();
+		if (this.icon_w && this.icons_urls.open) this.icon_w.set_url(this.icons_urls.open);
 	}
 	collapse(){
 		this.node_state = 'close'
@@ -84,6 +85,7 @@ bricks.TreeNode = class extends bricks.VBox {
 			return;
 		}
 		this.container.hide();
+		if (this.icon_w && this.icons_urls.close) this.icon_w.set_url(this.icons_urls.close);
 	}
 	create_triple(){
 		return new bricks.StatedSvg({
@@ -126,15 +128,14 @@ bricks.TreeNode = class extends bricks.VBox {
 		} else {
 			icon_url = this.icons_urls.leaf;
 			if (this.is_leaf) icon_url = this.icons_urls.leaf;
-			else if (this.node_state == 'expand') this.icon_url = this.icons_urls.open;
-			else this.icon_url = this.icons_urls.close;
+			else if (this.node_state == 'open') icon_url = this.icons_urls.open;
+			else icon_url = this.icons_urls.close;
 		}
-		console.log('icons=', this.icons_urls, 'icon_url=', icon_url, this.user_data);
-		var img = new bricks.Svg({
+		this.icon_w = new bricks.Svg({
 			rate:1,
 			url:icon_url
 		});
-		widget.add_widget(img);
+		widget.add_widget(this.icon_w);
 		if (this.tree.node_view){
 			this.view_w = await bricks.widgetBuild(this.tree.node_view, widget, this.user_data);
 			if (this.view_w){
@@ -171,7 +172,7 @@ bricks.TreeNode = class extends bricks.VBox {
 		}
 		if (! icons){
 			icons = {
-				open: bricks_resource('imgs/open-folders.svg'),
+				open: bricks_resource('imgs/open-folder.svg'),
 				close: bricks_resource('imgs/close-folder.svg'),
 				leaf: bricks_resource('imgs/close-folder.svg')
 			};
