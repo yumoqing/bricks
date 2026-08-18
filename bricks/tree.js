@@ -93,11 +93,11 @@ bricks.TreeNode = class extends bricks.VBox {
 			states:[
 				{
 					state: 'open',
-					url: bricks_resource('imgs/node-expand.svg')
+					url: '/bricks/imgs/node-expand.svg'
 				},
 				{
 					state: 'close',
-					url: bricks_resource('imgs/node-collapse.svg')
+					url: '/bricks/imgs/node-collapse.svg'
 				}
 			],
 			rate: 1,
@@ -172,9 +172,9 @@ bricks.TreeNode = class extends bricks.VBox {
 		}
 		if (! icons){
 			icons = {
-				open: bricks_resource('imgs/open-folder.svg'),
-				close: bricks_resource('imgs/close-folder.svg'),
-				leaf: bricks_resource('imgs/close-folder.svg')
+				open: '/bricks/imgs/open-folder.svg',
+				close: '/bricks/imgs/close-folder.svg',
+				leaf: '/bricks/imgs/close-folder.svg'
 			};
 		}
 		this.icons_urls = icons;

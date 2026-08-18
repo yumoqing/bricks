@@ -6,6 +6,8 @@ bricks.AgentInput = class extends bricks.VBox {
     constructor(opts) {
         opts.height = 'auto';
         opts.width = '100%';
+        // 默认内边距，避免子控件（输入框/模型选择器/按钮）贴边；可用 opts.padding 覆盖
+        if (opts.padding === undefined) opts.padding = '8px 12px';
         super(opts);
 
         // file upload
