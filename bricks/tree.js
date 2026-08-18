@@ -26,7 +26,7 @@ bricks.TreeNode = class extends bricks.VBox {
 		this.add_widget(n);
 		n.bind('click', this.tree.node_click_handle.bind(this.tree, this));
 		this.node_widget = n;
-		schedule_once(this.create_node_content.bind(this,n), 0.01);
+		this.create_node_content(n);
 		if (! this.user_data.is_leaf) {
 			this.container = new bricks.VBox({height:'auto'});
 			this.add_widget(this.container);
