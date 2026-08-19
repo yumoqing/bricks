@@ -101,6 +101,7 @@ bricks.TreeNode = class extends bricks.VBox {
 				}
 			],
 			rate: 1,
+			flexShrink: 0,
 		});
 	}
 	change_node_type(){
@@ -133,7 +134,8 @@ bricks.TreeNode = class extends bricks.VBox {
 		}
 		this.icon_w = new bricks.Svg({
 			rate:1,
-			url:icon_url
+			url:icon_url,
+			flexShrink: 0,
 		});
 		widget.add_widget(this.icon_w);
 		if (this.tree.node_view){
