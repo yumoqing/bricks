@@ -9,6 +9,10 @@ bricks.Message = class extends bricks.PopupWindow {
 	*/
 	constructor(opts){
 		opts.auto_open = true;
+		// 登录消息带 refresh=false 时，标记不刷新(非用户主动登录)
+		if (opts.refresh === false && bricks.app){
+			bricks.app._login_no_reload = true;
+		}
 		super(opts);
 		this.create_message_widget();
 		this.set_css('message');

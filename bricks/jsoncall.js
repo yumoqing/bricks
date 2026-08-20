@@ -171,7 +171,10 @@ bricks.HttpText = class {
 		var login_window = await bricks.widgetBuild({
 			"widgettype":"urlwidget",
 			"options":{
-				"url":bricks.app.login_url
+				"url":bricks.app.login_url,
+				"params":{
+					"login_source":"auto"
+				}
 			}
 		});
 		
@@ -208,7 +211,12 @@ bricks.HttpText = class {
 		console.log('withLoginInfo: retry successful');
 		// Dispatch user_logined event so shell can reload menu
 		if (bricks.app && bricks.app.dispatch) {
-			bricks.app.dispatch('user_logined');
+			if (bricks.app._login_no_reload) {
+				bricks.app._login_no_reload = false;
+				console.log('withLoginInfo: non-user login, skip menu reload');
+			} else {
+				bricks.app.dispatch('user_logined');
+			}
 		}
 		return await this.get_result_data(retryResult);
 	}	
