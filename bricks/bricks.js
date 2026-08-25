@@ -128,11 +128,64 @@ bricks.str2data = function(s, d){
 	}
 	return s;
 }
+/*
+ * event.params 不一定是数据字典：add_widget 派发的 'on_parent' 事件把父 widget
+ * 对象作为 params 传入，widget 与 dom_element 互相引用
+ * (dom_element.bricks_widget -> widget.dom_element)，直接 extend 进 handler 的
+ * params 会让 apply_data 里的 JSON.stringify 抛
+ * "Converting circular structure to JSON"。
+ * 这里只把「可当数据用」的 params 交给 handler；widget/DOM/Event 这类对象丢弃，
+ * script/method handler 仍可通过第二个参数 event(event.params) 拿到原始对象。
+ */
+bricks.event_params_data = function(p){
+	if (p === null || p === undefined){
+		return {};
+	}
+	if (typeof FormData !== 'undefined' && p instanceof FormData){
+		return p;
+	}
+	if (p instanceof bricks.JsWidget){
+		return {};
+	}
+	if (typeof Node !== 'undefined' && p instanceof Node){
+		return {};
+	}
+	if (typeof Event !== 'undefined' && p instanceof Event){
+		return {};
+	}
+	return p;
+}
+/*
+ * JSON.stringify 的安全版本：撞上循环引用时退化为跳过 widget/DOM/已见对象的序列化，
+ * 保证 apply_data 不会因为 params 里夹带 widget 对象而整个 handler 抛异常。
+ */
+bricks.safe_json_stringify = function(obj){
+	try {
+		return JSON.stringify(obj);
+	} catch (e) {
+		var seen = new WeakSet();
+		return JSON.stringify(obj, function(k, v){
+			if (v instanceof bricks.JsWidget){
+				return undefined;
+			}
+			if (typeof Node !== 'undefined' && v instanceof Node){
+				return undefined;
+			}
+			if (v && typeof v === 'object'){
+				if (seen.has(v)){
+					return undefined;
+				}
+				seen.add(v);
+			}
+			return v;
+		});
+	}
+}
 bricks.apply_data = function(desc, data){
 	if (bricks.is_empty(data)){
 		return desc;
 	}
-	var tmpl = JSON.stringify(desc);
+	var tmpl = bricks.safe_json_stringify(desc);
 	var s = bricks.obj_fmtstr(data, tmpl);
 	return JSON.parse(s);
 }
@@ -265,7 +318,7 @@ bricks.buildEventHandler = async function(w, desc, event){
 		return null
 	}
 	var rtdata = {};
-	desc.event_params = event.params || {} ;
+	desc.event_params = bricks.event_params_data(event.params);
 	desc.event = event;
 	if (desc.rtdata) rtdata = desc.rtdata;
 	else if (desc.datawidget){
