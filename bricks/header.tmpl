@@ -5,10 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="stylesheet" href="{{entire_url('/bricks/3parties/xterm.css')}}" />
-<link rel="stylesheet" href="{{entire_url('/bricks/css/bricks.css')}}?v=20260815f">
-<link rel="stylesheet" href="{{entire_url('/bricks/css/api_doc.css')}}">
+<link rel="stylesheet" href="{{entire_url('/bricks/css/bricks.css')}}?v={% if assets_ver %}{{assets_ver()}}{% else %}20260815f{% endif %}">
+<link rel="stylesheet" href="{{entire_url('/bricks/css/api_doc.css')}}{% if assets_ver %}?v={{assets_ver()}}{% endif %}">
 {% for mycss in cssfiles() %}
-<link rel="stylesheet" href="{{entire_url(mycss)}}">
+<link rel="stylesheet" href="{{entire_url(mycss)}}{% if assets_ver %}?v={{assets_ver()}}{% endif %}">
 {% endfor %}
 </head>
   <body>
@@ -37,9 +37,9 @@
   <script type="module"
     src="{{entire_url('/bricks/3parties/model-viewer.min.js')}}">
   </script>
-  <script src="{{entire_url('/bricks/bricks.js')}}?v=20260825a"></script>
+  <script src="{{entire_url('/bricks/bricks.js')}}?v={% if assets_ver %}{{assets_ver()}}{% else %}20260825a{% endif %}"></script>
 {% for myjs in jsfiles() %}
-  <script src="{{entire_url(myjs)}}"></script>
+  <script src="{{entire_url(myjs)}}{% if assets_ver %}?v={{assets_ver()}}{% endif %}"></script>
 {% endfor %}
 	<script>
 		const opts = {
