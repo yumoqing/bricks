@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>bricks3d Scene3D 最小闭环演示</title>
+<link rel="stylesheet" href="/bricks/css/bricks.css" />
+<style>html,body{margin:0;height:100%;background:#0d0d14}</style>
+</head>
+<body>
+<script src="/bricks/3parties/three.min.js"></script>
+<script src="/bricks/bricks.js"></script>
+<script>
+// 后端声明式场景描述符（实际部署时由 .dspy 返回，走 scene_url）
+var demo_scene = {
+	"camera": {"position": [8, 6, 10], "fov": 50},
+	"entities": [
+		{"id": "door", "name": "门", "type": "box",
+		 "transform": {"pos": [-3, 1, 0], "rot": [0, 30, 0], "scale": [1.2, 2, 0.3]},
+		 "appearance": {"color": "#3b82f6"}},
+		{"id": "ball", "name": "铃铛球", "type": "sphere",
+		 "transform": {"pos": [0, 0.6, 2], "rot": [0, 0, 0], "scale": [1.2, 1.2, 1.2]},
+		 "appearance": {"color": "#f59e0b"}},
+		{"id": "pillar", "name": "立柱", "type": "cylinder",
+		 "transform": {"pos": [3, 1, -1], "rot": [0, 0, 0], "scale": [0.8, 2, 0.8]},
+		 "appearance": {"color": "#10b981"}},
+		{"id": "crate", "name": "木箱", "type": "model",
+		 "transform": {"pos": [0.5, 0.5, -2.5], "rot": [0, 45, 0], "scale": [1, 1, 1]},
+		 "appearance": {"color": "#a16207"}}
+	]
+};
+
+const opts = {
+	"widget": {
+		"widgettype": "VBox",
+		"options": {"width": "100%", "height": "100%", "css": "filler"},
+		"subwidgets": [
+			{"widgettype": "HBox",
+			 "options": {"height": "44px", "alignItems": "center", "gap": "10px", "padding": "0 12px"},
+			 "subwidgets": [
+				{"widgettype": "Text", "id": "status_label",
+				 "options": {"text": "加载中...", "color": "#94a3b8", "halign": "left"}}
+			 ]},
+			{"widgettype": "Scene3D", "id": "scene",
+			 "options": {"scene": demo_scene, "css": "filler",
+			             "binds_demo_note": "entity_tapped 走 binds"}}
+		],
+		"binds": [
+			{"wid": "scene", "event": "scene_ready", "actiontype": "script", "target": "status_label",
+			 "script": "this.set_text('✅ 场景就绪：' + params.entity_count + ' 个实体（点击任意实体）');"},
+			{"wid": "scene", "event": "entity_tapped", "actiontype": "script", "target": "status_label",
+			 "script": "var sc=bricks.getWidgetById('scene',bricks.app);var colors=['#ef4444','#3b82f6','#f59e0b','#10b981','#a855f7'];var c=colors[Math.floor(Math.random()*colors.length)];sc.set_entity_color(params.entity_id,c);this.set_text('🖱 点击了「' + params.entity_name + '」→ 已变色（entity_tapped 事件回传成功）');"},
+			{"wid": "scene", "event": "scene_error", "actiontype": "script", "target": "status_label",
+			 "script": "this.set_text('❌ 场景错误：' + params.message);"}
+		]
+	}
+};
+const app = new bricks.App(opts);
+app.run();
+</script>
+</body>
+</html>
