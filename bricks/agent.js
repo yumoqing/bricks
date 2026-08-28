@@ -323,7 +323,7 @@ bricks.AgentIO = class extends bricks.VBox {
 			width: '100%',
 			css: 'filler'
 		});
-		this.inputw = new bricks.AgentInput({model_dataurl:this.opts.model_dataurl,model_cwidth:this.opts.model_cwidth,placeholder:this.opts.placeholder});
+		this.inputw = new bricks.AgentInput({model_dataurl:this.opts.model_dataurl,model_cwidth:this.opts.model_cwidth,model_params:this.opts.model_params,placeholder:this.opts.placeholder});
 		this.inputw.bind('inputed', this.user_inputed.bind(this));
 		this.add_widget(this.msg_box);
 		this.add_widget(this.inputw);

@@ -1198,6 +1198,14 @@ bricks.UiCode =class extends bricks.UiType {
 		var vf = this.opts.valueField || 'value';
 		var tf = this.opts.textField || 'text';
 		var v = this.opts.value || this.opts.defaultvalue || null;
+		// 服务端数据可用 selected:true 标记当前项（如：项目已选的模型）。
+		// 未显式指定 value 时尊重该标记，而不是永远回退第一项——
+		// 否则每次重建控件都会把用户已持久化的选择重置成列表首项。
+		if (!v) {
+			for (var i = 0; i < data.length; i++) {
+				if (data[i] && data[i].selected) { v = data[i][vf]; break; }
+			}
+		}
 		if (!v && ! this.opts.nullable && data.length > 0){
 			v = data[0][vf]
 		}
