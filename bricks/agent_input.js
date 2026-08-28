@@ -24,12 +24,18 @@ bricks.AgentInput = class extends bricks.VBox {
         });
 
         // model selector — 直接用 UiCode，不用 Form
+        // session_id 自动注入：模型下拉按会话解析当前项目（多 tab 各自项目），
+        // 服务端据此返回「项目已设模型」作为选中项；组件层统一注入，各产线 UI 无需逐个配置。
+        var _mp = bricks.extend({}, opts.model_params || {});
+        if (!_mp.session_id && typeof window._sid === 'function') {
+            _mp.session_id = window._sid();
+        }
         this.model_selector = new bricks.UiCode({
             name: 'model_id',
             valueField: 'model_id',
             textField: 'model_id_text',
             dataurl: opts.model_dataurl || '',
-            params: opts.model_params || {},
+            params: _mp,
             cwidth: opts.model_cwidth || 12,
             cfontsize: 0.85
         });
