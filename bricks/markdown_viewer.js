@@ -51,8 +51,17 @@ bricks.MdWidget = class extends bricks.JsWidget {
 		this.dom_element.innerHTML = marked.parse(this.md_content);
 		/* change links in markdown to a bricks action */
 		var links = this.dom_element.getElementsByTagName('a');
+		var host = location.origin;
 		for (var i=0; i<links.length; i ++){
 			var url = links[i].href;
+			/* 外链（http/https 且非当前源）：新窗口打开，不拦截。
+			   references 来源可查证（招标原文/政府网站等）。 */
+			if (/^https?:\/\//i.test(url) && url.indexOf(host) !== 0){
+				links[i].target = '_blank';
+				links[i].rel = 'noopener noreferrer';
+				links[i].onclick = null;
+				continue;
+			}
 			links[i].href = '#';
 			links[i].onclick=this._build.bind(this, url);
 		}
@@ -150,8 +159,15 @@ bricks.MarkdownViewer = class extends bricks.VBox {
 		
 		/* change links in markdown to a bricks action */
 		var links = this.md_el.getElementsByTagName('a');
+		var host = location.origin;
 		for (var i=0; i<links.length; i ++){
 			var url = links[i].href;
+			if (/^https?:\/\//i.test(url) && url.indexOf(host) !== 0){
+				links[i].target = '_blank';
+				links[i].rel = 'noopener noreferrer';
+				links[i].onclick = null;
+				continue;
+			}
 			links[i].href = '#';
 			links[i].onclick=this._build.bind(this, url);
 		}
