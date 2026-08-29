@@ -431,6 +431,9 @@ bricks.TextBase = class extends bricks.JsWidget {
 	set_attrs(){
 		if (this.opts.hasOwnProperty('text')){
 			this.text = this.opts.text;
+		} else if (this.opts.hasOwnProperty('label')){
+			// 兼容 label 写法（LLM 生成 .ui 常用 label；此前静默渲染空文本）
+			this.text = this.opts.label;
 		}
 		if (this.opts.hasOwnProperty('otext')){
 			this.otext = this.opts.otext;
