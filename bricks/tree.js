@@ -78,6 +78,8 @@ bricks.TreeNode = class extends bricks.VBox {
 		}
 		this.container.show();
 		if (this.icon_w && this.icons_urls.open) this.icon_w.set_url(this.icons_urls.open);
+		// 点击节点行展开时同步三角图标状态（set_state 同状态去重，不会死循环）
+		if (this.triple) this.triple.set_state('open');
 	}
 	collapse(){
 		this.node_state = 'close'
@@ -86,6 +88,8 @@ bricks.TreeNode = class extends bricks.VBox {
 		}
 		this.container.hide();
 		if (this.icon_w && this.icons_urls.close) this.icon_w.set_url(this.icons_urls.close);
+		// 收起时同步三角图标状态
+		if (this.triple) this.triple.set_state('close');
 	}
 	create_triple(){
 		return new bricks.StatedSvg({

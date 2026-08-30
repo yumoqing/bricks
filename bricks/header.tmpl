@@ -37,9 +37,9 @@
   <script type="module"
     src="{{entire_url('/bricks/3parties/model-viewer.min.js')}}">
   </script>
-  <script src="{{entire_url('/bricks/bricks.js')}}?v={% if assets_ver %}{{assets_ver()}}{% else %}20260830e{% endif %}"></script>
+  <script src="{{entire_url('/bricks/bricks.js')}}?v={% if assets_ver %}{{assets_ver()}}{% else %}20260831a{% endif %}"></script>
 {% for myjs in jsfiles() %}
-  <script src="{{entire_url(myjs)}}{% if assets_ver %}?v={{assets_ver()}}{% endif %}"></script>
+  <script src="{{entire_url(myjs)}}?v={% if assets_ver %}{{assets_ver()}}{% else %}20260831a{% endif %}"></script>
 {% endfor %}
 	<script>
 		const opts = {
