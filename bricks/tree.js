@@ -541,6 +541,14 @@ bricks.Tree = class extends bricks.VScrollPanel {
 			this.selected_node = node;
 			this.node_selected(node, true);
 		}
+		// 点击非叶子节点自动展开/收起（懒加载数据由 expand() 触发）
+		if (!node.is_leaf && node.container){
+			if (node.node_state != 'open'){
+				node.expand();
+			} else if (!this.opts.select_only){
+				node.collapse();
+			}
+		}
 	}
 	node_selected(node, flag){
 		console.log('node_selected():node=', node, flag);
