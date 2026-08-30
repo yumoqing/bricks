@@ -614,14 +614,10 @@ bricks.getWidgetById = function(idset, from_widget){
 		}
 		var el = fromw.dom_element;
 		var nel;
-		// id 可能是层级路径的末段（DOM id 为完整路径如 app.world_content），
-		// 先精确匹配，再按 ".末段" 后缀兜底；CSS.escape 防点号被当 class 选择器
-		var selExact = '#' + (window.CSS && CSS.escape ? CSS.escape(id) : id);
-		var selSuffix = '[id$=".' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '"]';
 		if(downward ){
-			nel = el.querySelector(selExact) || el.querySelector(selSuffix);
+			nel = el.querySelector('#' + id);
 		} else {
-			nel = el.closest(selExact) || el.closest(selSuffix);
+			nel = el.closest('#' + id);
 		}
 		if (!nel) {
 			console.log('get_by_id() return null',id, fromw, downward);
