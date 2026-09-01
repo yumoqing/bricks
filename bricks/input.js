@@ -1064,7 +1064,12 @@ bricks.UiText =class extends bricks.UiType {
 				break;
 			case 'Enter':
 				e.preventDefault(); // 阻止默认行为
-				this.handle_enter();
+				if (this.opts.enter_sends && !e.ctrlKey && !e.metaKey) {
+					// 回车直接发送（AgentIO 正文输入）；Ctrl+回车 / Cmd+回车仍插入换行
+					this.dispatch('enter_send');
+				} else {
+					this.handle_enter();
+				}
 				break;
 			case 'ArrowUp':
 			case 'ArrowDown':

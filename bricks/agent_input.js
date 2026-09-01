@@ -17,11 +17,13 @@ bricks.AgentInput = class extends bricks.VBox {
         this.file_names = [];
         this.inputfilew.bind('changed', this.file_added.bind(this));
 
-        // text input
+        // text input — 回车直接发送；Ctrl+回车换行（enter_sends 为 UiText 的 opt-in 选项）
         this.textw = new bricks.UiText({
             name: 'prompt',
-            placeholder: opts.placeholder || ''
+            placeholder: opts.placeholder || '',
+            enter_sends: true
         });
+        this.textw.bind('enter_send', this.input_finished.bind(this));
 
         // model selector — 直接用 UiCode，不用 Form
         // session_id 自动注入：模型下拉按会话解析当前项目（多 tab 各自项目），
