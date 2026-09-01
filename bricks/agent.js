@@ -332,21 +332,17 @@ bricks.AgentIO = class extends bricks.VBox {
 	}
 	// 会话区保持最后输出可见（2026-09-01）：内容超出显示范围时自动滚到底。
 	// 仅当用户本就停在底部附近才跟滚——用户主动上翻看历史时不强行拉回；
-	// 滚回底部或发送新消息后恢复跟滚。rAF 延迟到本帧布局完成后滚，
-	// 保证 scrollHeight 已是新内容的尺寸（同步滚会拿到旧高度）。
+	// 滚回底部或发送新消息后恢复跟滚。
+	// 同步滚：读 scrollHeight 本身强制布局，拿到的是新内容尺寸；
+	// 不用 rAF（后台 tab 不触发 rAF，流式更新时不滚）。
 	scroll_to_bottom(){
-		if (this._scroll_pending) return;
-		this._scroll_pending = true;
-		requestAnimationFrame(function(){
-			this._scroll_pending = false;
-			var e = this.msg_box && this.msg_box.dom_element;
-			if (!e) return;
-			if (this._follow === false) {
-				var near_bottom = (e.scrollHeight - e.scrollTop - e.clientHeight) < 80;
-				if (!near_bottom) return;
-			}
-			e.scrollTop = e.scrollHeight;
-		}.bind(this));
+		var e = this.msg_box && this.msg_box.dom_element;
+		if (!e) return;
+		if (this._follow === false) {
+			var near_bottom = (e.scrollHeight - e.scrollTop - e.clientHeight) < 80;
+			if (!near_bottom) return;
+		}
+		e.scrollTop = e.scrollHeight;
 	}
 	_track_follow(){
 		var e = this.msg_box && this.msg_box.dom_element;
