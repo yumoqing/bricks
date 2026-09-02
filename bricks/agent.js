@@ -327,6 +327,50 @@ bricks.AgentIO = class extends bricks.VBox {
 		this.inputw.bind('inputed', this.user_inputed.bind(this));
 		this.add_widget(this.msg_box);
 		this.add_widget(this.inputw);
+		// 用户上翻看历史时暂停跟滚，滚回底部恢复（scroll_to_bottom 依据 _follow）
+		this.msg_box.bind('scroll', this._track_follow.bind(this));
+		// 内容增长即跟滚到底（2026-09-01 根治）：agent 输出多为 widget 描述符，
+		// AgentOut.update 走 widgetBuild().then() 异步挂载——同步滚总在挂载前执行、
+		// 滚不到新内容。MutationObserver 在挂载落 DOM 后触发，同步/异步渲染全覆盖，
+		// 后台 tab 也生效（rAF 在后台 tab 不触发，已弃用）。
+		var mo = window.MutationObserver;
+		if (mo) {
+			this._mo = new mo(this.scroll_to_bottom.bind(this));
+			this._mo.observe(this.msg_box.dom_element,
+				{childList: true, subtree: true, characterData: true});
+		}
+	}
+	// 会话区保持最后输出可见（2026-09-01）：内容超出显示范围时自动滚到底。
+	// 仅当用户本就停在底部附近才跟滚——用户主动上翻看历史时不强行拉回；
+	// 滚回底部或发送新消息后恢复跟滚。
+	// 同步滚：读 scrollHeight 本身强制布局，拿到的是新内容尺寸；
+	// 不用 rAF（后台 tab 不触发 rAF，流式更新时不滚）。
+	scroll_to_bottom(){
+		var e = this.msg_box && this.msg_box.dom_element;
+		if (!e) return;
+		if (this._follow === false) {
+			var near_bottom = (e.scrollHeight - e.scrollTop - e.clientHeight) < 80;
+			if (!near_bottom) return;
+		}
+		e.scrollTop = e.scrollHeight;
+	}
+	_track_follow(){
+		var e = this.msg_box && this.msg_box.dom_element;
+		if (!e) return;
+		var st = e.scrollTop;
+		var near = (e.scrollHeight - st - e.clientHeight) < 80;
+		if (near) {
+			// 滚回底部附近 → 恢复跟滚
+			this._follow = true;
+		} else if (this._last_st !== undefined && st < this._last_st - 5) {
+			// scrollTop 减小 = 用户真上翻 → 暂停跟滚。
+			// 程序滚底只会增大 scrollTop；异步 widget 挂载使 scroll 事件滞后时
+			// gap 会瞬时 >80，但 st 不减小——不能误判为用户上翻（2026-09-01 根因：
+			// 旧实现按 gap 判 follow，第二条消息后程序滚底被自己的 scroll 事件
+			// 误关 follow，后续输出不再跟滚）。
+			this._follow = false;
+		}
+		this._last_st = st;
 	}
 	chunk_response(mout, l){
 		l = l.trim();
@@ -338,6 +382,7 @@ bricks.AgentIO = class extends bricks.VBox {
 		}
 		console.log('l=', l, 'd=', d);
 		mout.update_data(d);
+		this.scroll_to_bottom();
 	}
 	chunk_ended(){
 		console.log('chunk end');
@@ -395,6 +440,9 @@ bricks.AgentIO = class extends bricks.VBox {
         box.add_widget(w);
         box.add_widget(img);
         this.msg_box.add_widget(box);
+        // 用户刚发的消息必须可见：强制跟滚到底
+        this._follow = true;
+        this.scroll_to_bottom();
     }   
 }
 
