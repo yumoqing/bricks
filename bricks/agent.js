@@ -357,7 +357,20 @@ bricks.AgentIO = class extends bricks.VBox {
 	_track_follow(){
 		var e = this.msg_box && this.msg_box.dom_element;
 		if (!e) return;
-		this._follow = (e.scrollHeight - e.scrollTop - e.clientHeight) < 80;
+		var st = e.scrollTop;
+		var near = (e.scrollHeight - st - e.clientHeight) < 80;
+		if (near) {
+			// 滚回底部附近 → 恢复跟滚
+			this._follow = true;
+		} else if (this._last_st !== undefined && st < this._last_st - 5) {
+			// scrollTop 减小 = 用户真上翻 → 暂停跟滚。
+			// 程序滚底只会增大 scrollTop；异步 widget 挂载使 scroll 事件滞后时
+			// gap 会瞬时 >80，但 st 不减小——不能误判为用户上翻（2026-09-01 根因：
+			// 旧实现按 gap 判 follow，第二条消息后程序滚底被自己的 scroll 事件
+			// 误关 follow，后续输出不再跟滚）。
+			this._follow = false;
+		}
+		this._last_st = st;
 	}
 	chunk_response(mout, l){
 		l = l.trim();
