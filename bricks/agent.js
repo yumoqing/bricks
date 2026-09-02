@@ -329,6 +329,16 @@ bricks.AgentIO = class extends bricks.VBox {
 		this.add_widget(this.inputw);
 		// 用户上翻看历史时暂停跟滚，滚回底部恢复（scroll_to_bottom 依据 _follow）
 		this.msg_box.bind('scroll', this._track_follow.bind(this));
+		// 内容增长即跟滚到底（2026-09-01 根治）：agent 输出多为 widget 描述符，
+		// AgentOut.update 走 widgetBuild().then() 异步挂载——同步滚总在挂载前执行、
+		// 滚不到新内容。MutationObserver 在挂载落 DOM 后触发，同步/异步渲染全覆盖，
+		// 后台 tab 也生效（rAF 在后台 tab 不触发，已弃用）。
+		var mo = window.MutationObserver;
+		if (mo) {
+			this._mo = new mo(this.scroll_to_bottom.bind(this));
+			this._mo.observe(this.msg_box.dom_element,
+				{childList: true, subtree: true, characterData: true});
+		}
 	}
 	// 会话区保持最后输出可见（2026-09-01）：内容超出显示范围时自动滚到底。
 	// 仅当用户本就停在底部附近才跟滚——用户主动上翻看历史时不强行拉回；
