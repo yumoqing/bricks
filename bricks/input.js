@@ -819,6 +819,7 @@ bricks.UiCheckBox =class extends bricks.UiType {
 	constructor(opts){
 		super(opts);
 		this.uitype='checkbox';
+		this.multicheck = opts.multicheck || false;
 		this.valueField = opts.valueField || 'value';
 		this.textField = opts.textField || 'text';
 		this.value = this.opts.value || this.opts.defaultValue||[];
