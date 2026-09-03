@@ -1025,6 +1025,8 @@ bricks.UiText =class extends bricks.UiType {
 	build(){
 		var e = this.dom_element;
 		e.id = e.name = this.opts.name;
+		if (this.opts.placeholder)
+			e.placeholder = bricks.app.i18n._(this.opts.placeholder);
 		this.reset();
 		this.bind('input', this.set_value_from_input.bind(this))
 	}
