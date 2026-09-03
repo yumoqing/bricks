@@ -130,7 +130,8 @@ bricks.FormBody = class extends bricks.VScrollPanel {
 			var txtw = new bricks.UiText({
 				name:f.name,
 				css: "filler",
-				value:f.value
+				value:f.value,
+				placeholder:f.placeholder
 			});
 			var cell = new bricks.VBox({
 				css: "inputbox",
