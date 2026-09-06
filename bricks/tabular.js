@@ -138,14 +138,6 @@ bricks.Tabular = class extends bricks.DataViewer {
 		console.log('event_name=', event_name, 'record=', record);
 		this.dispatch(event_name, record);
 	}
-	get_hidefields(){
-		var fs = [];
-		var params = this.data_params || {};
-		for (var k in params){
-			fs.push({name:k, value:params[k], uitype:'hide'});
-		}
-		return fs;
-	}
 }
 
 bricks.Factory.register('Tabular', bricks.Tabular);
