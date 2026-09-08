@@ -194,7 +194,9 @@ bricks.Factory.register('TabBar', bricks.TabBar);
 */
 bricks.ChipBar = class extends bricks.HScrollPanel {
 	constructor(opts){
-		opts.css = (opts.css || '') + ' chipbar';
+		// css 未传时 (opts.css||'')+... 会产生前导空格 → set_css split 出空 token
+		// → classList.add('') 抛 SyntaxError（浏览器实测）—— 必须 trim
+		opts.css = ((opts.css || '') + ' chipbar').trim();
 		super(opts);
 		// HScrollPanel 构造强制 height:'100%'；胶囊条是内容高度（auto），恢复之
 		this.set_style('height', 'auto');
