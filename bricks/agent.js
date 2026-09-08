@@ -387,6 +387,44 @@ bricks.AgentIO = class extends bricks.VBox {
 	chunk_ended(){
 		console.log('chunk end');
 	}
+	// 切换产线（2026-09-07 移动端）：重设 chat/menus/model 地址的 pipeline_id 与
+	// session_id（m_<pid>，每产线独立会话不混历史）并清空会话区。
+	// 不重建控件 —— inputw 的未发草稿/附件保留。
+	// 入参兼容：字符串 pid / 数据对象 {id|pipeline_id} / bind 事件对象
+	// （method handler 收到的是 event，数据在 event.params —— ChipBar select）。
+	set_pipeline(p){
+		if (p && p.params) p = p.params;
+		var pid = (typeof p === 'string') ? p
+			: ((p && (p.pipeline_id || p.id)) || '');
+		if (!pid) return;
+		function _u(base, pl){
+			if (!base) return base;
+			var u = base;
+			function _set(key, val){
+				if (new RegExp('[?&]' + key + '=').test(u)){
+					u = u.replace(new RegExp('([?&]' + key + '=)[^&]*'), '$1' + encodeURIComponent(val));
+				} else {
+					u += (u.indexOf('?') >= 0 ? '&' : '?') + key + '=' + encodeURIComponent(val);
+				}
+			}
+			_set('pipeline_id', pl);
+			_set('session_id', 'm_' + pl);
+			return u;
+		}
+		this._base_chat_url = this._base_chat_url || this.opts.url;
+		this._base_model_url = this._base_model_url || this.opts.model_dataurl;
+		this.opts.url = _u(this._base_chat_url, pid);
+		if (this._base_model_url) {
+			this.opts.model_dataurl = _u(this._base_model_url, pid);
+			// 模型下拉按产线过滤（capabilities 等参数保留在 _base_model_url 里）
+			if (this.inputw && this.inputw.set_model_dataurl) {
+				this.inputw.set_model_dataurl(this.opts.model_dataurl,
+					{pipeline_id: pid, session_id: 'm_' + pid});
+			}
+		}
+		this.pipeline_id = pid;
+		this.msg_box.clear_widgets();
+	}
 	async user_inputed(e){
 		this.show_input(e.params);
 		var params = e.params;

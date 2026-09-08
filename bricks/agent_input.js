@@ -122,6 +122,32 @@ bricks.AgentInput = class extends bricks.VBox {
         this.inputfilew.show();
     }
 
+    // 重设模型下拉数据源（2026-09-07 移动端切产线用）：销毁重建 UiCode，
+    // 保持其在按钮行中的位置与样式不变。
+    set_model_dataurl(url, params) {
+        if (!url) return;
+        var _mp = bricks.extend({}, params || this.model_selector.opts.params || {});
+        var old = this.model_selector;
+        this.model_selector = new bricks.UiCode({
+            name: 'model_id',
+            valueField: 'model_id',
+            textField: 'model_id_text',
+            dataurl: url,
+            params: _mp,
+            cwidth: old.opts.cwidth || 12,
+            cfontsize: 0.85
+        });
+        // 原位替换：按钮行布局中 old 的位置换成新控件
+        var row = old.parent;
+        if (row && row.dom_element && old.dom_element) {
+            row.dom_element.replaceChild(this.model_selector.dom_element, old.dom_element);
+            var idx = row.children.indexOf(old);
+            if (idx >= 0) row.children[idx] = this.model_selector;
+            this.model_selector.parent = row;
+            old.parent = null;
+        }
+    }
+
     getValue() {
         return {
             prompt: (this.textw.getValue() || {}).prompt || '',

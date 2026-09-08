@@ -41,7 +41,30 @@ bricks.JsWidget = class {
 		if (this.bgimage){
 			this.set_bg_image(this.bgimage);
 		}
+		// 声明式端适配（2026-09-07）：
+		//   mobile_hidden: true  — 手机视口隐藏（桌面显示）
+		//   desktop_hidden: true — 桌面视口隐藏（手机显示）
+		//   mobile_opts: {margin:'0 8px 8px', padding:'4px', ...} — 手机视口下
+		//       覆盖对应行内样式键，桌面恢复 options 原值（无则清空行内）
+		// 由 bricks/mobile.js 的 on_mobile_mode 统一驱动，控件自身无脚本。
+		if (options.mobile_hidden || options.desktop_hidden || options.mobile_opts){
+			this._apply_visibility_mobile();
+			if (!bricks._mobile_adapt_widgets) bricks._mobile_adapt_widgets = [];
+			bricks._mobile_adapt_widgets.push(this);
+		}
 		bricks.resize_observer.observe(this.dom_element);
+	}
+	_apply_visibility_mobile(){
+		var m = bricks.is_mobile ? bricks.is_mobile() : false;
+		var hide = (m && this.opts.mobile_hidden) || (!m && this.opts.desktop_hidden);
+		this.dom_element.style.display = hide ? 'none' : '';
+		var mo = this.opts.mobile_opts;
+		if (mo){
+			for (var k in mo){
+				var v = m ? mo[k] : (this.opts[k] !== undefined ? this.opts[k] : '');
+				this.set_style(k, v);
+			}
+		}
 	}
 	set_bg_image(url){
 		var d = this.dom_element;

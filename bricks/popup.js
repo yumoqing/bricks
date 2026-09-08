@@ -480,6 +480,7 @@ bricks.PopupWindow = class extends bricks.Popup {
 		opts.auto_dismiss = false;
 		opts.auto_destroy = false;
 		super(opts);
+		this.set_css('popupwindow');   // 移动端全屏化 CSS 依赖此类（区别于下拉/提示等普通 Popup）
 		this.auto_open = ao;
 		this.title_bar = new bricks.HBox({css:'titlebar', cheight:2, width:'100%'});
 		this.moving_w = this.title_bar;
