@@ -168,6 +168,14 @@ bricks.HttpText = class {
 		return result;
 	}
 	async withLoginInfo(url, opts){
+		// 登录窗单例（2026-09-08）：手机首屏并发多个 401 请求时，旧实现每个请求
+		// 各建一个登录窗 → 叠开多个登录页。共享同一个窗：后来者等它销毁后重试。
+		if (bricks._login_window_pending){
+			await new Promise(resolve => {
+				bricks._login_window_pending.bind('destroy', resolve);
+			});
+			return await this._retry_after_login(url, opts);
+		}
 		var login_window = await bricks.widgetBuild({
 			"widgettype":"urlwidget",
 			"options":{
@@ -182,12 +190,16 @@ bricks.HttpText = class {
 			console.log('withLoginInfo: failed to build login widget');
 			return null;
 		}
+		bricks._login_window_pending = login_window;
 		
 		// Wait for login window to be destroyed (successful login)
 		await new Promise(resolve => {
 			login_window.bind('destroy', resolve);
 		});
-		
+		bricks._login_window_pending = null;
+		return await this._retry_after_login(url, opts);
+	}
+	async _retry_after_login(url, opts){
 		console.log('withLoginInfo: login window destroyed, retrying request');
 		
 		// Retry the original request

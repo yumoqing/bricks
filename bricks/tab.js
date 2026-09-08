@@ -104,6 +104,10 @@ bricks.TabPanel = class extends bricks.Layout {
 		this._mobile_bar_apply(bricks.is_mobile());
 	}
 	_mobile_bar_clicked(item){
+		// bind 事件经 dispatch 包装为 {params: 数据}（Toolbar/Menu 同约定）；
+		// 框架内部直调传裸对象 —— 两种形态都兼容（2026-09-08 实测：不解包则
+		// 用户点底部 Tab 静默无响应）
+		if (item && item.params) item = item.params;
 		var desc = null;
 		for (var i=0;i<this._mobile_bar_descs.length;i++){
 			if (this._mobile_bar_descs[i].name === item.name){ desc = this._mobile_bar_descs[i]; break; }
