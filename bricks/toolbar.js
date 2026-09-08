@@ -55,6 +55,9 @@ bricks.Toolbar = class extends bricks.Layout {
 				this.add_interval_box();
 			}
 		}
+		// 全部 tool 建好后广播 ready（TabPanel 借此在按钮存在后补首 tab 高亮，
+		// 2026-09-08：此前首屏 dispatch('command') 绕过 do_handle，首个 tab 从无 active 样式）
+		this.dispatch('ready', {});
 	}
 	async createTool(desc){
 		var options = {

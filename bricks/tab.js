@@ -138,7 +138,18 @@ bricks.TabPanel = class extends bricks.Layout {
 				return;
 			}
 		}
-		this.toolbar.dispatch('command', this.opts.items[0]);
+		var first = this.opts.items[0];
+		if (!first) return;
+		// 按钮已建好（Toolbar createTools 完成后的 ready 再入）→ click 走 do_handle：
+		// 内容切换 + active 高亮一起更新；按钮还没建好（constructor 首次同步调用）→
+		// dispatch command 先加载内容，高亮由 ready 后的 click 补上
+		for (var i=0;i<this.toolbar.toolList.length;i++){
+			if (this.toolbar.toolList[i].tool_opts.name === first.name){
+				this.toolbar.click(first.name);
+				return;
+			}
+		}
+		this.toolbar.dispatch('command', first);
 	}
 	createToolbar(){
 		var desc = {
