@@ -190,6 +190,7 @@ bricks.TabPanel = class extends bricks.Layout {
 					}
 					this.content_buffer[tdesc.name] = w;
 				}
+				this._push_tab_history(tdesc.name);
 				this.cur_tab_name = tdesc.name;
 				this.switch_content(w);
 				return;
@@ -216,8 +217,10 @@ bricks.TabPanel = class extends bricks.Layout {
 		if (w && this.cur_tab_name === desc.name) this.switch_content(w);
 	}
 	// 动态打开 tab：已存在则切换（默认刷新内容，desc.refresh===false 用缓存），
-	// 不存在则新增。同步返回：立即切换+高亮，content 异步加载。
-	open_tab(desc){
+	// 不存在则新增。content 异步加载不阻塞；新增时等 createTool 真正建出按钮
+	// 再 toolbar.click —— createTool 是 async（await widgetBuild），若同步 click，
+	// 新按钮还没进 toolList，click 空转 → active 高亮不切换（2026-09-08 bugfix）。
+	async open_tab(desc){
 		var existing = null;
 		for (var i=0;i<this.opts.items.length;i++){
 			if (this.opts.items[i].name === desc.name){ existing = this.opts.items[i]; break; }
@@ -225,6 +228,7 @@ bricks.TabPanel = class extends bricks.Layout {
 		if (existing){
 			var need_refresh = desc.refresh !== false;
 			if (desc.name !== this.cur_tab_name){
+				this._push_tab_history(desc.name);
 				this.cur_tab_name = desc.name;
 				if (this.toolbar && this.toolbar.click) this.toolbar.click(desc.name);
 			}
@@ -241,8 +245,11 @@ bricks.TabPanel = class extends bricks.Layout {
 		// 新增
 		desc.content = desc.content || {"widgettype":"urlwidget","options":{"url":desc.url}};
 		this.opts.items.push(desc);
-		this.add_tab(desc);
+		this._push_tab_history(desc.name);
 		this.cur_tab_name = desc.name;
+		await this.add_tab(desc);
+		// cur_tab_name 已提前置位：click → do_handle 更新按钮高亮，
+		// 派发的 command 到 show_tabcontent 时同名早退，不会重复加载 content
 		if (this.toolbar && this.toolbar.click) this.toolbar.click(desc.name);
 		this._load_tab_content(desc);
 	}
@@ -250,15 +257,50 @@ bricks.TabPanel = class extends bricks.Layout {
 		// createTool 内部已按 desc.removable 调 Toolbar.add_removable 挂删除按钮；
 		// TabPanel 自身无 add_removeable 方法（旧实现调它会 TypeError，
 		// 2026-09-07 收编 index_tab.js 修复时一并纠正）
-		this.toolbar.createTool(desc);
+		return this.toolbar.createTool(desc);
+	}
+	// tab 访问历史（删 tab 后切回「上一个当前页」用）
+	_push_tab_history(name){
+		if (!this.tab_history) this.tab_history = [];
+		this.tab_history.remove(name);
+		this.tab_history.push(name);
+	}
+	// 删除 tab 后的下一个 tab：历史里最近访问且仍在 items 的；无则第一个
+	_next_tab_after_remove(){
+		var items = this.opts.items;
+		var hist = this.tab_history || [];
+		for (var i=hist.length-1;i>=0;i--){
+			for (var j=0;j<items.length;j++){
+				if (items[j].name === hist[i]) return items[j].name;
+			}
+		}
+		return items.length ? items[0].name : null;
 	}
 	tab_removed(event){
 		var desc = event.params;
-		if (this.content_buffer.hasOwnProperty(desc.name))
-			delete this.content_buffer[desc.name];
-		
-		if (desc.name == this.cur_tab_name){
-			this.show_first_tab();
+		var name = desc.name;
+		if (this.content_buffer.hasOwnProperty(name)){
+			var w = this.content_buffer[name];
+			delete this.content_buffer[name];
+			// 释放被删 tab 的内容 widget（含定时器/事件，防泄漏）
+			if (w && w.destroy) { try { w.destroy(); } catch(e){} }
+		}
+		// items 同步移除：否则 open_tab/show_tabcontent 仍把它当存在的 tab
+		for (var i=0;i<this.opts.items.length;i++){
+			if (this.opts.items[i].name === name){ this.opts.items.splice(i,1); break; }
+		}
+		if (this.tab_history) this.tab_history.remove(name);
+		if (name == this.cur_tab_name){
+			// 清空 cur_tab_name：让 toolbar.click → show_tabcontent 不早退，
+			// 且 do_handle 真正切换内容 + 更新按钮高亮
+			this.cur_tab_name = '';
+			var next = this._next_tab_after_remove();
+			if (next){
+				if (this.toolbar && this.toolbar.click) this.toolbar.click(next);
+			} else {
+				// 没有剩余 tab：内容区一并清空（原实现漏掉 → 内容残留）
+				this.content_container.clear_widgets();
+			}
 		}
 	}
 }

@@ -63,6 +63,13 @@ bricks.Layout = class  extends bricks.JsWidget {
 		this.selected_item = w;
 		this.selected_item.selected(true);
 	}
+	unselect_item(w){
+		// 与 select_item 对称：仅当 w 是当前选中项时取消选中
+		if (this.selected_item === w){
+			w.selected(false);
+			this.selected_item = null;
+		}
+	}
 	select_default_item(){
 		if (!this.keyselectable) return;
 		var w = this.children[0];
