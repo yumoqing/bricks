@@ -106,13 +106,15 @@ bricks.HttpText = class {
 		}
 		return Object.assign(this.headers, headers);
 	}
-	async bricks_fetch(url, {method='GET', headers=null, params=null}={}){
+	async bricks_fetch(url, {method='GET', headers=null, params=null, signal=null}={}){
 		url = this.url_parse(url);
 		var data = this.add_own_params(params);
 		var header = this.add_own_headers(headers);
 		var _params = {
 			method:method
 		}
+		// AbortController signal：调用方可中断在飞的请求（流式 agent「停」指令用）
+		if (signal) _params.signal = signal;
 		if (data instanceof FormData){
 			method = 'POST';
 			_params.body = data;
@@ -130,7 +132,8 @@ bricks.HttpText = class {
 		const fetchResult = await this.bricks_fetch(url, {
 				method: opts.method, 
 				headers: opts.headers, 
-				params: opts.params});
+				params: opts.params,
+				signal: opts.signal});
 		if (fetchResult.status == 401 && bricks.app.login_url){
 			console.log('401 unauthorized, opening login')
 			return await this.withLoginInfo(url, opts);
@@ -248,11 +251,12 @@ bricks.HttpText = class {
 					params:params
 				});
 	}
-	async post(url, {headers=null, params=null}={}){
+	async post(url, {headers=null, params=null, signal=null}={}){
 		return await this.httpcall(url, {
 					method:'POST',
 					headers:headers,
-					params:params
+					params:params,
+					signal:signal
 				});
 	}
 }
@@ -279,18 +283,32 @@ bricks.HttpResponseStream = class extends bricks.HttpResponse {
 	async handle_chunk(resp, handler){
 		const reader = resp.body.getReader();
 		const decoder = new TextDecoder('utf-8');
-		let result = await reader.read();
 		var buff_ = '';
-		while (!result.done) {
-			const text = decoder.decode(result.value);
-			buff_ += text;
-			const lines = buff_.split('\n');
-			for (var i=0;i<lines.length - 1; i++){
-				//  console.log('line=', lines[i]);
-				handler(lines[i]);
+		var result;
+		try {
+			result = await reader.read();
+			while (!result.done) {
+				const text = decoder.decode(result.value);
+				buff_ += text;
+				const lines = buff_.split('\n');
+				for (var i=0;i<lines.length - 1; i++){
+					//  console.log('line=', lines[i]);
+					handler(lines[i]);
+				}
+				buff_ = lines[lines.length - 1];
+				result = await reader.read()
 			}
-			buff_ = lines[lines.length - 1];
-			result = await reader.read()
+		} catch (e){
+			// AbortController.abort() → reader.read() 抛 AbortError：
+			// 用户主动「停」是预期中断，静默结束读取循环（不刷错误），
+			// 保留 buff_ 里已收到的完整行，尾行照常处理。
+			if (e && (e.name === 'AbortError' || e.code === 20)) {
+				// cancel() 返回 Promise，abort 后流已处于 error 态可能 reject
+				// → 必须 .catch() 兜底，否则冒泡成 unhandledrejection
+				try { Promise.resolve(reader.cancel()).catch(function(){}); } catch(_){}
+			} else {
+				throw e;
+			}
 		}
 		if (buff_ != ''){
 			handler(buff_);

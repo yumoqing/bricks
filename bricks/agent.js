@@ -243,7 +243,23 @@ bricks.AgentOutput = class extends bricks.VBox {
 			this.run = null;
 		}
 	}
+	// 会话被用户「停」中断：冻结已输出内容（停在输入「停」之前的状态），
+	// 移除"思考中"动画，末尾追加一个轻量「已停止」标记（挂在 AgentOutput 自身，
+	// 不受 filler 重渲染影响；不新增对话气泡）。
+	show_stopped(){
+		if (this._stopped) return;
+		this._stopped = true;
+		this.run_stopped();
+		try {
+			var t = new bricks.Text({
+				text: '已停止', otext: '已停止', i18n: true,
+				halign: 'left', cfontsize: 0.85, color: '#94a3b8'
+			});
+			this.add_widget(t);
+		} catch(e){}
+	}
 	async update_data(data){
+		if (this._stopped) return;   // 已停止：不再接收/渲染后续 chunk（冻结输出）
 		this.run_stopped();
 		this.filler.update(data);
 		if (data.llmusageid) {
@@ -319,6 +335,7 @@ bricks.AgentIO = class extends bricks.VBox {
 		if (!opts.height) opts.height = '100%';
 		super(opts);
 		this.llmmodels = [];
+		this._running_streams = [];   // 在飞的流 [{controller:AbortController, mout:AgentOutput}]，「停」统一中断
 		this.msg_box = new bricks.VScrollPanel({
 			width: '100%',
 			css: 'filler'
@@ -387,6 +404,27 @@ bricks.AgentIO = class extends bricks.VBox {
 	chunk_ended(){
 		console.log('chunk end');
 	}
+	// 「停」类快捷指令识别（2026-09-08）：整句精确匹配，绝不子串匹配——
+	// 「别停下来继续说」「为什么任务已取消」含停止词但语义是继续/提问，
+	// 子串匹配会误杀（教训见技能「用户意图识别」节）。
+	is_stop_command(text){
+		var t = String(text || '').trim().replace(/[。.!！?？~～\s]+$/,'').toLowerCase();
+		return ['停','停止','停下','停一下','取消','终止','stop','cancel','abort'].indexOf(t) >= 0;
+	}
+	// 中断所有在飞的流式应答：abort fetch（服务端连接断开 → 生成器在下个
+	// yield 点收到 GeneratorExit 终止，不再调 LLM/工具）+ 冻结输出气泡
+	// （不再渲染后续 chunk，停在输入「停」之前的状态）+ 追加「已停止」标记。
+	// 返回中断的流数量（0 = 当前没有在跑的应答）。
+	stop_running(){
+		var running = this._running_streams || [];
+		var n = running.length;
+		running.forEach(function(it){
+			try { it.controller.abort(); } catch(e){}
+			if (it.mout && it.mout.show_stopped) it.mout.show_stopped();
+		});
+		this._running_streams = [];
+		return n;
+	}
 	// 切换产线（2026-09-07 移动端）：重设 chat/menus/model 地址的 pipeline_id 与
 	// session_id（m_<pid>，每产线独立会话不混历史）并清空会话区。
 	// 不重建控件 —— inputw 的未发草稿/附件保留。
@@ -426,8 +464,17 @@ bricks.AgentIO = class extends bricks.VBox {
 		this.msg_box.clear_widgets();
 	}
 	async user_inputed(e){
-		this.show_input(e.params);
 		var params = e.params;
+		// 「停」快捷指令（2026-09-08 修复：用户输入停 → 会话要停在输入停之前，
+		// 而不是回一句"已停止"、旧流还在继续输出）：
+		// 有在飞的流 → 前端直接中断（abort fetch + 冻结旧输出气泡 + 标记已停止），
+		// 消息不上屏、不发请求（零 LLM 费用）；没有在跑的流 → 按普通消息走后端。
+		if (this.is_stop_command(params.prompt) && (this._running_streams||[]).length > 0){
+			this.stop_running();
+			this.scroll_to_bottom();
+			return;
+		}
+		this.show_input(params);
 		params.llmid = this.agent_using_llmid;
 		console.log('params=', params);
 		/*
@@ -456,13 +503,40 @@ bricks.AgentIO = class extends bricks.VBox {
 			});
 			files.forEach(function(f){ send_params.append('file', f); });
 		}
-		var resp = await hr.post(this.opts.url, {params:send_params});
-		if (! resp) {
-			mout.run_stopped();
-			return;
+		// 每条流一个 AbortController：注册到 _running_streams，「停」指令统一中断
+		var controller = window.AbortController ? new AbortController() : null;
+		var self = this;
+		var slot = null;
+		if (controller){
+			slot = {controller: controller, mout: mout};
+			if (!this._running_streams) this._running_streams = [];
+			this._running_streams.push(slot);
 		}
-		await hr.handle_chunk(resp, this.chunk_response.bind(this, mout));
-		this.chunk_ended();
+		var _unregister = function(){
+			if (slot && self._running_streams){
+				self._running_streams = self._running_streams.filter(function(s){ return s !== slot; });
+			}
+		};
+		try {
+			var resp = await hr.post(this.opts.url, {params:send_params,
+					signal: controller ? controller.signal : null});
+			if (! resp) {
+				mout.run_stopped();
+				return;
+			}
+			await hr.handle_chunk(resp, this.chunk_response.bind(this, mout));
+			this.chunk_ended();
+		} catch(err){
+			// abort 时 fetch 本身 reject AbortError（headers 未回阶段）；
+			// 读流阶段的 AbortError 已在 handle_chunk 内静默。
+			// stop_running 已冻结气泡+标记，这里只需静默收尾，不弹错误。
+			if (!(err && (err.name === 'AbortError' || err.code === 20))) {
+				console.log('agent stream error:', err);
+				mout.run_stopped();
+			}
+		} finally {
+			_unregister();
+		}
 	}
     async show_input(params){
         var box = new bricks.HBox({width:'100%'});
