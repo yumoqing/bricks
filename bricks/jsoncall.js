@@ -221,6 +221,15 @@ bricks.HttpText = class {
 		}
 		
 		console.log('withLoginInfo: retry successful');
+		// 登录页文档内登录成功（手机/直接打开 login.ui 入口）：shell 是 in-place
+		// 渲染进登录页文档的，document URL 仍是 .../login.ui → baseURI 错误 →
+		// 后续所有根绝对 urlwidget 解析到 /rbac/user/xxx 反复 401 → 登录窗反复
+		// 打开（2026-09-08 用户报障实测根因）。导航回根域名让 shell 以正确
+		// baseURI 重建。桌面弹窗登录的 document 是 shell 页，不受影响。
+		if (window.location.pathname.indexOf('login.ui') >= 0){
+			window.location.replace('/');
+			return null;
+		}
 		// Dispatch user_logined event so shell can reload menu
 		if (bricks.app && bricks.app.dispatch) {
 			if (bricks.app._login_no_reload) {
