@@ -71,13 +71,35 @@ bricks.TabPanel = class extends bricks.Layout {
 	}
 	createMobileBar(){
 		var mb = this.opts.mobile_bar;
-		var items = ((mb && mb.items) || []).map(function(it){
+		var all_descs = (mb && mb.items) || [];
+		// 溢出规则（2026-09-08 用户要求）：max_visible（默认 4）个平铺，
+		// 超出部分收进第 N+1 格「更多」→ 点击弹 MobileSheet 竖向菜单，
+		// 选中项照常 open_tab 进内容区。more.dataurl 可再挂动态项
+		// （如已购产线，打开时实时拉取，购买后无需改 index.ui 即出现）。
+		var max_visible = (mb && typeof mb.max_visible === 'number' && mb.max_visible > 0)
+			? mb.max_visible : 4;
+		var visible = all_descs.slice(0, max_visible);
+		var overflow = all_descs.slice(max_visible);
+		var more_cfg = (mb && mb.more) || {};
+		var has_more = overflow.length > 0 || !!more_cfg.dataurl || !!more_cfg.items;
+		var items = visible.map(function(it){
 			return {name: it.name, label: it.label || it.name, icon: it.micon || '',
 					badge_url: it.badge_url || ''};
 		});
-		this.mobile_bar = new bricks.TabBar({items: items, badge_interval: mb.badge_interval || 60});
-		this._mobile_bar_descs = (mb && mb.items) || [];
+		var bar_opts = {items: items, badge_interval: mb.badge_interval || 60};
+		if (has_more){
+			bar_opts.more = {label: more_cfg.label || '更多', icon: more_cfg.micon || '⋯'};
+		}
+		this.mobile_bar = new bricks.TabBar(bar_opts);
+		// 底部栏可见 tab 的描述集合（open_tab 用）；溢出项也注册——
+		// 「更多」里选中后同样走 _mobile_bar_clicked 语义
+		this._mobile_bar_descs = visible.concat(overflow);
+		this._mobile_overflow_descs = overflow;
+		this._mobile_more_cfg = has_more ? more_cfg : null;
 		this.mobile_bar.bind('command', this._mobile_bar_clicked.bind(this));
+		if (has_more){
+			this.mobile_bar.bind('more', this._mobile_more_clicked.bind(this));
+		}
 		bricks.Body.add_widget(this.mobile_bar);
 		var self = this;
 		this._mobile_bar_apply = function(m){
@@ -102,6 +124,61 @@ bricks.TabPanel = class extends bricks.Layout {
 		};
 		bricks.on_mobile_mode(this._mobile_bar_apply);
 		this._mobile_bar_apply(bricks.is_mobile());
+	}
+	// 「更多」点击：静态溢出项 + more.dataurl 动态项（打开时实时拉，
+	// 已购产线购买后立即出现）→ MobileSheet 竖向菜单；选中 → open_tab。
+	async _mobile_more_clicked(){
+		var cfg = this._mobile_more_cfg || {};
+		var items = (this._mobile_overflow_descs || []).map(function(it){
+			return {name: it.name, label: it.label || it.name, icon: it.micon || '',
+					url: it.url, _tab: true};
+		});
+		// 声明式静态附加项（more.items）
+		var extra = cfg.items || [];
+		for (var i=0;i<extra.length;i++){
+			items.push({name: extra[i].name, label: extra[i].label || extra[i].name,
+						icon: extra[i].micon || extra[i].icon || '', url: extra[i].url, _tab: true});
+		}
+		// 动态项（如已购产线）：{items:[{name,label,icon,desc,url}]}
+		if (cfg.dataurl){
+			try {
+				var jc = new bricks.HttpJson();
+				var d = await jc.get(cfg.dataurl, {});
+				var dyn = (d && (d.items || d)) || [];
+				if (Array.isArray(dyn)){
+					for (var j=0;j<dyn.length;j++){
+						var it = dyn[j] || {};
+						items.push({name: it.name || ('dyn_' + j), label: it.label || it.name || '',
+									icon: it.icon || '', desc: it.desc || '',
+									url: it.url || '', popup: !!it.popup, _tab: !it.popup && !!it.url});
+					}
+				}
+			} catch(e){ console.log('mobile more dataurl error', e); }
+		}
+		var self = this;
+		var sheet = new bricks.MobileSheet({
+			title: cfg.title || '',
+			items: items,
+			selected: this.cur_tab_name,
+			empty_text: cfg.empty_text || '暂无更多功能'
+		});
+		// 注意：单个 select 监听，先注册后切换——动态项（产线页）不在
+		// _mobile_bar_descs 时 _mobile_bar_clicked 会查不到 desc 直接 return
+		// （两个监听器分先后会踩这个顺序坑，2026-09-08 写完即改）
+		sheet.bind('select', function(ev){
+			var it = ev.params;
+			if (!it || !it._tab || !it.url) return;   // popup 项已在 _row_clicked 内构建
+			var found = false;
+			for (var k=0;k<self._mobile_bar_descs.length;k++){
+				if (self._mobile_bar_descs[k].name === it.name){ found = true; break; }
+			}
+			if (!found){
+				self._mobile_bar_descs.push({name: it.name, label: it.label, url: it.url});
+			}
+			// 与平铺 tab 同语义：open_tab + 底部栏高亮态更新
+			self._mobile_bar_clicked({name: it.name});
+		});
+		sheet.open();
 	}
 	_mobile_bar_clicked(item){
 		// bind 事件经 dispatch 包装为 {params: 数据}（Toolbar/Menu 同约定）；

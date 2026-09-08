@@ -1068,6 +1068,91 @@ hr {
     box-sizing: border-box;
 }
 
+/* ══════════ MobileSheet 底部上滑竖向菜单（2026-09-08） ══════════
+   「更多」溢出 tab / 手机端功能按钮收缩共用。
+   蒙层盖全屏（含底部 TabBar 上方）；z-index 高于 TabBar(9000)。 */
+.tabbar-more { flex: 0 0 auto; }
+.sheet-mask {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    /* 高于 TabBar(9000)，低于 PopupWindow(app.new_zindex 从 10000 起)——
+       sheet 里选「功能」项弹出的窗口必须盖在蒙层之上可交互 */
+    z-index: 9500;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    /* VBox 基底是 flex column：主轴垂直，面板贴底用 justify-content
+       （align-items:flex-end 在 column 下会把面板挤到右侧，实测会翻车） */
+    justify-content: flex-end;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+.sheet-mask-open { opacity: 1; }
+.sheet-panel {
+    width: 100%;
+    flex: 0 0 auto;
+    max-height: 70vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--sage-bg, #ffffff);
+    border-radius: 16px 16px 0 0;
+    padding: 8px 0 calc(12px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -4px 24px rgba(15, 23, 42, 0.18);
+    transform: translateY(100%);
+    transition: transform 0.22s ease;
+    box-sizing: border-box;
+}
+.sheet-panel-open { transform: translateY(0); }
+[data-theme="dark"] .sheet-panel {
+    background: #0f172a;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.5);
+}
+.sheet-handle {
+    flex: 0 0 auto;
+    align-self: center;
+    height: 4px;
+    border-radius: 2px;
+    background: #cbd5e1;
+    margin: 4px auto 8px;
+}
+[data-theme="dark"] .sheet-handle { background: #475569; }
+.sheet-title {
+    font-size: 12px;
+    color: #94a3b8;
+    padding: 0 20px 6px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.sheet-empty {
+    font-size: 13px;
+    color: #94a3b8;
+    padding: 18px 20px;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+.sheet-item {
+    min-height: 48px;               /* 触控目标 >= 44px */
+    padding: 10px 20px !important;
+    box-sizing: border-box;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.12s ease;
+}
+.sheet-item:active { background: rgba(37, 99, 235, 0.06); }
+.sheet-item-active { background: rgba(37, 99, 235, 0.08); }
+.sheet-item-active .sheet-item-label { color: #2563eb !important; font-weight: 600; }
+[data-theme="dark"] .sheet-item:active { background: rgba(96, 165, 250, 0.10); }
+[data-theme="dark"] .sheet-item-active { background: rgba(96, 165, 250, 0.12); }
+[data-theme="dark"] .sheet-item-active .sheet-item-label { color: #60a5fa !important; }
+.sheet-item-icon { font-size: 18px; flex: 0 0 auto; width: 26px; text-align: center; }
+.sheet-item-label { font-size: 15px; color: #1e293b !important; line-height: 1.4; }
+[data-theme="dark"] .sheet-item-label { color: #e2e8f0 !important; }
+.sheet-item-desc { font-size: 12px; color: #94a3b8 !important; line-height: 1.3; }
+
 /* 胶囊切换条（ChipBar） */
 .chipbar {
     gap: 8px;
@@ -1112,7 +1197,13 @@ hr {
 /* ══════════ 手机视口全局规则（<=768px；平板按桌面处理） ══════════ */
 @media (max-width: 768px) {
     /* PopupWindow 全屏化：bricks 弹窗行内 width/height/left/top，用 !important 覆盖。
-     * 只针对 .popupwindow —— 普通 .popup（下拉菜单/小提示）保持锚定小窗。
+     * 只针对 .popupwindow —— 普通 .popup（下拉菜单/小提示）保持锚定小窗，
+     * 但同样钳制 max-height 不许超出可视屏（2026-09-08 用户报障：
+     * 弹出窗口/控件高度超出屏幕，要求高度=屏幕高）。
+     * 100vh 在手机浏览器是 large viewport（含地址栏遮挡区），可能大于可视高，
+     * 支持 dvh 的内核用 dvh（dynamic viewport，随地址栏收缩）；
+     * 不支持的（老微信 X5 等）由 popup.js _mobile_clamp 以 window.innerHeight
+     * 实测内联 important 覆盖兜底（JS 权威，CSS 只是首帧静态兜底）。
      * 底部让出 TabBar 高度：全屏弹窗不盖住底部标签栏（2026-09-08 用户要求），
      * 用户随时可点 Tab 离开弹窗页 */
     .popupwindow {
@@ -1124,6 +1215,24 @@ hr {
         top: 0 !important;
         border-radius: 0 !important;
         box-sizing: border-box;
+    }
+    /* 普通弹出控件（.popup：下拉/提示/锚定小窗）不许高出可视屏。
+     * :not(.popupwindow) —— PopupWindow 同时带两个类，它的高度由上面
+     * .popupwindow 规则钳制（要让出 TabBar），别被这里覆盖 */
+    .popup:not(.popupwindow) {
+        max-width: 100vw !important;
+        max-height: calc(100vh - env(safe-area-inset-bottom, 0px)) !important;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    @supports (height: 100dvh) {
+        .popupwindow {
+            height: calc(100dvh - 56px - env(safe-area-inset-bottom, 0px)) !important;
+            max-height: calc(100dvh - 56px - env(safe-area-inset-bottom, 0px)) !important;
+        }
+        .popup:not(.popupwindow) {
+            max-height: calc(100dvh - env(safe-area-inset-bottom, 0px)) !important;
+        }
     }
     /* 输入控件 16px：iOS Safari 对 <16px 输入框聚焦时自动放大页面 */
     .inputbox, .auto-textarea, textarea,

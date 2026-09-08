@@ -3,7 +3,9 @@
 // 提供：
 //   bricks.is_mobile()            — 当前是否手机视口（<=768px，平板按桌面）
 //   bricks.on_mobile_mode(fn)     — 视口模式变化监听（fn(is_mobile)）
-//   bricks.TabBar                 — 底部标签栏控件（手机专用，TabPanel mobile_bar 模式使用）
+//   bricks.TabBar                 — 底部标签栏控件（手机专用，TabPanel mobile_bar 模式使用；
+//                                   opts.more 时末尾追加「更多」格，点击派发 more 事件）
+//   bricks.MobileSheet            — 底部上滑竖向菜单（「更多」溢出项/功能按钮收缩用）
 //   bricks.ChipBar                — 横向胶囊切换条（dataurl 动态数据，select 事件带整条数据）
 
 var bricks = window.bricks || {};
@@ -99,6 +101,12 @@ bricks.TabBar = class extends bricks.HBox {
 		for (var i=0;i<this.bar_items.length;i++){
 			this._create_item(this.bar_items[i]);
 		}
+		// 「更多」格（2026-09-08）：opts.more = {label, icon}，固定占末位；
+		// 点击不走 command（不是 tab），派发 more 事件由宿主（TabPanel）弹 MobileSheet
+		this.more_desc = opts.more || null;
+		if (this.more_desc){
+			this._create_more(this.more_desc);
+		}
 		this._start_badge_polling(opts.badge_interval || 60);
 	}
 	_create_item(item){
@@ -120,6 +128,20 @@ bricks.TabBar = class extends bricks.HBox {
 		this.add_widget(cell);
 		this.bar_btns[item.name] = {cell: cell, icon: icon, label: label, badge: badge};
 	}
+	_create_more(m){
+		var cell = new bricks.VBox({css:'filler tabbar-item tabbar-more', gap:'1px', alignItems:'center'});
+		var icon = new bricks.Text({otext: m.icon || '⋯', i18n: true, css:'tabbar-icon', cfontsize:1.3});
+		var label = new bricks.Text({otext: m.label || '更多', i18n: true, css:'tabbar-label'});
+		cell.add_widget(icon);
+		cell.add_widget(label);
+		cell.dom_element.style.cursor = 'pointer';
+		var self = this;
+		cell.bind('click', function(){ self.dispatch('more', m); });
+		cell.dom_element.addEventListener('touchstart', function(){ cell.set_css('tabbar-item-press'); }, {passive:true});
+		cell.dom_element.addEventListener('touchend', function(){ cell.set_css('tabbar-item-press', true); }, {passive:true});
+		this.add_widget(cell);
+		this.more_btn = {cell: cell, icon: icon, label: label};
+	}
 	_clicked(item){
 		this.set_active(item.name);
 		this.dispatch('command', item);
@@ -131,6 +153,8 @@ bricks.TabBar = class extends bricks.HBox {
 			if (k === name) b.cell.set_css('tabbar-item-active');
 			else b.cell.set_css('tabbar-item-active', true);
 		}
+		// 「更多」格永远不高亮为选中（它不是 tab，选中态属于 sheet 里的项）
+		if (this.more_btn) this.more_btn.cell.set_css('tabbar-item-active', true);
 	}
 	set_badge(name, n){
 		var b = this.bar_btns[name];
@@ -175,6 +199,123 @@ bricks.TabBar = class extends bricks.HBox {
 	}
 }
 bricks.Factory.register('TabBar', bricks.TabBar);
+
+/* ══════════════════════════ MobileSheet ══════════════════════════
+   底部上滑竖向菜单（2026-09-08）。两个场景：
+   1. TabPanel mobile_bar 的「更多」溢出项（第 5 格起收进来，含 dataurl 动态项
+      如已购产线）—— select 后宿主 open_tab；
+   2. 手机端功能按钮收缩（agent_menus.dspy 桌面一排按钮 → 一个「⋯ 功能」按钮
+      + 本控件竖排），给会话区留最大空间 —— item.popup=true 时点击直接
+      widgetBuild urlwidget（服务端返回 PopupWindow 自开，与桌面按钮同链路）。
+   options: {
+       title: 顶部小标题（可空）
+       items: [{name, label, icon(emoji), desc(灰色小字), url, popup, active_tab, _raw}]
+       selected: 高亮项 name
+       empty_text: items 为空时的提示
+   }
+   events: select → item（派发后自动收起）
+   用法：var sh = new bricks.MobileSheet({...}); sh.bind('select', fn); sh.open();
+   同屏只保留一个实例（重复 open 自动收掉旧的）。
+*/
+bricks.MobileSheet = class extends bricks.VBox {
+	constructor(opts){
+		opts.width = '100%';
+		opts.height = '100%';
+		super(opts);
+		this.set_css('sheet-mask');
+		this.sheet_items = opts.items || [];
+		this._closed = false;
+		this.panel = new bricks.VBox({css:'sheet-panel', width:'100%', height:'auto'});
+		var handle = new bricks.VBox({css:'sheet-handle', width:'36px', height:'4px'});
+		this.panel.add_widget(handle);
+		if (opts.title){
+			this.panel.add_widget(new bricks.Text({text: opts.title, css:'sheet-title'}));
+		}
+		if (!this.sheet_items.length){
+			this.panel.add_widget(new bricks.Text({
+				text: opts.empty_text || '暂无内容', css:'sheet-empty'}));
+		}
+		for (var i=0;i<this.sheet_items.length;i++){
+			this._create_row(this.sheet_items[i], opts.selected);
+		}
+		this.add_widget(this.panel);
+		// 点蒙层收起；面板内点击不冒泡到蒙层
+		var self = this;
+		this.dom_element.addEventListener('click', function(e){
+			if (e.target === self.dom_element) self.close();
+		});
+		this.panel.dom_element.addEventListener('click', function(e){ e.stopPropagation(); });
+	}
+	_create_row(item, selected){
+		var row = new bricks.HBox({css:'sheet-item', width:'100%', height:'auto', gap:'12px', alignItems:'center'});
+		if (item.icon){
+			row.add_widget(new bricks.Text({text: item.icon, css:'sheet-item-icon'}));
+		}
+		var col = new bricks.VBox({css:'filler', gap:'2px'});
+		col.add_widget(new bricks.Text({text: item.label || item.name || '', css:'sheet-item-label'}));
+		if (item.desc){
+			col.add_widget(new bricks.Text({text: item.desc, css:'sheet-item-desc'}));
+		}
+		row.add_widget(col);
+		if (selected && item.name === selected){
+			row.set_css('sheet-item-active');
+		}
+		row.dom_element.style.cursor = 'pointer';
+		row.bind('click', this._row_clicked.bind(this, item));
+		this.panel.add_widget(row);
+	}
+	_row_clicked(item){
+		this.dispatch('select', item);
+		// item.popup + url：直接构建（服务端 dspy 返回 PopupWindow 自开自挂 Body，
+		// 与桌面功能按钮 actiontype=urlwidget 同一链路；非 Popup 结果忽略）。
+		// 先收起 sheet 再构建：PopupWindow 的 z-index 从 10000 起（app.new_zindex），
+		// sheet 蒙层 9500 —— 顺序无所谓，但收起后用户直接看到弹窗，无遮挡残影。
+		if (item.url && item.popup){
+			this.close();
+			try {
+				bricks.widgetBuild({"widgettype":"urlwidget","options":{"url":item.url}}, bricks.Body);
+			} catch(e){ console.log('MobileSheet popup build error', e); }
+			return;
+		}
+		this.close();
+	}
+	open(){
+		// 同屏单例：先收掉已开的 sheet
+		if (bricks.MobileSheet._cur && bricks.MobileSheet._cur !== this){
+			try { bricks.MobileSheet._cur.close(); } catch(e){}
+		}
+		bricks.MobileSheet._cur = this;
+		bricks.Body.add_widget(this);
+		// 强制回流后直接加 open 类触发过渡（不用 rAF：手机浏览器后台/快速
+		// 点击时 rAF 可能延迟合并帧 → 蒙层开着但面板不上滑的竞态）
+		void this.dom_element.offsetHeight;
+		this.set_css('sheet-mask-open');
+		this.panel.set_css('sheet-panel-open');
+	}
+	close(){
+		if (this._closed) return;
+		this._closed = true;
+		if (bricks.MobileSheet._cur === this) bricks.MobileSheet._cur = null;
+		this.set_css('sheet-mask-open', true);
+		this.panel.set_css('sheet-panel-open', true);
+		var self = this;
+		setTimeout(function(){ self._teardown(); }, 240);
+	}
+	// 基类 Widget 没有 destroy()（Popup 系才有）——自己实现摘除，
+	// 不能只靠 try{destroy()}（抛错后 DOM 残留 → 蒙层永远挡屏幕）
+	_teardown(){
+		try {
+			if (this.parent && this.parent.remove_widget){
+				this.parent.remove_widget(this);
+			} else if (this.dom_element && this.dom_element.parentNode){
+				this.dom_element.parentNode.removeChild(this.dom_element);
+			}
+		} catch(e){
+			try { this.dom_element.remove(); } catch(e2){}
+		}
+	}
+}
+bricks.Factory.register('MobileSheet', bricks.MobileSheet);
 
 /* ══════════════════════════ ChipBar ══════════════════════════
    横向滚动胶囊切换条。数据来自 dataurl（dspy 返回 {items:[...], selected:...}
