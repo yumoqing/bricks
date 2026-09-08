@@ -47,8 +47,11 @@ bricks.JsWidget = class {
 		//   mobile_opts: {margin:'0 8px 8px', padding:'4px', ...} — 手机视口下
 		//       覆盖对应行内样式键，桌面恢复 options 原值（无则清空行内）
 		// 由 bricks/mobile.js 的 on_mobile_mode 统一驱动，控件自身无脚本。
+		// 注意：Button 等子类构造在 super() 之后还会写行内 display（flex），
+		// 会覆盖此处同步设置的 none —— 故首次应用推迟到构造链结束后
+		// （schedule_once），模式切换时的 _notify 仍同步应用（构造早已完成）。
 		if (options.mobile_hidden || options.desktop_hidden || options.mobile_opts){
-			this._apply_visibility_mobile();
+			schedule_once(this._apply_visibility_mobile.bind(this), 0);
 			if (!bricks._mobile_adapt_widgets) bricks._mobile_adapt_widgets = [];
 			bricks._mobile_adapt_widgets.push(this);
 		}
