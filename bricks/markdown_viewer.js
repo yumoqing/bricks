@@ -65,6 +65,71 @@ bricks.MdWidget = class extends bricks.JsWidget {
 			links[i].href = '#';
 			links[i].onclick=this._build.bind(this, url);
 		}
+		/* 媒体下载按钮：必须在上面的链接处理循环【之后】注入——否则同源 <a download>
+		   会被循环改成 onclick=_build（把 mp4 当 markdown 加载，下载不了）。
+		   marked 原生透传渲染 img/video/audio，这里只追加下载入口，不动渲染。 */
+		this._add_media_download_buttons();
+	}
+	/* 给已渲染的 <img>/<video>/<audio> 各加一个下载按钮（2026-09-08 用户定夺：
+	   会话 agent 生成的媒体必须提供下载按钮）。下载走 ?download=1 →
+	   ahserver path_download 返回 Content-Disposition:attachment 触发浏览器下载。 */
+	_add_media_download_buttons(){
+		var host = location.origin;
+		var nodes = this.dom_element.querySelectorAll('img, video, audio');
+		for (var i=0; i<nodes.length; i++){
+			var el = nodes[i];
+			if (el.getAttribute('data-dl-bound')) continue;  // 幂等：已加过
+			el.setAttribute('data-dl-bound', '1');
+			/* 取媒体 URL：video/audio 可能用子 <source src> */
+			var src = el.currentSrc || el.src || '';
+			if (!src){
+				var so = el.querySelector('source');
+				if (so) src = so.src || so.getAttribute('src') || '';
+			}
+			if (!src) continue;
+			var href, is_data = src.indexOf('data:') === 0;
+			if (is_data){
+				href = src;  /* 内联 base64：直接用 download 属性 */
+			} else {
+				/* 同源媒体（/idfile 落地文件）加 ?download=1 强制附件下载；
+				   外链媒体保持原 URL（跨域 download 属性无效，靠浏览器行为） */
+				var sep = src.indexOf('?') >= 0 ? '&' : '?';
+				href = (src.indexOf(host) === 0 || src.charAt(0) === '/')
+					? src + sep + 'download=1' : src;
+			}
+			/* 文件名：URL 末段（去 query），data URL 用媒体类型兜底 */
+			var fname = '';
+			if (!is_data){
+				fname = decodeURIComponent(src.split('?')[0].split('/').pop() || '');
+			}
+			if (!fname){
+				fname = 'download_' + Date.now() + '.' + (el.tagName === 'IMG' ? 'png'
+					: el.tagName === 'VIDEO' ? 'mp4' : 'mp3');
+			}
+			var a = document.createElement('a');
+			a.href = href;
+			a.setAttribute('download', fname);
+			a.textContent = '⬇ 下载';
+			a.className = 'md-media-download';
+			a.style.cssText = 'display:inline-block;margin:4px 0;padding:2px 10px;'
+				+ 'font-size:12px;color:#fff;background:#2563eb;border-radius:6px;'
+				+ 'cursor:pointer;text-decoration:none;';
+			/* 同源链接已被上面循环处理过；本 <a> 是新建的，不会被再处理。
+			   显式置空 onclick 防冒泡到父级链接拦截。 */
+			a.onclick = function(e){ e.stopPropagation(); };
+			if (is_data || href.indexOf(host) === 0 || href.charAt(0) === '/'){
+				/* 同源/内联：a[download] 直接触发下载，不跳转 */
+			} else {
+				a.target = '_blank';
+				a.rel = 'noopener noreferrer';
+			}
+			/* 插在媒体元素之后（同一父容器内） */
+			if (el.nextSibling){
+				el.parentNode.insertBefore(a, el.nextSibling);
+			} else {
+				el.parentNode.appendChild(a);
+			}
+		}
 	}
 	getname(){
 		return this.name || 'mdtext';
