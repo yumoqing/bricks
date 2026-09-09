@@ -67,6 +67,21 @@ bricks.Popup = class extends bricks.VBox {
 		this.set_style('display', 'none');
 		bricks.Body.add_widget(this);
 		this.bind('click', this.bring_to_top.bind(this));
+		// 可视高度变化（转屏/软键盘弹出收起/桌面窗口缩进手机视口）时重钳弹窗高度。
+		// visualViewport 优先（软键盘会触发它的 resize，window.resize 不一定触发）。
+		// 无条件注册：构造时可能是桌面视口，之后缩窄进手机模式也要生效；
+		// _mobile_clamp 内部自带 is_mobile() 判断，桌面模式是空操作。
+		{
+			var vv = window.visualViewport;
+			var on_vv_resize = () => {
+				if (!this.opened || !this.dom_element || !this.dom_element.isConnected) return;
+				if (this._clamp_task) clearTimeout(this._clamp_task);
+				this._clamp_task = setTimeout(() => { this._clamp_task = null; this._mobile_clamp(); }, 100);
+			};
+			if (vv && vv.addEventListener) vv.addEventListener('resize', on_vv_resize);
+			window.addEventListener('resize', on_vv_resize);
+			this._vv_resize_bound = on_vv_resize;
+		}
 		if (this.auto_open){
 			this.open();
 		}
@@ -127,6 +142,7 @@ bricks.Popup = class extends bricks.VBox {
 		}
 		this.set_style('top', y + 'px');
 		this.set_style('left', x + 'px');
+		this._mobile_clamp();
 	}
 	setup_resizable(){
 		console.log('============= setup_resizable() called ================')
@@ -218,11 +234,13 @@ bricks.Popup = class extends bricks.VBox {
 		var rect, w, h, t, l;
 		if (this.opts.eventpos && this.opts.origin_event){
 			bricks.relocate_by_eventpos(this.opts.origin_event, this);
+			this._mobile_clamp();
 			return;
 		}
 		if (this.top && this.left){
 			this.set_style('top', this.top);
 			this.set_style('left', this.left);
+			this._mobile_clamp();
 			return;
 		}
 		rect = bricks.app.showRectage();
@@ -279,9 +297,52 @@ bricks.Popup = class extends bricks.VBox {
 		}	
 		this.set_style('top', t + 'px');
 		this.set_style('left', l + 'px');
+		this._mobile_clamp();
 		return {
 			top:t,
 			left:l
+		}
+	}
+	/* 手机端弹窗高度钳制（2026-09-08 用户报障：弹窗高度超出屏幕，要求=屏幕高）。
+	 * 根因：① positify_tl 用 body rect 高度算内联 px 高——手机上文档滚动后 body
+	 *        可高于可视屏，百分比换算随之超屏；② CSS 的 100vh 在手机浏览器是
+	 *        large viewport（含被地址栏/工具栏遮挡部分），大于 window.innerHeight。
+	 * 修法：手机视口下统一以 window.innerHeight（真实可视高）钳制：
+	 *   - PopupWindow（全屏语义）：高度恒等于可视高 - TabBar 实测高（CSS 里写死
+	 *     56px，这里用 offsetHeight 实测，更准），setProperty important 覆盖
+	 *     CSS !important，不依赖 dvh 的浏览器支持（微信 X5 等老内核无 dvh）；
+	 *   - 普通 Popup（下拉/小提示等锚定控件）：只在超出可视屏时钳高并回拉 top。
+	 * resize/键盘弹出（visualViewport resize）时对打开中的弹窗重钳。 */
+	_mobile_clamp(){
+		if (!bricks.is_mobile || !bricks.is_mobile()) return;
+		var el = this.dom_element;
+		if (!el || !el.isConnected) return;
+		var vh = window.innerHeight;
+		var vw = window.innerWidth;
+		var is_win = (this instanceof bricks.PopupWindow);
+		var reserve = 0;
+		if (is_win){
+			var tabbar = document.querySelector('.tabbar');
+			if (tabbar && tabbar.style.display !== 'none') reserve = tabbar.offsetHeight || 0;
+		}
+		var maxh = Math.max(vh - reserve, 100);
+		if (is_win || el.offsetHeight > maxh || this._mobile_clamped){
+			el.style.setProperty('height', maxh + 'px', 'important');
+			el.style.setProperty('max-height', maxh + 'px', 'important');
+			this._mobile_clamped = true;
+		}
+		if (el.offsetWidth > vw){
+			el.style.setProperty('width', vw + 'px', 'important');
+			el.style.setProperty('max-width', vw + 'px', 'important');
+		}
+		if (!is_win){
+			var h = el.offsetHeight;
+			var t = parseFloat(el.style.top);
+			if (isNaN(t)) t = 0;
+			if (t < 0) t = 0;
+			if (t + h > vh){
+				el.style.setProperty('top', Math.max(vh - h, 0) + 'px', 'important');
+			}
 		}
 	}
 			
@@ -332,6 +393,8 @@ bricks.Popup = class extends bricks.VBox {
 		this.moving_w.unbind('touchmove', this.moving.bind(this));
 		bricks.Body.unbind('mouseup', this.stop_moving.bind(this));
 		bricks.Body.unbind('touchend', this.stop_moving.bind(this));
+		// 手机端拖拽结束重钳：防止拖出可视屏底部（高度超屏回拉）
+		this._mobile_clamp();
 	}
 	click_outside(event){
 		if (event.target != this.dom_element){
@@ -391,6 +454,17 @@ bricks.Popup = class extends bricks.VBox {
 	destroy(){
 		if (this.opened){
 			this.dismiss();
+		}
+		// 清掉手机视口 resize 监听，防止弹窗销毁后监听器泄漏
+		if (this._vv_resize_bound){
+			var vv = window.visualViewport;
+			if (vv && vv.removeEventListener) vv.removeEventListener('resize', this._vv_resize_bound);
+			window.removeEventListener('resize', this._vv_resize_bound);
+			this._vv_resize_bound = null;
+		}
+		if (this._clamp_task){
+			clearTimeout(this._clamp_task);
+			this._clamp_task = null;
 		}
 		if (this.parent){
 			this.parent.remove_widget(this);
