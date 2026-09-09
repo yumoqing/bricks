@@ -336,12 +336,20 @@ bricks.Popup = class extends bricks.VBox {
 			el.style.setProperty('max-width', vw + 'px', 'important');
 		}
 		if (!is_win){
+			// 普通 Popup 定位钳制：确保整个弹窗落在可视屏内。
+			// 高度被钳到≈铺满可视屏时，强制 top=0（否则居中的负 top 会把
+			// 顶端切出屏外上方）；否则把 top 钳进 [0, vh-h] 区间。
 			var h = el.offsetHeight;
-			var t = parseFloat(el.style.top);
-			if (isNaN(t)) t = 0;
-			if (t < 0) t = 0;
-			if (t + h > vh){
-				el.style.setProperty('top', Math.max(vh - h, 0) + 'px', 'important');
+			var raw_t = parseFloat(el.style.top);
+			if (isNaN(raw_t)) raw_t = 0;
+			var t;
+			if (h >= vh){
+				t = 0;
+			} else {
+				t = Math.min(Math.max(raw_t, 0), vh - h);
+			}
+			if (t !== raw_t){
+				el.style.setProperty('top', t + 'px', 'important');
 			}
 		}
 	}
