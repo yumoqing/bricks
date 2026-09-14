@@ -31,7 +31,10 @@ bricks.I18n = class {
 		var msgs = this.lang_msgs[this.lang].msgs || {};
 		mt = msgs[txt] || txt;
 		if (obj instanceof Object){
-			outt = obj_fmtstr(obj, mt);
+			// 🔴 必须用 bricks.obj_fmtstr（该函数定义在 utils.js 的 bricks 命名空间下，
+			// 裸 obj_fmtstr 是 ReferenceError）。此前这行从未被执行（无调用方传 obj），
+			// 直到 i18n_params 动态文本特性（widget.js 传 params）才暴露此 bug。
+			outt = bricks.obj_fmtstr(obj, mt);
 		} else {
 			outt = mt;
 		}
