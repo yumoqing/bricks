@@ -467,9 +467,14 @@ bricks.TextBase = class extends bricks.JsWidget {
 		if (this.opts.hasOwnProperty('i18n')){
 			this.i18n = this.opts.i18n;
 		}
+		if (this.opts.hasOwnProperty('i18n_params')){
+			// 动态文本国际化：otext 用 ${name} 占位，i18n_params 提供替换值
+			// 切语言时 set_i18n_text→set_otext 会带 i18n_params 重新 obj_fmtstr
+			this.i18n_params = this.opts.i18n_params;
+		}
 		this.set_style('flexShrink', '0'); 
 		if (this.i18n && this.otext) {
-			this.text = bricks.app.i18n._(this.otext);
+			this.text = bricks.app.i18n._(this.otext, this.i18n_params);
 		}
 		this.dom_element.innerHTML = this.text || '';
 	}
@@ -477,7 +482,7 @@ bricks.TextBase = class extends bricks.JsWidget {
 		var text;
 		this.otext = otxt || '';
 		if (this.i18n) {
-			text = bricks.app.i18n._(this.otext);
+			text = bricks.app.i18n._(this.otext, this.i18n_params);
 		} else {
 			text = this.otext;
 		}
