@@ -1215,6 +1215,11 @@ hr {
         top: 0 !important;
         border-radius: 0 !important;
         box-sizing: border-box;
+        /* 2026-09-16 用户报障「手机待办详情点输入域弹窗即关」根因修复：
+         * .popup 基类是 position:absolute——软键盘弹出收缩视口后文档可滚，
+         * 浏览器 focus 自动滚动把 absolute 弹窗整块滚出可视区（视觉=弹窗没了），
+         * 部分内嵌浏览器 resize/clamp 补偿不来。fixed 钉死视口，文档怎么滚都不动。 */
+        position: fixed !important;
     }
     /* 普通弹出控件（.popup：下拉/提示/锚定小窗）不许高出可视屏。
      * :not(.popupwindow) —— PopupWindow 同时带两个类，它的高度由上面

@@ -55,6 +55,20 @@ bricks.Popup = class extends bricks.VBox {
 		if (this.auto_dismiss){
 			bricks.Body.bind('click', this.click_outside.bind(this));
 		}
+		// 2026-09-16 手机「点输入域弹窗即关」根因修复（安全网，CSS fixed 为主修）：
+		// 软键盘弹出收缩视口后文档变可滚，浏览器 focus 自动滚动会把 absolute
+		// 弹窗整块滚出可视区（视觉=弹窗没了/键盘瞬关）。focusin 时若顶层
+		// PopupWindow 开着，立即把文档滚动归零。全局只装一次。
+		if (!bricks.Popup._focus_scroll_guard){
+			bricks.Popup._focus_scroll_guard = true;
+			document.addEventListener('focusin', function(){
+				if (!bricks.is_mobile || !bricks.is_mobile()) return;
+				var top = bricks.app.toppopup;
+				if (top && top.opened && top instanceof bricks.PopupWindow && window.scrollY){
+					window.scrollTo(0, 0);
+				}
+			}, true);
+		}
 		this.target_w = bricks.Body;
 		this.moving_status = false;
 		if (this.movable){
@@ -330,6 +344,11 @@ bricks.Popup = class extends bricks.VBox {
 			el.style.setProperty('height', maxh + 'px', 'important');
 			el.style.setProperty('max-height', maxh + 'px', 'important');
 			this._mobile_clamped = true;
+		}
+		// 2026-09-16：全屏弹窗重钳时把文档滚动归零——软键盘收缩视口后浏览器
+		// focus 自动滚动可能已把 absolute 弹窗滚出可视区（点输入域"弹窗即关"）。
+		if (is_win && window.scrollY){
+			window.scrollTo(0, 0);
 		}
 		if (el.offsetWidth > vw){
 			el.style.setProperty('width', vw + 'px', 'important');
