@@ -1057,6 +1057,36 @@ bricks.UiText =class extends bricks.UiType {
 		var v = this.opts.value || this.opts.defaultvalue||'';
 		this.setValue(v);
 	}
+	/**
+	 * 在当前光标位置插入文本（有选区则替换选区），返回插入后的光标位置。
+	 * 2026-09-17 为 AgentIO「插入敏感信息占位符」新增。
+	 *
+	 * 两个时序坑（照抄 handle_enter/handle_tab_indent 的既有处理）：
+	 * - 程序直接改 dom_element.value **不触发 input 事件** → set_value_from_input
+	 *   不会跑，必须手动同步 this.value，否则外层 getValue() 读到旧值；
+	 * - focus() 后浏览器可能重置 selectionStart → 用 schedule_once 二次设置光标
+	 *   （与 handle_enter 同款做法，0.5ms 后重设）。
+	 */
+	insertAtCursor(text){
+		text = (text === undefined || text === null) ? '' : String(text);
+		var editor = this.dom_element;
+		if (! editor) return;
+		var value = editor.value || '';
+		var start = (typeof editor.selectionStart === 'number') ? editor.selectionStart : value.length;
+		var end = (typeof editor.selectionEnd === 'number') ? editor.selectionEnd : start;
+		editor.value = value.substring(0, start) + text + value.substring(end);
+		this.value = editor.value;
+		var pos = start + text.length;
+		editor.selectionStart = editor.selectionEnd = pos;
+		editor.focus();
+		this.handleInput();   // 高度自适应（textarea auto-resize）
+		schedule_once(this.set_editor_focus.bind(this, editor, pos), 0.5);
+		// 不 dispatch('changed')：与 handle_enter / handle_tab_indent 保持一致。
+		// UiText 也用于 Form，程序化插入后多发一次 changed 会触发 Form 的脏值/校验
+		// 联动（意外副作用）；取值路径 getValue()→resultValue() 直接读 dom_element.value，
+		// 上面已同步 this.value，外层（AgentInput.input_finished）能拿到最新文本。
+		return pos;
+	}
 	key_handle(e){
 		switch(e.key){
 			case 'Tab':

@@ -56,10 +56,24 @@ bricks.AgentInput = class extends bricks.VBox {
         });
         inputw.bind('click', this.input_finished.bind(this));
 
-        // button row: [+add] [model_selector] [filler] [submit]
+        // secret picker button (2026-09-17) — 仅在宿主提供 secret_dataurl 时渲染，
+        // 未配置的宿主/应用完全看不到这个图标（bricks 通用性：不硬编码宿主路径）
+        var secretw = null;
+        if (opts.secret_dataurl) {
+            secretw = new bricks.Svg({
+                cwidth: 1.5, cheight: 1.5,
+                url: opts.secret_url || bricks_resource('imgs/secret_key.svg'),
+                // tip 由 widget.js 统一做 i18n._() 包装，这里传原始 key（勿预翻译，会二次包装）
+                tip: opts.secret_tip || 'Insert secret'
+            });
+            secretw.bind('click', this.open_secret_picker.bind(this));
+        }
+
+        // button row: [+add] [model_selector] [🔑secret?] [filler] [submit]
         var hbox = new bricks.HBox({cheight: 1.5, gap: '4px', alignItems: 'center'});
         hbox.add_widget(addfilew);
         hbox.add_widget(this.model_selector);
+        if (secretw) hbox.add_widget(secretw);
         hbox.add_widget(new bricks.VBox({css: 'filler'}));
         hbox.add_widget(inputw);
 
@@ -120,6 +134,125 @@ bricks.AgentInput = class extends bricks.VBox {
 
     add_file() {
         this.inputfilew.show();
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // 敏感信息插入（2026-09-17）
+    //
+    // 通用性约束：bricks 是多应用共用框架，**不得硬编码任何宿主的路径或占位符格式**
+    // （对齐 model_dataurl 的既有设计）。宿主通过 opts 注入：
+    //   secret_dataurl   — 列表数据源（后端只返回元数据，绝不返回值本身）
+    //   secret_params    — 附加查询参数（如 session_id/pipeline_id）
+    //   secret_format    — 占位符格式，{name} 为替换位（如 '@@sec:{name}@@'）
+    //   secret_title     — 弹窗标题
+    // 未传 secret_dataurl 时钥匙图标根本不渲染 → 其他应用零影响。
+    // ══════════════════════════════════════════════════════════════
+    async open_secret_picker() {
+        if (!this.opts.secret_dataurl) return;
+        if (this._secret_win) {           // 防重复弹窗
+            try { this._secret_win.open(); } catch (e) {}
+            return;
+        }
+        var self = this;
+        var win = new bricks.PopupWindow({
+            title: this.opts.secret_title || bricks.app.i18n._('Secrets'),
+            auto_open: true,
+            width: '460px',
+            height: '420px',
+            archor: 'cc'
+        });
+        this._secret_win = win;
+
+        var body = new bricks.VBox({width: '100%', height: '100%', gap: '4px'});
+        win.content_w.add_widget(body);
+
+        var tip = new bricks.Text({
+            text: bricks.app.i18n._(
+                'Click an item to insert a placeholder at the cursor. The real value is never shown.'),
+            css: 'secret-picker-tip',
+            wrap: true, width: '100%'
+        });
+        body.add_widget(tip);
+
+        var listw = new bricks.VScrollPanel({width: '100%', height: '100%'});
+        body.add_widget(listw);
+        var rows = new bricks.VBox({width: '100%', gap: '2px'});
+        listw.add_widget(rows);
+
+        var loading = new bricks.Text({text: '…', width: '100%'});
+        rows.add_widget(loading);
+
+        try {
+            var jc = new bricks.HttpJson();
+            var params = bricks.extend({}, this.opts.secret_params || {});
+            var data = await jc.httpcall(this.opts.secret_dataurl,
+                                         {method: 'GET', params: params});
+            rows.clear_widgets();
+            var items = (data && (data.secrets || data.rows || data.data)) || [];
+            if (!items.length) {
+                rows.add_widget(new bricks.Text({
+                    text: bricks.app.i18n._('No secrets saved yet.'),
+                    width: '100%', wrap: true
+                }));
+            }
+            items.forEach(function (it) {
+                var name = it.name || '';
+                if (!name) return;
+                var row = new bricks.HBox({width: '100%', gap: '6px', alignItems: 'center'});
+                row.set_css('secret-picker-row');
+                // 主行：名称（加粗）+ 类型徽标
+                var label = new bricks.Text({
+                    text: (it.label && it.label !== name) ? (name + '  ·  ' + it.label) : name,
+                    cfontsize: 0.9, width: 'auto'
+                });
+                row.add_widget(label);
+                row.add_widget(new bricks.VBox({css: 'filler'}));
+                if (it.secret_type) {
+                    row.add_widget(new bricks.Text({text: it.secret_type, cfontsize: 0.75, css: 'secret-type-tag'}));
+                }
+                rows.add_widget(row);
+                // 元数据行：前缀/长度/用过几次——够人类辨认是哪个凭据，但拼不出可用值
+                var meta = [];
+                if (it.prefix_hint) meta.push('prefix ' + it.prefix_hint);
+                if (it.length_hint) meta.push('len ' + it.length_hint);
+                if (it.use_count) meta.push('used ' + it.use_count + 'x');
+                if (it.remark) meta.push(it.remark);
+                if (meta.length) {
+                    rows.add_widget(new bricks.Text({
+                        text: meta.join('  ·  '), cfontsize: 0.72, css: 'secret-picker-meta', width: '100%'
+                    }));
+                }
+                row.bind('click', function () {
+                    self.insert_secret_placeholder(name);
+                });
+            });
+        } catch (e) {
+            rows.clear_widgets();
+            rows.add_widget(new bricks.Text({
+                text: bricks.app.i18n._('Failed to load secrets: ') + String(e).slice(0, 120),
+                css: 'resp-error', width: '100%', wrap: true
+            }));
+        }
+        // 弹窗关闭/最小化后清引用（Popup 的事件是 'dismissed'，无 'closed'；
+        // X 按钮走 destroy() → dismiss() 同样触发）——下次打开重新拉最新列表
+        win.bind('dismissed', function () { self._secret_win = null; });
+    }
+
+    insert_secret_placeholder(name) {
+        var fmt = this.opts.secret_format || '@@sec:{name}@@';
+        var text = String(fmt).split('{name}').join(name);
+        if (this.textw && this.textw.insertAtCursor) {
+            this.textw.insertAtCursor(text);
+        } else {
+            // UiText 不支持时的降级：追加到末尾（不静默失败）
+            var cur = (this.textw && this.textw.dom_element) ? (this.textw.dom_element.value || '') : '';
+            this.textw.setValue(cur + text);
+        }
+        if (this._secret_win) {
+            // PopupWindow 无 close()——正确 API 是 dismiss()（隐藏并 dispatch 'dismissed'）
+            try { this._secret_win.dismiss(); } catch (e) {}
+            this._secret_win = null;
+        }
     }
 
     // 重设模型下拉数据源（2026-09-07 移动端切产线用）：销毁重建 UiCode，

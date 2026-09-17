@@ -340,7 +340,7 @@ bricks.AgentIO = class extends bricks.VBox {
 			width: '100%',
 			css: 'filler'
 		});
-		this.inputw = new bricks.AgentInput({model_dataurl:this.opts.model_dataurl,model_cwidth:this.opts.model_cwidth,model_params:this.opts.model_params,placeholder:this.opts.placeholder});
+		this.inputw = new bricks.AgentInput({model_dataurl:this.opts.model_dataurl,model_cwidth:this.opts.model_cwidth,model_params:this.opts.model_params,placeholder:this.opts.placeholder,secret_dataurl:this.opts.secret_dataurl,secret_params:this.opts.secret_params,secret_format:this.opts.secret_format,secret_title:this.opts.secret_title,secret_url:this.opts.secret_url,secret_tip:this.opts.secret_tip});
 		this.inputw.bind('inputed', this.user_inputed.bind(this));
 		this.add_widget(this.msg_box);
 		this.add_widget(this.inputw);
