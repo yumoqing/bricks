@@ -12,7 +12,9 @@ bricks.AgentInput = class extends bricks.VBox {
         // shell 启动时设一次（{secret_dataurl, secret_format, secret_title, secret_tip}），
         // 全站所有 AgentIO 自动获得钥匙图标——不再要求每个产线 .ui 逐个复制粘贴
         // （实测漏配：bidding/opportunity/platform 三入口无钥匙）。显式 opts 优先。
-        var _sd = (bricks.app && bricks.app.secret_defaults) || window.__SECRET_DEFAULTS || {};
+        var _sd = (bricks.app && bricks.app.secret_defaults)
+            || (bricks.app && bricks.app.opts && bricks.app.opts.secret_defaults)
+            || window.__SECRET_DEFAULTS || {};
         for (var _k in _sd) {
             if (opts[_k] === undefined) opts[_k] = _sd[_k];
         }
