@@ -665,6 +665,7 @@ hr {
 	--bg-side: #f8fafc;      /* 侧栏容器底（菜单项未覆盖区） */
 	--bg-page: #f1f5f9;      /* 页面/内容区底 */
 	--surface-card: #ffffff; /* 卡片表面 */
+	--line: #e2e8f0;         /* 分隔线/边框 */
 }
 html[data-theme="dark"] {
 	--ink-0: #f1f5f9;
@@ -674,6 +675,7 @@ html[data-theme="dark"] {
 	--bg-side: #0F172A;
 	--bg-page: #0F172A;
 	--surface-card: #1E293B;
+	--line: #334155;
 }
 
 /* 菜单分组展开指示箭头（2026-09-18 用户要求分风格）：颜色跟 --ink-3 双主题，
@@ -781,6 +783,20 @@ html[data-theme="dark"] {
 }
 [data-theme="dark"] .toolbar-button-active {
 	background-color: #334155;
+}
+/* TabPanel 的 tab 按钮（Toolbar prefix=scrollpanel，2026-09-18 暗色治理）：
+   浏览器默认按钮底色在暗主题下是亮块，必须显式跟主题表面。
+   未选中按钮无基类（Toolbar 只给 active 加 prefix-button-active），
+   故用 .tabpanel 作用域内的 button 兜底 */
+[data-theme="dark"] .tabpanel button {
+	background-color: var(--surface-card);
+	color: #CBD5E1;
+	border: 1px solid #334155;
+}
+[data-theme="dark"] .tabpanel button.selected,
+[data-theme="dark"] .tabpanel button.scrollpanel-button-active {
+	background-color: #334155;
+	color: #F1F5F9;
 }
 
 [data-theme="dark"] .tabpanel {
