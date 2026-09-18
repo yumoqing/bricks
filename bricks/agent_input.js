@@ -8,6 +8,14 @@ bricks.AgentInput = class extends bricks.VBox {
         opts.width = '100%';
         // 默认内边距，避免子控件（输入框/模型选择器/按钮）贴边；可用 opts.padding 覆盖
         if (opts.padding === undefined) opts.padding = '8px 12px';
+        // 宿主级 secret 默认（2026-09-18 统一化）：bricks.app.secret_defaults 由宿主
+        // shell 启动时设一次（{secret_dataurl, secret_format, secret_title, secret_tip}），
+        // 全站所有 AgentIO 自动获得钥匙图标——不再要求每个产线 .ui 逐个复制粘贴
+        // （实测漏配：bidding/opportunity/platform 三入口无钥匙）。显式 opts 优先。
+        var _sd = (bricks.app && bricks.app.secret_defaults) || window.__SECRET_DEFAULTS || {};
+        for (var _k in _sd) {
+            if (opts[_k] === undefined) opts[_k] = _sd[_k];
+        }
         super(opts);
 
         // file upload
