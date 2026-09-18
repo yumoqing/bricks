@@ -662,12 +662,31 @@ hr {
 	--ink-1: #1e293b;  /* 主正文 */
 	--ink-2: #334155;  /* 次正文 */
 	--ink-3: #475569;  /* 弱化说明 */
+	--bg-side: #f8fafc;      /* 侧栏容器底（菜单项未覆盖区） */
+	--bg-page: #f1f5f9;      /* 页面/内容区底 */
+	--surface-card: #ffffff; /* 卡片表面 */
 }
 html[data-theme="dark"] {
 	--ink-0: #f1f5f9;
 	--ink-1: #e2e8f0;
 	--ink-2: #cbd5e1;
 	--ink-3: #94a3b8;
+	--bg-side: #0F172A;
+	--bg-page: #0F172A;
+	--surface-card: #1E293B;
+}
+
+/* 菜单分组展开指示箭头（2026-09-18 用户要求分风格）：颜色跟 --ink-3 双主题，
+   展开态旋转 90°。menu.js 给分组项加 .menu-group / 展开时加 .menu-group-open */
+.menu-group::after {
+	content: "▸";
+	color: var(--ink-3);
+	margin-left: 6px;
+	transition: transform .15s ease;
+	display: inline-block;
+}
+.menu-group.menu-group-open::after {
+	transform: rotate(90deg);
 }
 
 [data-theme="dark"] body,

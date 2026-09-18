@@ -135,6 +135,9 @@ bricks.Menu = class extends bricks.VScrollPanel {
 				itw.user_data = item;
 				itw.add_widget(subw);
 				itw.add_widget(w1);
+				// 分组展开指示（2026-09-18 用户要求分风格）：分组行加 .menu-group，
+				// 展开/收起时同步 .menu-group-open（CSS ::after 箭头跟主题色旋转）
+				subw.dom_element.classList.add('menu-group');
 				if (cnt < 4){
 					this.create_children(itw, cnt+1);
 				}
@@ -197,6 +200,10 @@ bricks.Menu = class extends bricks.VScrollPanel {
 	}
 	items_toggle_hide(w, event){
 		w.toggle_hide();
+		// 同步分组箭头展开态（.menu-group-open 由 CSS 旋转 ::after 箭头）
+		var row = event && event.target && event.target.closest
+			? event.target.closest('.menu-group') : null;
+		if (row) row.classList.toggle('menu-group-open', w.dom_element.style.display !== 'none');
 		event.stopPropagation();
 	}
 	create_menuitem(item){
