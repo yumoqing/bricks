@@ -655,6 +655,21 @@ hr {
 }
 
 /* ========== Dark Theme (Sage Shell) ========== */
+/* 主题感知文字色变量（2026-09-17 暗色对比度治理）：.ui/.dspy 里禁止硬编码字体色，
+   用 var(--ink-N) 跟随双主题。亮色=slate 深阶，暗色=slate 浅阶（与 body/card 规则同族）。 */
+:root, html:not([data-theme="dark"]) {
+	--ink-0: #0f172a;  /* 最强正文/标题 */
+	--ink-1: #1e293b;  /* 主正文 */
+	--ink-2: #334155;  /* 次正文 */
+	--ink-3: #475569;  /* 弱化说明 */
+}
+html[data-theme="dark"] {
+	--ink-0: #f1f5f9;
+	--ink-1: #e2e8f0;
+	--ink-2: #cbd5e1;
+	--ink-3: #94a3b8;
+}
+
 [data-theme="dark"] body,
 [data-theme="dark"] {
 	color: #CBD5E1;
