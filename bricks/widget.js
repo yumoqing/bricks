@@ -507,7 +507,9 @@ bricks.TextBase = class extends bricks.JsWidget {
 bricks.Text = class extends bricks.TextBase {
 	constructor(opts){
 		super(opts);
-		this.cfontsize = 1;
+		// cfontsize opt-in（2026-09-18 框架缺陷修复）：此前硬写 1 使 opts.cfontsize
+		// 全被忽略（.ui 写了不生效，实测字号恒 20px）；传了才用，默认 1 不影响存量
+		this.cfontsize = opts.cfontsize || 1;
 		this.charsize_sizing();
 	}
 }
