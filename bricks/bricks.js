@@ -227,6 +227,13 @@ bricks.widgetBuild = async function(desc, widget, data){
 	}
 	var options = desc.options || {};
 	options.baseURI = base_url;
+	// 宿主级 secret 默认注册（2026-09-18 统一化）：任何 widget 的 options 带
+	// secret_defaults（shell root 带）→ 登记到 bricks.app.secret_defaults，
+	// 此后全站 AgentIO 构造时自动合并（钥匙图标不再逐产线 .ui 配置）。
+	if (options.secret_defaults) {
+		if (bricks.app) bricks.app.secret_defaults = options.secret_defaults;
+		window.__SECRET_DEFAULTS = options.secret_defaults;
+	}
 	let w = new klass(options);
 	if (! w){
 		console.log('w is null');
