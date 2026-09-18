@@ -691,6 +691,31 @@ html[data-theme="dark"] {
 	transform: rotate(90deg);
 }
 
+/* 侧栏折叠图标主题感知（2026-09-18 用户要求前后色分风格）：
+   glyph 文本隐藏，改画汉堡线 + 主题感知底色 chip——
+   亮色=浅底(#fff)+深线(--ink-1)，暗色=深底(#1E293B)+浅线(--ink-0)，
+   顶栏恒深色下两主题都高对比；不再靠 JS 换字符 */
+.sidebar-toggle {
+	color: transparent !important;
+	position: relative;
+	background-color: var(--surface-card) !important;
+	border-radius: 6px !important;
+	border: 1px solid var(--line) !important;
+}
+.sidebar-toggle::before,
+.sidebar-toggle::after {
+	content: "";
+	position: absolute;
+	left: 22%;
+	right: 22%;
+	height: 2px;
+	border-radius: 1px;
+	background-color: var(--ink-1);
+	transition: background-color .2s ease;
+}
+.sidebar-toggle::before { top: 32%; }
+.sidebar-toggle::after { top: 60%; }
+
 [data-theme="dark"] body,
 [data-theme="dark"] {
 	color: #CBD5E1;
