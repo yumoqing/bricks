@@ -14,6 +14,7 @@ SOURCES=" page_data_loader.js factory.js uitypesdef.js utils.js uitype.js \
 	keypress.js asr.js webspeech.js countdown.js progressbar.js \
 	qaframe.js svg.js videoplayer.js scatter.js radar.js kline.js \
 	heatmap.js map.js qr.js textfiles.js agent_input.js agent.js api_doc.js flipcard.js carousel.js draggable.js resourcebrowser.js inherit.js engine.js scene3d.js code_editor.js mobile.js "
+mkdir -p ../dist
 echo ${SOURCES}
 cat ${SOURCES} > ../dist/bricks.js
 # uglifyjs --compress --mangle -- ../dist/bricks.js > ../dist/bricks.min.js
