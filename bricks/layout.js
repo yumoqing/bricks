@@ -348,6 +348,24 @@ bricks.RefreshWidget = class extends bricks.VBox {
 		this.stopped = true;
 		bricks.live_widgets.unregister(this);
 	}
+	// stop_refresh 生效（项目不再进行中）时，连同【本面板】内其它实时控件一起停：
+	// 表头 RefreshWidget 已停，但同一面板里的任务树 Tree 自带 refresh_seconds 轮询，
+	// 不停它 →「项目跑完不再刷新」不成立。面板根取 this.dom_element.parentElement
+	// （表头与树同为该面板 VBox 的子节点）；stop_all(root) 按 root.contains(...) 作用域，
+	// 只影响本面板（同页多会话 tab 不互扰）。
+	// 防御：dom_element/parentElement 缺失、live_widgets.stop_all 不存在时静默跳过（不得抛）。
+	stop_panel_widgets(){
+		try {
+			var lw = bricks.live_widgets;
+			if (!lw || typeof lw.stop_all !== 'function'){ return; }
+			var el = this.dom_element;
+			if (!el || !el.parentElement){ return; }
+			lw.stop_all(el.parentElement);
+		} catch(e){
+			// 停其它实时控件是「顺带」：任何异常都不许影响本控件已渲染的最终状态
+			console.log('stop_panel_widgets skipped', e);
+		}
+	}
 	// 停掉已登记的实时面板（只影响 live_panel，不影响页面其它 RefreshWidget）
 	// 可选 root 作用域：传 root 时只停 DOM 在该 root 内的面板（按会话作用域）
 	// —— 同页多会话 tab 时，B 会话发消息不会误停 A 会话正在看的实时面板；
@@ -390,7 +408,9 @@ bricks.RefreshWidget = class extends bricks.VBox {
 		}
 		if (stop_refresh){
 			// 项目不再进行中：停在刚渲染的最终状态上，不再轮询（也不闪回）。
+			// 并同停本面板内其它实时控件（如任务树 Tree），否则它仍会每 5s 拉。
 			this.stop();
+			this.stop_panel_widgets();
 			return;
 		}
 		if (this.is_in_dom() && !this.stopped){
