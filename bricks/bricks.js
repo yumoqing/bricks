@@ -185,8 +185,22 @@ bricks.apply_data = function(desc, data){
 	if (bricks.is_empty(data)){
 		return desc;
 	}
+	// desc 是 JSON 模板：safe_json_stringify(desc) 后靠 ${key} 插值，再 JSON.parse。
+	// 插值值必须能安全嵌进 JSON 字符串——值里含 " / \ / 换行 / 控制符时若不转义，
+	// JSON.parse 会抛（抛点在 TreeNode.create_node_content，构造器未 await →
+	// 该节点标题静默消失，只剩三角+图标，无日志）。
+	// 只对「字符串型」值做 JSON 字符串转义（JSON.stringify 后去掉首尾引号）；
+	// 非字符串值（数字/bool/对象）原样传——模板里 ${n} 常在引号外当数字用，行为与改前一致。
+	// 注意：obj_fmtstr 本体不改，因为纯文本模板（非 JSON）也直接调它，
+	// 在那里统一转义会把文本模板里的换行/引号变成字面 \n / \"。
+	var safe = {};
+	for (var k in data){
+		if (!Object.prototype.hasOwnProperty.call(data, k)){ continue; }
+		var v = data[k];
+		safe[k] = (typeof v === 'string') ? JSON.stringify(v).slice(1, -1) : v;
+	}
 	var tmpl = bricks.safe_json_stringify(desc);
-	var s = bricks.obj_fmtstr(data, tmpl);
+	var s = bricks.obj_fmtstr(safe, tmpl);
 	return JSON.parse(s);
 }
 

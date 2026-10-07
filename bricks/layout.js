@@ -358,19 +358,40 @@ bricks.RefreshWidget = class extends bricks.VBox {
 	}
 	async show_widget(){
 		if (this.stopped){ return; }
-		var desc = {
-			widgettype: "urlwidget",
-			options: {
-				params: this.opts.params,
-				method: this.opts.method,
-				url: this.opts.url
-			}
-		};
-		var w = await bricks.widgetBuild(desc, this);
+		// 直接拉取端点响应（与 Tree.get_children_data 对称）：端点可返回包装体
+		// {"widget": <widget desc>, "stop_refresh": bool}——判据是【顶层有 widget 键】
+		// （不要与「widget 本身就是 {widgettype:...}」混淆）。有 widget 键 → 渲染其中的
+		// widget；stop_refresh 为真 → 渲染完再 this.stop()（停在自己的最终状态上，不闪回）。
+		// 返回普通 widget desc（无 widget 键）→ 与改前逐行等价：旧路径 widgetBuild(urlwidget)
+		// 内部就是同款 absurl+httpcall，并把返回 widget 的 options.baseURI 设为解析后的 url，
+		// 故这里显式以 {baseURI: url} 作父上下文还原该 base（widgetBuild 只读父的 baseURI）。
+		var url = bricks.absurl(this.opts.url, this);
+		var jc = new bricks.HttpJson();
+		var resp = await jc.httpcall(url, {
+			"method": this.opts.method || 'GET',
+			"params": this.opts.params || {}
+		});
+		if (this.stopped){ return; }
+		var wdesc = resp;
+		var stop_refresh = false;
+		if (resp && typeof resp === 'object' && !Array.isArray(resp)
+				&& Object.prototype.hasOwnProperty.call(resp, 'widget')){
+			wdesc = resp.widget;
+			stop_refresh = !!resp.stop_refresh;
+		}
+		var w = null;
+		if (wdesc){
+			w = await bricks.widgetBuild(wdesc, {baseURI: url});
+		}
 		if (this.stopped){ return; }
 		if (w){
 			this.clear_widgets();
 			this.add_widget(w)
+		}
+		if (stop_refresh){
+			// 项目不再进行中：停在刚渲染的最终状态上，不再轮询（也不闪回）。
+			this.stop();
+			return;
 		}
 		if (this.is_in_dom() && !this.stopped){
 			schedule_once(this.show_widget.bind(this), this.opts.period_seconds);

@@ -282,15 +282,25 @@ bricks.Tree = class extends bricks.VScrollPanel {
 	// 定时「保展开态」原地重载：收 open ids → 清空重拉根 → 按父先子后依次 expand
 	async refresh_tick(){
 		if (this.stopped){ return; }
-		var open_ids = this._collect_open_ids();
-		if (this.container){ this.container.clear_widgets(); }
-		await this.get_children_data(this);
-		if (this.stopped){ return; }	// 根返回 stop_refresh 时上面已停
-		await this._restore_open_ids(open_ids);
-		if (this.is_in_dom() && !this.stopped){
-			this.schedule_refresh();
-		} else {
-			console.log('Stop refresh tree data from server');
+		try {
+			var open_ids = this._collect_open_ids();
+			if (this.container){ this.container.clear_widgets(); }
+			await this.get_children_data(this);
+			if (this.stopped){ return; }	// 根返回 stop_refresh 时上面已停
+			await this._restore_open_ids(open_ids);
+		} catch(e) {
+			// 拉取/重载失败（网络失败 / 403 返回 null / 响应非 JSON 解析失败）：
+			// 必须留痕（不许静默），且由 finally 统一决定是否续排下一次——
+			// 否则 reject 会让尾部 schedule_refresh() 永不执行，刷新永久停止且无日志。
+			console.warn('Tree refresh_tick() failed, keep scheduling:', e);
+		} finally {
+			// 续排下一次的唯一出口：在 DOM 且未停 → 续排；否则注销自己（不再排程）。
+			if (this.is_in_dom() && !this.stopped){
+				this.schedule_refresh();
+			} else {
+				// A4：不在 DOM（被移除/隐藏）时注销，不再静默留在实时面板登记表里。
+				this.stop();
+			}
 		}
 	}
 	// 深度优先收集当前 node_state==='open' 的节点 id（父在前、子在后；只遍历已展开的节点）
@@ -598,7 +608,7 @@ bricks.Tree = class extends bricks.VScrollPanel {
 		// 端点可返回对象形态 {"nodes":[...], "stop_refresh":bool}：
 		// 取 nodes 作子节点；stop_refresh 为真则停掉定时器（不再刷新）。
 		// 返回数组（或其它）时行为与之前完全一致。
-		var d = resp;
+		var d = resp || [];
 		if (resp && typeof resp === 'object' && !Array.isArray(resp) && resp.hasOwnProperty('nodes')){
 			d = resp.nodes || [];
 			if (resp.stop_refresh){
