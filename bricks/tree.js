@@ -234,6 +234,15 @@ bricks.Tree = class extends bricks.VScrollPanel {
 		});
 		this.add_widget(this.container);
 		this.data_id = null;
+		// refresh_seconds>0：自行定时「保展开态」原地重载（未传则完全不变，无定时器）
+		this.stopped = false;
+		if (this.opts.refresh_seconds > 0){
+			this.schedule_refresh();
+		}
+		// live_panel=true：登记进统一实时面板表，用户新输入时随之停刷（Tree 自己实现 stop()）
+		if (this.opts.live_panel && bricks.live_widgets){
+			bricks.live_widgets.register(this);
+		}
 		if (this.opts.dataurl){
 			this.params = options.params || {};
 			schedule_once(this.get_children_data.bind(this, this), 0.1);
@@ -259,6 +268,73 @@ bricks.Tree = class extends bricks.VScrollPanel {
 	}
 	get_id(){
 		return this.user_data[this.idField];
+	}
+	// 停止本树的定时刷新（并把自己从统一实时面板表移除）
+	stop(){
+		this.stopped = true;
+		if (bricks.live_widgets) bricks.live_widgets.unregister(this);
+	}
+	// 安排下一次刷新 tick（沿用 RefreshWidget 的 schedule_once 风格）
+	schedule_refresh(){
+		if (this.stopped){ return; }
+		schedule_once(this.refresh_tick.bind(this), this.opts.refresh_seconds);
+	}
+	// 定时「保展开态」原地重载：收 open ids → 清空重拉根 → 按父先子后依次 expand
+	async refresh_tick(){
+		if (this.stopped){ return; }
+		var open_ids = this._collect_open_ids();
+		if (this.container){ this.container.clear_widgets(); }
+		await this.get_children_data(this);
+		if (this.stopped){ return; }	// 根返回 stop_refresh 时上面已停
+		await this._restore_open_ids(open_ids);
+		if (this.is_in_dom() && !this.stopped){
+			this.schedule_refresh();
+		} else {
+			console.log('Stop refresh tree data from server');
+		}
+	}
+	// 深度优先收集当前 node_state==='open' 的节点 id（父在前、子在后；只遍历已展开的节点）
+	_collect_open_ids(){
+		var ids = [];
+		var this_id_field = this.opts.idField;
+		var walk = function(node){
+			if (!node.container){ return; }
+			for (var i=0;i<node.container.children.length;i++){
+				var c = node.container.children[i];
+				if (c.node_state === 'open'){
+					ids.push(c.user_data[this_id_field]);
+					if (c.container){ walk(c); }
+				}
+			}
+		};
+		walk(this);
+		return ids;
+	}
+	// 在新树里按 id 深度优先查找节点（找不到返回 null）
+	find_node_by_id(id){
+		var this_id_field = this.opts.idField;
+		var found = null;
+		var walk = function(node){
+			if (found || !node.container){ return; }
+			for (var i=0;i<node.container.children.length;i++){
+				var c = node.container.children[i];
+				if (c.user_data[this_id_field] === id){ found = c; return; }
+				walk(c);
+				if (found){ return; }
+			}
+		};
+		walk(this);
+		return found;
+	}
+	// 按 id 逐个恢复展开（父先子后，expand() 会懒加载其子节点；找不到的 id 忽略）
+	async _restore_open_ids(ids){
+		for (var i=0;i<ids.length;i++){
+			if (this.stopped){ return; }
+			var node = this.find_node_by_id(ids[i]);
+			if (node){
+				await node.expand();
+			}
+		}
 	}
 	create_toolbar(){
 		var toolbar = bricks.extend({}, this.toolbar);
@@ -515,10 +591,20 @@ bricks.Tree = class extends bricks.VScrollPanel {
 			p.id = node.user_data[this.idField];
 		}
 		console.log('params=', p);
-		var d = await jc.httpcall(this.opts.dataurl,{
+		var resp = await jc.httpcall(this.opts.dataurl,{
 				method : this.opts.method || 'GET',
 				params : p
 			})
+		// 端点可返回对象形态 {"nodes":[...], "stop_refresh":bool}：
+		// 取 nodes 作子节点；stop_refresh 为真则停掉定时器（不再刷新）。
+		// 返回数组（或其它）时行为与之前完全一致。
+		var d = resp;
+		if (resp && typeof resp === 'object' && !Array.isArray(resp) && resp.hasOwnProperty('nodes')){
+			d = resp.nodes || [];
+			if (resp.stop_refresh){
+				this.stop();
+			}
+		}
 		if (d.length == 0){
 			node.is_leaf = true;
 		} else {

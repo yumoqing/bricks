@@ -302,6 +302,28 @@ bricks.ResponsiveBox = class extends bricks.Layout {
 		}
 	}
 }
+// 统一「实时面板」登记表（2026-10-07）：
+// RefreshWidget 与 Tree 等带 live_panel 的实时控件都登记到这里；
+// 用户新输入时由 bricks.live_widgets.stop_all(root) 一次性停掉（历史状态定格）。
+// stop_all(root) 语义与旧 RefreshWidget.stop_live_panels(root) 一致：
+// 传 root 只停 DOM 在某 root 内的（同页多会话 tab 不互相误停），不传则停全部。
+bricks.live_widgets = {
+	registry: [],
+	register(w){
+		if (!w || this.registry.indexOf(w) >= 0){ return; }
+		this.registry.push(w);
+	},
+	unregister(w){
+		var i = this.registry.indexOf(w);
+		if (i >= 0){ this.registry.splice(i, 1); }
+	},
+	stop_all(root){
+		this.registry.slice().forEach(function(w){
+			if (root && (!w || !w.dom_element || !root.contains(w.dom_element))){ return; }
+			try { if (w && w.stop) w.stop(); } catch(e){}
+		});
+	}
+};
 bricks.RefreshWidget = class extends bricks.VBox {
 	/* 
 	{
@@ -317,27 +339,22 @@ bricks.RefreshWidget = class extends bricks.VBox {
 		this.stopped = false;
 		// live_panel=true：登记为「实时面板」，用户新输入时可由 stop_live_panels() 停掉（历史状态定格）
 		if (opts && opts.live_panel){
-			bricks.RefreshWidget.live_panels = bricks.RefreshWidget.live_panels || [];
-			bricks.RefreshWidget.live_panels.push(this);
+			bricks.live_widgets.register(this);
 		}
 		schedule_once(this.show_widget.bind(this), 0.01);
 	}
 	// 显式停止本控件的轮询（并把自己从实时面板登记表移除）
 	stop(){
 		this.stopped = true;
-		var a = bricks.RefreshWidget.live_panels || [];
-		var i = a.indexOf(this);
-		if (i >= 0) a.splice(i, 1);
+		bricks.live_widgets.unregister(this);
 	}
 	// 停掉已登记的实时面板（只影响 live_panel，不影响页面其它 RefreshWidget）
 	// 可选 root 作用域：传 root 时只停 DOM 在该 root 内的面板（按会话作用域）
 	// —— 同页多会话 tab 时，B 会话发消息不会误停 A 会话正在看的实时面板；
 	// 不传 root 时停全部（行为与之前完全一致）。dom_element 缺失的面板跳过（不误判）。
+	// 转调统一登记表 bricks.live_widgets.stop_all（Tree 等实时控件也登记在同一张表）。
 	static stop_live_panels(root){
-		(bricks.RefreshWidget.live_panels || []).slice().forEach(function(w){
-			if (root && (!w || !w.dom_element || !root.contains(w.dom_element))){ return; }
-			try { w.stop(); } catch(e){}
-		});
+		return bricks.live_widgets.stop_all(root);
 	}
 	async show_widget(){
 		if (this.stopped){ return; }
