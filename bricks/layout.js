@@ -314,9 +314,29 @@ bricks.RefreshWidget = class extends bricks.VBox {
 	constructor(opts){
 		super(opts);
 		this.refresh_task = null;
+		this.stopped = false;
+		// live_panel=true：登记为「实时面板」，用户新输入时可由 stop_live_panels() 停掉（历史状态定格）
+		if (opts && opts.live_panel){
+			bricks.RefreshWidget.live_panels = bricks.RefreshWidget.live_panels || [];
+			bricks.RefreshWidget.live_panels.push(this);
+		}
 		schedule_once(this.show_widget.bind(this), 0.01);
 	}
+	// 显式停止本控件的轮询（并把自己从实时面板登记表移除）
+	stop(){
+		this.stopped = true;
+		var a = bricks.RefreshWidget.live_panels || [];
+		var i = a.indexOf(this);
+		if (i >= 0) a.splice(i, 1);
+	}
+	// 停掉所有已登记的实时面板（只影响 live_panel，不影响页面其它 RefreshWidget）
+	static stop_live_panels(){
+		(bricks.RefreshWidget.live_panels || []).slice().forEach(function(w){
+			try { w.stop(); } catch(e){}
+		});
+	}
 	async show_widget(){
+		if (this.stopped){ return; }
 		var desc = {
 			widgettype: "urlwidget",
 			options: {
@@ -326,11 +346,12 @@ bricks.RefreshWidget = class extends bricks.VBox {
 			}
 		};
 		var w = await bricks.widgetBuild(desc, this);
+		if (this.stopped){ return; }
 		if (w){
 			this.clear_widgets();
 			this.add_widget(w)
 		}
-		if (this.is_in_dom()){
+		if (this.is_in_dom() && !this.stopped){
 			schedule_once(this.show_widget.bind(this), this.opts.period_seconds);
 		} else {
 			console.log('Stop load data from server');

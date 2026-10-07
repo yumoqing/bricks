@@ -524,6 +524,8 @@ bricks.AgentIO = class extends bricks.VBox {
 				mout.run_stopped();
 				return;
 			}
+			// 用户新输入已真正发起（进入流式）：停掉历史应答里的实时面板（历史状态定格、不再轮询）
+			if (bricks.RefreshWidget && bricks.RefreshWidget.stop_live_panels) bricks.RefreshWidget.stop_live_panels();
 			await hr.handle_chunk(resp, this.chunk_response.bind(this, mout));
 			this.chunk_ended();
 		} catch(err){
