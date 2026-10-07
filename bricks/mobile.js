@@ -229,11 +229,11 @@ bricks.MobileSheet = class extends bricks.VBox {
 		var handle = new bricks.VBox({css:'sheet-handle', width:'36px', height:'4px'});
 		this.panel.add_widget(handle);
 		if (opts.title){
-			this.panel.add_widget(new bricks.Text({text: opts.title, css:'sheet-title'}));
+			this.panel.add_widget(new bricks.Text({otext: opts.title, i18n: true, css:'sheet-title'}));
 		}
 		if (!this.sheet_items.length){
 			this.panel.add_widget(new bricks.Text({
-				text: opts.empty_text || '暂无内容', css:'sheet-empty'}));
+				otext: opts.empty_text || '暂无内容', i18n: true, css:'sheet-empty'}));
 		}
 		for (var i=0;i<this.sheet_items.length;i++){
 			this._create_row(this.sheet_items[i], opts.selected);
@@ -252,9 +252,10 @@ bricks.MobileSheet = class extends bricks.VBox {
 			row.add_widget(new bricks.Text({text: item.icon, css:'sheet-item-icon'}));
 		}
 		var col = new bricks.VBox({css:'filler', gap:'2px'});
-		col.add_widget(new bricks.Text({text: item.label || item.name || '', css:'sheet-item-label'}));
+		// otext+i18n：菜单项 label 走词典（i18n._ 未命中时回退原文，安全）
+		col.add_widget(new bricks.Text({otext: item.label || item.name || '', i18n: true, css:'sheet-item-label'}));
 		if (item.desc){
-			col.add_widget(new bricks.Text({text: item.desc, css:'sheet-item-desc'}));
+			col.add_widget(new bricks.Text({otext: item.desc, i18n: true, css:'sheet-item-desc'}));
 		}
 		row.add_widget(col);
 		if (selected && item.name === selected){
