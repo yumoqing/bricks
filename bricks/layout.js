@@ -329,9 +329,13 @@ bricks.RefreshWidget = class extends bricks.VBox {
 		var i = a.indexOf(this);
 		if (i >= 0) a.splice(i, 1);
 	}
-	// 停掉所有已登记的实时面板（只影响 live_panel，不影响页面其它 RefreshWidget）
-	static stop_live_panels(){
+	// 停掉已登记的实时面板（只影响 live_panel，不影响页面其它 RefreshWidget）
+	// 可选 root 作用域：传 root 时只停 DOM 在该 root 内的面板（按会话作用域）
+	// —— 同页多会话 tab 时，B 会话发消息不会误停 A 会话正在看的实时面板；
+	// 不传 root 时停全部（行为与之前完全一致）。dom_element 缺失的面板跳过（不误判）。
+	static stop_live_panels(root){
 		(bricks.RefreshWidget.live_panels || []).slice().forEach(function(w){
+			if (root && (!w || !w.dom_element || !root.contains(w.dom_element))){ return; }
 			try { w.stop(); } catch(e){}
 		});
 	}

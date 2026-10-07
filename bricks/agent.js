@@ -524,8 +524,9 @@ bricks.AgentIO = class extends bricks.VBox {
 				mout.run_stopped();
 				return;
 			}
-			// 用户新输入已真正发起（进入流式）：停掉历史应答里的实时面板（历史状态定格、不再轮询）
-			if (bricks.RefreshWidget && bricks.RefreshWidget.stop_live_panels) bricks.RefreshWidget.stop_live_panels();
+			// 用户新输入已真正发起（进入流式）：停掉本会话历史应答里的实时面板（历史状态定格、不再轮询）
+			// 传本 AgentIO 的 DOM 作作用域：只停本会话面板，不误停同页其它会话 tab 正在看的面板
+			if (bricks.RefreshWidget && bricks.RefreshWidget.stop_live_panels) bricks.RefreshWidget.stop_live_panels(this.dom_element);
 			await hr.handle_chunk(resp, this.chunk_response.bind(this, mout));
 			this.chunk_ended();
 		} catch(err){

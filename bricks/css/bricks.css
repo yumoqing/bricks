@@ -1378,12 +1378,12 @@ html[data-theme="dark"] {
 }
 
 /* === 会话末条应答的「项目任务现状」面板（agent_live_status）=== */
-/* 进行中任务图标闪动。周期刻意取 2.5s：整除面板 5s 轮询周期 →
-   每 5 秒重建面板时动画正好落在周期边界（0%/100% 均为不透明），视觉上不跳。 */
+/* 进行中任务图标闪动。周期取 1s：重建周期并非精确 5s（show_widget 拉取完成后才排下一次，
+   实际周期 = 5s + fetch 耗时），短周期使任意时刻重启都几乎不可察觉。 */
 @keyframes agent-blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.25; }
 }
 .agent-live-status .st-running {
-    animation: agent-blink 2.5s ease-in-out infinite;
+    animation: agent-blink 1s ease-in-out infinite;
 }
