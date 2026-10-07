@@ -94,14 +94,28 @@ const cur_utils = fs.readFileSync(path.join(REPO, 'bricks/utils.js'), 'utf8');
 const cur_bricks = fs.readFileSync(path.join(REPO, 'bricks/bricks.js'), 'utf8');
 const newB = load(cur_utils, cur_bricks);
 
-// 改前（git HEAD）的源码做差分对照；取不到就跳过差分（不 fail）
-let oldB = null, old_ok = true;
+// 改前的源码做差分对照；取不到、或基线其实已含修复（HEAD 已提交本修复）→ 跳过差分（不 fail）
+// 基线可用 BASELINE_REF=<ref> 指定（默认 HEAD）。**注意**：本修复一旦提交，HEAD 就变成"改后"，
+// 差分门禁会退化 —— 故此处显式检测「基线的 apply_data 与当前逐字节相同」并跳过，
+// 否则差分用例会把"改后"当"改前"，把真实用例误判为失败（曾发生：提交后跑出 10/16）。
+const BASELINE_REF = process.env.BASELINE_REF || 'HEAD';
+function grab_apply_data(src) {
+	const m = src.match(/bricks\.apply_data = function[\s\S]*?\n\}\n/);
+	return m ? m[0] : null;
+}
+let oldB = null, old_ok = true, old_skip_reason = '';
 try {
-	const old_utils = execSync('git show HEAD:bricks/utils.js', { cwd: REPO, encoding: 'utf8', maxBuffer: 1 << 24 });
-	const old_bricks = execSync('git show HEAD:bricks/bricks.js', { cwd: REPO, encoding: 'utf8', maxBuffer: 1 << 24 });
-	oldB = load(old_utils, old_bricks);
+	const old_utils = execSync('git show ' + BASELINE_REF + ':bricks/utils.js', { cwd: REPO, encoding: 'utf8', maxBuffer: 1 << 24 });
+	const old_bricks = execSync('git show ' + BASELINE_REF + ':bricks/bricks.js', { cwd: REPO, encoding: 'utf8', maxBuffer: 1 << 24 });
+	if (grab_apply_data(old_bricks) === grab_apply_data(cur_bricks)) {
+		old_ok = false;
+		old_skip_reason = '基线 ' + BASELINE_REF + ' 的 apply_data 与当前逐字节相同（已含修复）→ 跳过差分门禁';
+	} else {
+		oldB = load(old_utils, old_bricks);
+	}
 } catch (e) {
 	old_ok = false;
+	old_skip_reason = '取不到基线 ' + BASELINE_REF + ' 的源码';
 }
 
 // ── 断言框架 ──
@@ -212,7 +226,7 @@ for (const r of results) {
 	if (r.ok) { passed++; console.log('  ok   ' + r.name); }
 	else { console.log('  FAIL ' + r.name + '  →  ' + r.detail); }
 }
-if (!old_ok) console.log('  (note) 未能从 git HEAD 取出改前源码，差分对照已跳过');
+if (!old_ok) console.log('  (note) ' + (old_skip_reason || '差分对照已跳过'));
 console.log('');
 console.log('APPLY_DATA_OK=' + passed + '/' + results.length);
 process.exit(passed === results.length ? 0 : 1);
