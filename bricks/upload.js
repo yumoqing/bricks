@@ -597,6 +597,9 @@ var bricks = window.bricks || {};
 				reject(new TypeError('Failed to fetch'));
 				return;
 			}
+			// 标记本 XHR 已被本函数接管：否则 XMLHttpRequest.send 的全局钩子
+			// 会给同一个请求再建一条任务（表现为「拖一次文件出现两条状态」）。
+			try { xhr.__bricks_upload_job = job; } catch (e) { }
 			var stream = make_stream();
 			// 请求头（FormData/URLSearchParams 的 Content-Type 交给浏览器，别覆盖 boundary/编码）
 			var plain = {};
