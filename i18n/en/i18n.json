@@ -25,5 +25,17 @@
   "Are you sure to delete this record?": "Are you sure to delete this record?",
   "[Untitle window]": "[Untitled window]",
   "Delete": "Delete",
-  "Search": "Search"
+  "Search": "Search",
+  "Upload status": "Upload status",
+  "Uploading": "Uploading",
+  "Upload complete": "Upload complete",
+  "Upload failed": "Upload failed",
+  "Upload canceled": "Upload canceled",
+  "Upload timeout": "Upload timeout",
+  "Network error": "Network error",
+  "Clear finished": "Clear finished",
+  "File": "File",
+  "File data": "File data",
+  "Left": "Left",
+  "${n} files": "${n} files"
 }

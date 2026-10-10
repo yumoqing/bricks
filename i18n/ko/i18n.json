@@ -25,5 +25,17 @@
   "Are you sure to delete this record?": "이 레코드를 삭제하시겠습니까?",
   "[Untitle window]": "[제목 없음]",
   "Delete": "삭제",
-  "Search": "검색"
+  "Search": "검색",
+  "Upload status": "업로드 상태",
+  "Uploading": "업로드 중",
+  "Upload complete": "업로드 완료",
+  "Upload failed": "업로드 실패",
+  "Upload canceled": "취소됨",
+  "Upload timeout": "업로드 시간 초과",
+  "Network error": "네트워크 오류",
+  "Clear finished": "완료 항목 지우기",
+  "File": "파일",
+  "File data": "파일 데이터",
+  "Left": "남음",
+  "${n} files": "${n} 개 파일"
 }

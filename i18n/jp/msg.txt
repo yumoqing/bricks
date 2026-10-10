@@ -14,3 +14,15 @@ access error: アクセスエラー
 知识库: 知識ベース
 召回数量: 検索数
 模版: テンプレート
+Upload status: アップロード状況
+Uploading: アップロード中
+Upload complete: アップロード完了
+Upload failed: アップロード失敗
+Upload canceled: キャンセル
+Upload timeout: アップロードタイムアウト
+Network error: ネットワークエラー
+Clear finished: 完了分をクリア
+File: ファイル
+File data: ファイルデータ
+Left: 残り
+${n} files: ${n} 個のファイル

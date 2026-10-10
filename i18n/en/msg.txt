@@ -14,3 +14,15 @@ access error: Access error
 知识库: Knowledge Base
 召回数量: Recall Count
 模版: Template
+Upload status: Upload status
+Uploading: Uploading
+Upload complete: Upload complete
+Upload failed: Upload failed
+Upload canceled: Upload canceled
+Upload timeout: Upload timeout
+Network error: Network error
+Clear finished: Clear finished
+File: File
+File data: File data
+Left: Left
+${n} files: ${n} files

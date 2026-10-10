@@ -25,5 +25,17 @@
   "Are you sure to delete this record?": "このレコードを削除しますか？",
   "[Untitle window]": "[無題ウィンドウ]",
   "Delete": "削除",
-  "Search": "検索"
+  "Search": "検索",
+  "Upload status": "アップロード状況",
+  "Uploading": "アップロード中",
+  "Upload complete": "アップロード完了",
+  "Upload failed": "アップロード失敗",
+  "Upload canceled": "キャンセル",
+  "Upload timeout": "アップロードタイムアウト",
+  "Network error": "ネットワークエラー",
+  "Clear finished": "完了分をクリア",
+  "File": "ファイル",
+  "File data": "ファイルデータ",
+  "Left": "残り",
+  "${n} files": "${n} 個のファイル"
 }

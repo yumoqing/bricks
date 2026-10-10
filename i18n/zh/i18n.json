@@ -25,5 +25,17 @@
   "Are you sure to delete this record?": "确定删除此记录？",
   "[Untitle window]": "[未命名窗口]",
   "Delete": "删除",
-  "Search": "搜索"
+  "Search": "搜索",
+  "Upload status": "上传状态",
+  "Uploading": "上传中",
+  "Upload complete": "上传完成",
+  "Upload failed": "上传失败",
+  "Upload canceled": "已取消",
+  "Upload timeout": "上传超时",
+  "Network error": "网络错误",
+  "Clear finished": "清除已完成",
+  "File": "文件",
+  "File data": "文件数据",
+  "Left": "剩余",
+  "${n} files": "${n} 个文件"
 }
