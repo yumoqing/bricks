@@ -38,5 +38,6 @@
   "File data": "File data",
   "Left": "Left",
   "${n} files": "${n} files",
-  "drop in or click to choose file": "Drop file here or click to choose"
+  "drop in or click to choose file": "Drop file here or click to choose",
+  "Network retry": "Network blocked, retried via fallback"
 }

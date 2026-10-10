@@ -243,6 +243,11 @@ var bricks = window.bricks || {};
 			this.paint();
 			this.center.render();
 		}
+		// 网络层被掐断、改用原生 fetch 重发时的提示（meta 行显示）
+		retry_hint() {
+			this.retry_note = this._t('Network retry');
+			this.paint();
+		}
 		remove() {
 			this.center.remove_job(this);
 		}
@@ -333,6 +338,7 @@ var bricks = window.bricks || {};
 			} else {
 				m.push(t('Upload failed'));
 			}
+			if (this.retry_note) m.push(this.retry_note);
 			this._meta_el.textContent = m.join(' · ');
 			if (this.status === 'error' || this.status === 'canceled') {
 				this._err_el.style.display = 'block';
@@ -516,6 +522,7 @@ var bricks = window.bricks || {};
 			var job = bricks.upload_status ? bricks.upload_status.new_job(meta, url, method) : null;
 			var xhr = new XMLHttpRequest();
 			var settled = false, pushed = 0, sctrl = null, closed = false;
+			var retried = false;
 			var encoder = (typeof TextEncoder !== 'undefined') ? new TextEncoder() : null;
 
 			function make_stream() {
@@ -585,7 +592,53 @@ var bricks = window.bricks || {};
 					job.fail(job._t('Network error'));
 				}
 			}
+			// 网络层失败兜底：XHR 连响应头都没收到就被掐断（Chrome 报 net::ERR_FAILED，
+			// 服务端访问日志里毫无痕迹——实测企业网络/安全软件会掐 XHR 发起的上传，
+			// 而同一 body 走原生 fetch 能过）。此时用原始 fetch 重发一次：代价是该路
+			// 没有百分比（浮层显示上传中→完成），但保证文件能传上去。
+			// 只在「一个字节都没收到响应头」时兜底，避免服务端已处理却重复提交。
+			function retry_with_fetch() {
+				if (retried || aborted || settled) return false;
+				var raws = bricks.upload_probe(init.body);
+				if (!raws) return false;
+				retried = true;
+				if (job && job.status === 'uploading') job.retry_hint();
+				try { console.warn('[bricks.upload] XHR 被网络层掐断，改用原生 fetch 重发:', url); } catch (e) { }
+				var orig = bricks._orig_fetch || window.fetch;
+				Promise.resolve()
+					.then(function () {
+						return orig.call(window, url, {
+							method: method,
+							headers: init.headers || undefined,
+							body: init.body,
+							credentials: init.credentials,
+							signal: init.signal
+						});
+					})
+					.then(function (resp) {
+						if (resp && resp.status >= 200 && resp.status < 400) {
+							if (job) job.done();
+							settled = true;
+							resolve(resp);
+						} else {
+							var st = (resp && resp.status) || 0;
+							return resp.text().then(function (t) {
+								if (job) job.fail(st > 0 ? err_text(st, resp.statusText, t, url)
+									: job._t('Network error') + '\n' + url);
+								settled = true;
+								resolve(resp);
+							});
+						}
+					})
+					.catch(function (err) {
+						if (job) job.fail(job._t('Network error') + '\n' + url);
+						if (settled) stream_error(err);
+						else { settled = true; reject(err); }
+					});
+				return true;
+			}
 			function fail_network() {
+				if (retry_with_fetch()) return;
 				var e = new TypeError('Failed to fetch');
 				if (job) job.fail(job._t('Network error') + '\n' + url);
 				if (settled) stream_error(e);

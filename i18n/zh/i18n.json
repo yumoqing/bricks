@@ -38,5 +38,6 @@
   "File data": "文件数据",
   "Left": "剩余",
   "${n} files": "${n} 个文件",
-  "drop in or click to choose file": "拖拽文件到此处或点击选择"
+  "drop in or click to choose file": "拖拽文件到此处或点击选择",
+  "Network retry": "网络受限，已走备用通道重发"
 }

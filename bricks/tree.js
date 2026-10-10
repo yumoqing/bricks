@@ -53,10 +53,20 @@ bricks.TreeNode = class extends bricks.VBox {
 		return this.user_data[this.tree.idField];
 	}
 	selected(flg){
-		if (flg){
-			this.str_w.set_css('selected');
-		} else {
-			this.str_w.set_css('selected',true);
+		if (this.str_w){
+			if (flg){
+				this.str_w.set_css('selected');
+			} else {
+				this.str_w.set_css('selected',true);
+			}
+			return;
+		}
+		// 自定义 node_view 的节点没有 str_w（标签控件）——旧实现在这里直接
+		// 抛 TypeError: Cannot read properties of undefined (reading 'set_css')，
+		// 点击工作空间树节点即报错（2026-10-10 实测）。改为给节点行加/去 selected 类。
+		var el = this.node_widget && this.node_widget.dom_element;
+		if (el && el.classList){
+			if (flg) el.classList.add('selected'); else el.classList.remove('selected');
 		}
 	}
 	async toggleExpandCollapse(event){
@@ -161,7 +171,7 @@ bricks.TreeNode = class extends bricks.VBox {
 				widget.add_widget(this.view_w);
 			}
 		}
-		this.str_w.set_text(this.user_data[this.tree.opts.textField]);
+		if (this.str_w) this.str_w.set_text(this.user_data[this.tree.opts.textField]);
 	}
 	setup_icon_urls(){
 		var icons = null;
