@@ -26,3 +26,4 @@ File: 文件
 File data: 文件数据
 Left: 剩余
 ${n} files: ${n} 个文件
+drop in or click to choose file: 拖拽文件到此处或点击选择

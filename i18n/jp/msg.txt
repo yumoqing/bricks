@@ -26,3 +26,4 @@ File: ファイル
 File data: ファイルデータ
 Left: 残り
 ${n} files: ${n} 個のファイル
+drop in or click to choose file: ここにファイルをドロップ、またはクリックして選択

@@ -26,3 +26,4 @@ File: 파일
 File data: 파일 데이터
 Left: 남음
 ${n} files: ${n} 개 파일
+drop in or click to choose file: 여기에 파일을 놓거나 클릭하여 선택
