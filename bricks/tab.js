@@ -300,9 +300,62 @@ bricks.TabPanel = class extends bricks.Layout {
 			return;
 		}
 		var c = desc.content || {"widgettype":"urlwidget","options":{"url":desc.url}};
-		var w = await bricks.widgetBuild(c, this, {});
+		var w = null;
+		try{
+			w = await bricks.widgetBuild(c, this, {});
+		}catch(e){
+			// 后端短暂不可用（重启窗口/502）：退避重试一次；仍失败则先放占位并后台自动重试。
+			// 旧实现：content 加载不 await（open_tab 里 fire-and-forget）→ 失败只剩
+			// 控制台 Uncaught Failed to fetch，用户看到「tab 名出来了、内容永远空白」，
+			// 只能刷新页面（2026-10-10 用户实报）。
+			console.warn('[bricks] tab 内容加载失败，1.2s 后重试：' + desc.name, e);
+			await new Promise(function(resolve){ setTimeout(resolve, 1200); });
+			try{
+				w = await bricks.widgetBuild(c, this, {});
+			}catch(e2){
+				console.warn('[bricks] tab 内容仍加载失败，转占位+后台自动重试：' + desc.name, e2);
+				w = await this._tab_error_widget(desc, e2);
+				this.content_buffer[desc.name] = w;
+				if (this.cur_tab_name === desc.name) this.switch_content(w);
+				this._retry_tab_later(desc, 0);
+				return;
+			}
+		}
 		this.content_buffer[desc.name] = w;
 		if (w && this.cur_tab_name === desc.name) this.switch_content(w);
+	}
+	// 失败占位：可读原因 + 后台按退避自动重试（后端恢复后内容自动出现，无需用户刷新）
+	async _tab_error_widget(desc, err){
+		var msg = (err && (err.message || err)) ? (err.message || err) : '' + err;
+		var _t = function(s){ return (bricks.app && bricks.app.i18n) ? bricks.app.i18n._(s) : s; };
+		var w = await bricks.widgetBuild({
+			"widgettype":"VBox",
+			"options":{"width":"100%","height":"100%","padding":"16px","gap":"8px"},
+			"subwidgets":[
+				{"widgettype":"Title5","options":{"text":_t('内容加载失败')}},
+				{"widgettype":"Text","options":{"text":_t('后端可能正在重启或网络中断：') + msg}},
+				{"widgettype":"Text","options":{"text":_t('正在自动重试（后端恢复后本页会自动出现）；也可稍后点左侧菜单重进。')}}
+			]
+		}, this, {});
+		if (w) w.__tab_load_error = true;
+		return w;
+	}
+	_retry_tab_later(desc, n){
+		var delays = [2000, 4000, 8000, 15000, 30000];
+		if (n >= delays.length) return;
+		var self = this;
+		setTimeout(async function(){
+			var cur = self.content_buffer[desc.name];
+			if (!cur || !cur.__tab_load_error) return;   // 已被正常内容替换/用户切走了
+			var c = desc.content || {"widgettype":"urlwidget","options":{"url":desc.url}};
+			try{
+				var w = await bricks.widgetBuild(c, self, {});
+				self.content_buffer[desc.name] = w;
+				if (self.cur_tab_name === desc.name) self.switch_content(w);
+			}catch(e){
+				self._retry_tab_later(desc, n + 1);
+			}
+		}, delays[n]);
 	}
 	// 动态打开 tab：已存在则切换（默认刷新内容，desc.refresh===false 用缓存），
 	// 不存在则新增。content 异步加载不阻塞；新增时等 createTool 真正建出按钮

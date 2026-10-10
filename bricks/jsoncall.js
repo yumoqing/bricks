@@ -126,7 +126,42 @@ bricks.HttpText = class {
 				_params.body = JSON.stringify(data);
 			}
 		}
-		return await fetch(url, _params);
+		// 瞬时故障自动重试（2026-10-10 实事故：应用重启窗口内 nginx 回 502 / 连接被拒，
+		// 前端表现为 tab 内容空白、待办角标 Uncaught Failed to fetch，刷新页面才恢复）。
+		// 只重试幂等方法（GET/HEAD）——POST 等有副作用的请求绝不自动重发；
+		// 退避 0.5s/1.5s/3s（累计约 5s），覆盖一次重启的不可用窗口。
+		return await this._fetch_retry(url, _params, method);
+	}
+	_retry_delays(method){
+		var m = (method || 'GET').toUpperCase();
+		if (m === 'GET' || m === 'HEAD') return [500, 1500, 3000];
+		return [];
+	}
+	_sleep(ms){
+		return new Promise(function(resolve){ setTimeout(resolve, ms); });
+	}
+	async _fetch_retry(url, params, method){
+		var delays = this._retry_delays(method);
+		var i = 0;
+		for (;;){
+			try{
+				var resp = await fetch(url, params);
+				if (i < delays.length && (resp.status === 502 || resp.status === 503 || resp.status === 504)){
+					console.warn('[bricks] 上游暂不可用(HTTP ' + resp.status + ')，'
+						+ delays[i] + 'ms 后重试：' + url);
+					await this._sleep(delays[i++]);
+					continue;
+				}
+				return resp;
+			}catch(e){
+				// fetch 网络级失败（连接被拒/超时/断网）= TypeError；主动中断(AbortError)不重试
+				if (e && e.name === 'AbortError') throw e;
+				if (i >= delays.length) throw e;
+				console.warn('[bricks] 请求失败(' + ((e && e.message) ? e.message : e) + ')，'
+					+ delays[i] + 'ms 后重试：' + url);
+				await this._sleep(delays[i++]);
+			}
+		}
 	}
 	async httpcall(url, opts){
 		const fetchResult = await this.bricks_fetch(url, {
