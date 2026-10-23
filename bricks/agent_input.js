@@ -61,8 +61,8 @@ bricks.AgentInput = class extends bricks.VBox {
 
         // submit button
         var inputw = new bricks.Svg({
-            cwidth: 1.5, cheight: 1.5,
-            url: opts.url || bricks_resource('imgs/submit.svg')
+            cwidth: 3, cheight: 1.5,
+            url: opts.url || bricks_resource('imgs/send.svg')
         });
         inputw.bind('click', this.input_finished.bind(this));
 
