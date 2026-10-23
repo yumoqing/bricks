@@ -80,7 +80,7 @@ bricks.AgentInput = class extends bricks.VBox {
         }
 
         // button row: [+add] [model_selector] [🔑secret?] [filler] [submit]
-        var hbox = new bricks.HBox({cheight: 1.5, gap: '4px', alignItems: 'center'});
+        var hbox = new bricks.HBox({cheight: 2.2, gap: '4px', alignItems: 'center'});
         hbox.add_widget(addfilew);
         hbox.add_widget(this.model_selector);
         if (secretw) hbox.add_widget(secretw);
