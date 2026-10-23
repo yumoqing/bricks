@@ -10,8 +10,10 @@ bricks.Svg = class extends bricks.VBox {
 	*/
 	constructor(opts){
 		opts.rate = opts.rate || 1;
-		opts.cwidth = opts.rate;
-		opts.cheight = opts.rate;
+		if (!opts.cwidth && !opts.cheight) {
+			opts.cwidth = opts.rate;
+			opts.cheight = opts.rate;
+		}
 		opts.blinktime = opts.blinktime? opts.blinktime : 0;
 		opts.dynsize = true;
 		super(opts);
