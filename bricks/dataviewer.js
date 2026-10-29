@@ -219,6 +219,10 @@ bricks.DataViewer = class extends bricks.VBox {
 				{
 					name:'clone',
 					tip:'clone selected record',
+					/* 2026-10-29：补中文标签。克隆图标（imgs/clone.svg）在部分主题/缓存下
+					   渲染为不可见，用户反馈「clone 按钮没有了」——带标签后图标摘不出来
+					   也看得见、点得到（IconTextBar 的 Text 带 i18n，可按语言替换）。 */
+					label:'复制',
 					selected_row:true,
 					icon:this.editable.clone_icon || bricks_resource('imgs/clone.svg')
 				},
