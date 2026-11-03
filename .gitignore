@@ -3,3 +3,6 @@ dist/
 # NFS temp files
 .nfs*
 .DS_Store
+init/
+logs/
+*.log
