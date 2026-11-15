@@ -406,10 +406,14 @@ bricks.AgentIO = class extends bricks.VBox {
 		var path = q >= 0 ? u.slice(0, q) : u;
 		var qs = q >= 0 ? u.slice(q) : '';
 		if (!/\.dspy$/.test(path)) return '';
+		// chat url 没带 pipeline_id = 还不知道是哪个产线（如移动端先建 AgentIO、等 ChipBar 拿到
+		// 产线列表再 set_pipeline）：此时不拉，否则会先渲染一瞬「开发产线」的错误引导。
+		if (!/[?&]pipeline_id=/.test(qs)) return '';
 		return path.replace(/[^\/]+$/, 'agent_welcome.dspy') + qs;
 	}
 	// 拉开场提示并按「agent 的一条输出」渲染（AgentOutput 气泡：头像 + 卡片）。
-	// 服务端在「该会话已有对话记录」时返回 null/空 → 什么都不显示（老会话不占版面）。
+	// 2026-11-15 二改口径：服务端**每次都返回**（常驻引导条，会话区顶部），只有未登录/异常才返回 {}
+	// → 什么都不显示。（旧口径「已有对话记录就不出」已废弃，别按它加回判定。）
 	async load_welcome(){
 		var url = this.welcome_url();
 		if (!url) return;
