@@ -346,6 +346,10 @@ bricks.AgentIO = class extends bricks.VBox {
 		this.add_widget(this.inputw);
 		// 用户上翻看历史时暂停跟滚，滚回底部恢复（scroll_to_bottom 依据 _follow）
 		this.msg_box.bind('scroll', this._track_follow.bind(this));
+		// 会话开场提示（2026-11-15 用户口径）：本产线做什么 + 你先这样做 是**会话 agent 的第一条
+		// 输出**，显示在会话区里，不是挂在工具栏/菜单行上。构造时按 chat url 同目录的
+		// agent_welcome.dspy 拉一次（会话/产线参数跟着原查询串带过去）。
+		this.load_welcome();
 		// 内容增长即跟滚到底（2026-09-01 根治）：agent 输出多为 widget 描述符，
 		// AgentOut.update 走 widgetBuild().then() 异步挂载——同步滚总在挂载前执行、
 		// 滚不到新内容。MutationObserver 在挂载落 DOM 后触发，同步/异步渲染全覆盖，
@@ -388,6 +392,50 @@ bricks.AgentIO = class extends bricks.VBox {
 			this._follow = false;
 		}
 		this._last_st = st;
+	}
+	// 会话开场提示的地址：默认 = chat url 同目录的 agent_welcome.dspy（原查询串照带，
+	// session_id/pipeline_id 天然对齐）。可用 options.welcome_url 覆盖；welcome_url:false 关闭。
+	// 为什么按同目录推导：所有产线会话页（开发/投标/商机/移动端/通用）都只配了 chat url，
+	// 推导可让它们零改动拿到开场白，不必逐仓改 index.ui。
+	welcome_url(){
+		var o = this.opts || {};
+		if (o.welcome_url === false) return '';
+		if (o.welcome_url) return o.welcome_url;
+		var u = String(o.url || '');
+		var q = u.indexOf('?');
+		var path = q >= 0 ? u.slice(0, q) : u;
+		var qs = q >= 0 ? u.slice(q) : '';
+		if (!/\.dspy$/.test(path)) return '';
+		return path.replace(/[^\/]+$/, 'agent_welcome.dspy') + qs;
+	}
+	// 拉开场提示并按「agent 的一条输出」渲染（AgentOutput 气泡：头像 + 卡片）。
+	// 服务端在「该会话已有对话记录」时返回 null/空 → 什么都不显示（老会话不占版面）。
+	async load_welcome(){
+		var url = this.welcome_url();
+		if (!url) return;
+		var gen = (this._welcome_seq || 0) + 1;
+		this._welcome_seq = gen;
+		try {
+			// 用底层 bricks_fetch 而不用 httpcall：httpcall 对非 2xx 会弹 5 秒错误窗，
+			// 而"该页没有开场白端点（404）/服务端异常"都不该打扰用户快照页面。
+			var jc = new bricks.HttpJson();
+			var resp = await jc.bricks_fetch(url, {method:'GET'});
+			if (!resp || !resp.ok) return;
+			var desc = JSON.parse(await resp.text());
+			if (gen !== this._welcome_seq) return;   // 期间切了产线/会话：丢弃过期结果
+			if (!desc || !desc.widgettype) return;
+			var mout = new bricks.AgentOutput({});
+			mout.run_stopped();        // 开场白不是"思考中"，不要转圈的运行指示
+			// 必须落在「第一条」：慢网/重试窗口里用户可能已经先发了消息，
+			// 追加到末尾就把开场白挤到提问与回复之后了 —— 有内容就插到 0 位。
+			var has_kids = this.msg_box.children && this.msg_box.children.length > 0;
+			if (has_kids) { this.msg_box.add_widget(mout, 0); mout.parent = this.msg_box; }
+			else this.msg_box.add_widget(mout);
+			mout.update_data(desc);
+			this.scroll_to_bottom();   // 不强制恢复跟滚：用户上翻看历史时不许被拉回
+		} catch(e){
+			console.log('agent welcome load failed:', e);
+		}
 	}
 	chunk_response(mout, l){
 		l = l.trim();
@@ -462,6 +510,8 @@ bricks.AgentIO = class extends bricks.VBox {
 		}
 		this.pipeline_id = pid;
 		this.msg_box.clear_widgets();
+		// 切产线 = 换了一个新会话区：开场提示按新产线重拉（旧的已随 clear_widgets 清掉）
+		this.load_welcome();
 	}
 	async user_inputed(e){
 		var params = e.params;
