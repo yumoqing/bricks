@@ -5,7 +5,7 @@
   <script>
   if (/[?&]debug=1/.test(location.search)) {
     var s = document.createElement("script");
-    s.src = "/cdn/eruda.js";
+    s.src = "{{entire_url('/bricks/3parties/eruda.js')}}";
     s.onload = function(){ eruda.init(); };
     document.head.appendChild(s);
   }
@@ -25,15 +25,14 @@
 <!--
 
 
-<script src="/cdn/ort.js"></script>
-<script src="/cdn/vad-web.min.js"></script>
- <script src="/cdn/docx.min.js"></script>
-<script src="/cdn/pdf.min.js"></script>
-<script src="/cdn/xlsx.full.min.js"></script>
-<script src="/cdn/mammoth.browser.min.js"></script>
-	<script src="/cdn/hls.js"></script>
+<script src="{{entire_url('/bricks/3parties/ort.js')}}"></script>
+<script src="{{entire_url('/bricks/3parties/vad.0.0.7.min.js')}}"></script>
+ <script src="{{entire_url('/bricks/3parties/docx.min.js')}}"></script>
+<script src="{{entire_url('/bricks/3parties/pdf.min.js')}}"></script>
+<script src="{{entire_url('/bricks/3parties/xlsx.full.min.js')}}"></script>
+<script src="{{entire_url('/bricks/3parties/mammoth.browser.min.js')}}"></script>
 -->
-   <script type="text/javascript" src="/cdn/echarts.min.js"></script>
+   <script type="text/javascript" src="{{entire_url('/bricks/3parties/echarts.min.js')}}"></script>
 
   <script src="{{entire_url('/bricks/3parties/marked.js')}}"></script>
   <script src="{{entire_url('/bricks/3parties/xterm.js')}}"></script>
