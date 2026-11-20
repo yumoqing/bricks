@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+  <!-- eruda 调试控制台：站内自托管，仅 ?debug=1 时加载（原来每页同步拉 bootcdn，国内 4-5s） -->
+  <script>
+  if (/[?&]debug=1/.test(location.search)) {
+    var s = document.createElement("script");
+    s.src = "/cdn/eruda.js";
+    s.onload = function(){ eruda.init(); };
+    document.head.appendChild(s);
+  }
+  </script>
+
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,18 +23,17 @@
 </head>
   <body>
 <!--
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/js-docx-viewer/dist/css/docxviewer.min.css">
-  <script src="//cdn.bootcdn.net/ajax/libs/eruda/2.3.3/eruda.js"></script>
-<script>eruda.init();</script>
-<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.7/dist/bundle.min.js"></script>
- <script src="https://unpkg.com/docx-js@3.2.0/lib/docx.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+
+<script src="/cdn/ort.js"></script>
+<script src="/cdn/vad-web.min.js"></script>
+ <script src="/cdn/docx.min.js"></script>
+<script src="/cdn/pdf.min.js"></script>
+<script src="/cdn/xlsx.full.min.js"></script>
+<script src="/cdn/mammoth.browser.min.js"></script>
+	<script src="/cdn/hls.js"></script>
 -->
-   <script type="text/javascript" src="https://registry.npmmirror.com/echarts/5.5.1/files/dist/echarts.min.js"></script>
+   <script type="text/javascript" src="/cdn/echarts.min.js"></script>
 
   <script src="{{entire_url('/bricks/3parties/marked.js')}}"></script>
   <script src="{{entire_url('/bricks/3parties/xterm.js')}}"></script>
